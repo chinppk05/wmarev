@@ -21,7 +21,7 @@ const payment = require('./routers/payment')(app)
 const receipt = require('./routers/receipt')(app)
 const sector = require('./routers/sector')(app)
 const usage = require('./routers/usage')(app)
-
+const cost = require('./routers/cost')(app)
 
 app.listen(port,()=>{
   console.log("เซิฟเวอร์สตารทแล่ว!")

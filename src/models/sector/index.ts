@@ -13,6 +13,7 @@ const schema = new Schema({
     signedBy:String,
     signedPosition:String,
     activeYear:Number,
+    accountCode:Number
 }) 
 schema.plugin(mongoosePaginate)
 const Sector = mongoose.model("Sector",schema)
