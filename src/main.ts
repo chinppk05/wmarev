@@ -13,6 +13,15 @@ app.use(bodyParser.json())
 app.use(express.urlencoded())
 
 const paymentCondition = require('./routers/paymentcondition')(app)
+const collectcondition = require('./routers/collectcondition')(app)
+const collection = require('./routers/collection')(app)
+const customer = require('./routers/customer')(app)
+const invoice = require('./routers/invoice')(app)
+const payment = require('./routers/payment')(app)
+const receipt = require('./routers/receipt')(app)
+const sector = require('./routers/sector')(app)
+const usage = require('./routers/usage')(app)
+
 
 app.listen(port,()=>{
   console.log("เซิฟเวอร์สตารทแล่ว!")
