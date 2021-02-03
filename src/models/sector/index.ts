@@ -6,13 +6,13 @@ const schema = new Schema({
     name:String,
     address:String,
     contractStart:Date,
-    contractSign:String,
+    contractSigned:Date,
     province:String,
     district:String,
     subDistrict:String,
     signedBy:String,
     signedPosition:String,
-    activeYear:Date,
+    activeYear:Number,
 }) 
 schema.plugin(paginate)
 const Sector = mongoose.model("Sector",schema)
