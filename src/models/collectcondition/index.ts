@@ -1,5 +1,5 @@
-import mongoose from "mongoose"
-import paginate from "mongoose-paginate"
+const mongoose = require('mongoose')
+const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
@@ -17,6 +17,6 @@ const schema = new Schema({
     profitType:String,
     lossType:String,
 }) 
-schema.plugin(paginate)
+schema.plugin(mongoosePaginate)
 const Collectcondition = mongoose.model(" Collectcondition ",schema)
 export default  Collectcondition 

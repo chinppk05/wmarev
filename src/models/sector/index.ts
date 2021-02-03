@@ -1,5 +1,5 @@
-import mongoose from "mongoose"
-import paginate from "mongoose-paginate"
+const mongoose = require('mongoose')
+const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
@@ -14,6 +14,6 @@ const schema = new Schema({
     signedPosition:String,
     activeYear:Number,
 }) 
-schema.plugin(paginate)
+schema.plugin(mongoosePaginate)
 const Sector = mongoose.model("Sector",schema)
 export default Sector

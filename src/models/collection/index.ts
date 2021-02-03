@@ -1,5 +1,5 @@
-import mongoose from "mongoose"
-import paginate from "mongoose-paginate"
+const mongoose = require('mongoose')
+const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
@@ -13,6 +13,6 @@ const schema = new Schema({
   percentage: Number
 
 })
-schema.plugin(paginate)
+schema.plugin(mongoosePaginate)
 const Collection = mongoose.model("Collection", schema)
 export default Collection

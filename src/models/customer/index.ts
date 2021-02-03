@@ -1,5 +1,5 @@
-import mongoose from "mongoose"
-import paginate from "mongoose-paginate"
+const mongoose = require('mongoose')
+const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema
 const schema = new Schema({
   prefix: String,
@@ -13,6 +13,6 @@ const schema = new Schema({
   taxId: String
 
 })
-schema.plugin(paginate)
+schema.plugin(mongoosePaginate)
 const Customer = mongoose.model("Customer", schema)
 export default Customer

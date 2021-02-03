@@ -1,5 +1,5 @@
-import mongoose from "mongoose"
-import paginate from "mongoose-paginate"
+const mongoose = require('mongoose')
+const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
@@ -14,6 +14,6 @@ const schema = new Schema({
     usage:{type: ObjectId, ref: 'Usage'},
     customer: {type: ObjectId, ref: 'Customer'},
 }) 
-schema.plugin(paginate)
+schema.plugin(mongoosePaginate)
 const Receipt = mongoose.model("Receipt",schema)
 export default Receipt

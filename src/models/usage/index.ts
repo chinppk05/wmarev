@@ -1,5 +1,5 @@
-import mongoose from "mongoose"
-import paginate from "mongoose-paginate"
+const mongoose = require('mongoose')
+const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
@@ -12,6 +12,6 @@ const schema = new Schema({
   period: String
 
 })
-schema.plugin(paginate)
+schema.plugin(mongoosePaginate)
 const Usage = mongoose.model("Usage", schema)
 export default Usage
