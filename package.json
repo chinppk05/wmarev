@@ -1,0 +1,15 @@
+{
+  "name": "wma201am1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "NCC",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^5.11.14",
+    "mongoose-paginate": "^5.0.3"
+  }
+}
