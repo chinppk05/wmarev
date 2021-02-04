@@ -1,9 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/cost/index'
 const mongoose = require('mongoose');
-const Excel = require('exceljs');
+// const Excel = require('exceljs');
 // const ExcelJS = require('exceljs');
-const ExcelJS = require('exceljs/dist/es5');
+// const ExcelJS = require('exceljs/dist/es5');
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const newObj:any = new DBModel(req.body);
@@ -101,16 +101,5 @@ export const postGroup = (req: Request, res: Response) => {
   });
 };
 export const importExcel = async (req: Request, res: Response) => {
-  res.send({
-    status: 'success',
-    timestamp: new Date(),
-    file: req.file,
-    ...req.file
-})
-
-const workbook = new Excel.Workbook();
-await workbook.xlsx.readFile(req.file.path);
-workbook.eachSheet(function(worksheet, sheetId) {
-  console.log(sheetId)
-});
 }
+
