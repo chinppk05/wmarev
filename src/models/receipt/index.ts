@@ -13,6 +13,7 @@ const schema = new Schema({
     invoice:{type: ObjectId, ref: 'Invoice'},
     usage:{type: ObjectId, ref: 'Usage'},
     customer: {type: ObjectId, ref: 'Customer'},
+    printDate:Date,
 }) 
 schema.plugin(mongoosePaginate)
 const Receipt = mongoose.model("Receipt",schema)
