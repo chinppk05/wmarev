@@ -19,7 +19,7 @@ const customer = require('./routers/customer')(app)
 const invoice = require('./routers/invoice')(app)
 const payment = require('./routers/payment')(app)
 const receipt = require('./routers/receipt')(app)
-const sector = require('./routers/sector')(app)
+const contract = require('./routers/contract')(app)
 const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
 

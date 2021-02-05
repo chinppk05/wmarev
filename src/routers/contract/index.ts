@@ -1,7 +1,7 @@
-import * as ctrl from "../../controllers/sector"
+import * as ctrl from "../../controllers/contract"
 import {Express} from "express"
-let endpoint = "sector"
-let endpoints = "sectors"
+let endpoint = "contract"
+let endpoints = "contracts"
 
 module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}/`, ctrl.create)

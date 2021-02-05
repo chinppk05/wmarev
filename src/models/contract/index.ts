@@ -10,11 +10,14 @@ const schema = new Schema({
     province:String,
     district:String,
     subDistrict:String,
+    postal:String,
     signedBy:String,
     signedPosition:String,
     activeYear:Number,
-    accountCode:Number
+    accountCode:Number,
+    description:String,
+    fileUrl:String,
 }) 
 schema.plugin(mongoosePaginate)
-const Sector = mongoose.model("Sector",schema)
-export default Sector
+const Contract = mongoose.model("Contract",schema)
+export default Contract

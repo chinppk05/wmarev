@@ -3,7 +3,7 @@ const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
-    sector:{type: ObjectId, ref: 'Sector'},
+    contract:{type: ObjectId, ref: 'Contract'},
     collector:String,
     calculation:Number,
     period:String,
