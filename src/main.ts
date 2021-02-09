@@ -25,5 +25,5 @@ const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
 
 app.listen(port,()=>{
-  console.log("เซิฟเวอร์สตารทแล่ว!")
+  console.log("Server started! at port " + port)
 })
