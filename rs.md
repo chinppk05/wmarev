@@ -1,0 +1,1 @@
+git reset --hard && git pull && gulp build && pm2 restart wma201am1 && pm2 log wma201am1

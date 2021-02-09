@@ -5,6 +5,7 @@ const schema = new Schema({
   prefix: String,
   firstName: String,
   lastName: String,
+  meter:String,
   address: String,
   province: String,
   district: String,
