@@ -21,6 +21,11 @@ const schema = new Schema({
     fileUrl:[String],
     maximum:Number,
     isMaximum:Boolean,
+    conditions:[{
+        category:String,
+        value:String,
+        value2:String,
+    }],
     collections:[{
         category:String,
         value:String,
