@@ -7,6 +7,7 @@ const schema = new Schema({
     address:String,
     contractNumber:String,
     contractStart:Date,
+    contractEnd:Date,
     contractSigned:Date,
     province:String,
     district:String,
