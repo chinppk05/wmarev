@@ -17,6 +17,7 @@ const schema = new Schema({
     accountCode:Number,
     description:String,
     fileUrl:String,
+    collections:['mixed']
 }) 
 schema.plugin(mongoosePaginate)
 const Contract = mongoose.model("Contract",schema)
