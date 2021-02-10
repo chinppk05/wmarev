@@ -21,6 +21,7 @@ const schema = new Schema({
     collections:[{
         category:String,
         value:String,
+        value2:String,
     }]
 }) 
 schema.plugin(mongoosePaginate)
