@@ -19,6 +19,7 @@ const schema = new Schema({
     description:String,
     fileUrl:[String],
     maximum:Number,
+    isMaximum:Boolean,
     collections:[{
         category:String,
         value:String,
