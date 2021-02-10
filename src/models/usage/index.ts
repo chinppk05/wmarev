@@ -6,6 +6,7 @@ const schema = new Schema({
   customer: {type:ObjectId,ref:"Customer"},
   meter: String,
   qty: Number,
+  name: String,
   firstName: String,
   lastName: String,
   address: String,
