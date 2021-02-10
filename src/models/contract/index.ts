@@ -16,7 +16,7 @@ const schema = new Schema({
     activeYear:Number,
     accountCode:Number,
     description:String,
-    fileUrl:String,
+    fileUrl:[String],
     collections:[{
         category:String,
         value:String,
