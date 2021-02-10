@@ -18,6 +18,7 @@ const schema = new Schema({
     accountCode:Number,
     description:String,
     fileUrl:[String],
+    maximum:Number,
     collections:[{
         category:String,
         value:String,
