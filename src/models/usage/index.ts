@@ -10,8 +10,9 @@ const schema = new Schema({
   firstName: String,
   lastName: String,
   address: String,
-  period: String
-
+  period: String,
+  area: String,
+  category: Number,
 })
 schema.plugin(mongoosePaginate)
 const Usage = mongoose.model("Usage", schema)
