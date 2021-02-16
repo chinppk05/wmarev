@@ -7,7 +7,7 @@ const schema = new Schema({
   ledgerCode: Number,
   amount: Number,
   accountCode: Number,
-  mouth: Number,
+  month: Number,
   accountName: String,
   year: Number
 })
