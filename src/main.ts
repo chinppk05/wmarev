@@ -45,6 +45,7 @@ const receipt = require('./routers/receipt')(app)
 const contract = require('./routers/contract')(app)
 const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
+const costsummarized = require('./routers/costsummarized')(app)
 
 
 app.get("/", (req, res) => {
