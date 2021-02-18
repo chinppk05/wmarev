@@ -16,7 +16,7 @@ mongoose.connect('mongodb://localhost:27017/wma',{useNewUrlParser:true,useUnifie
 app.use(cors())
 app.use(bodyParser.json())
 app.use(express.urlencoded())
-
+app.use(morgan('combined'))
 app.use('/api/v1/uploads', express.static('uploads'))
 
 
