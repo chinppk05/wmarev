@@ -17,14 +17,15 @@ const schema = new Schema({
     signedPosition:String,
     activeYear:Number,
     accountCode:Number,
-    description:String,
-    fileUrl:[String],
+    fileUrl1:[String],
+    fileUrl2:[String],
     maximum:Number,
     isMaximum:Boolean,
     conditions:[{
         category:String,
         value:String,
         value2:String,
+        description:String,
     }],
     collections:[{
         category:String,
