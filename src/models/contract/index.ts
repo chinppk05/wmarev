@@ -25,6 +25,8 @@ const schema = new Schema({
     conditions:[{
         category:String,
         value:String,
+        valueProfit:String,
+        valueLoss:String,
         value2:String,
         description:String,
     }],
