@@ -45,10 +45,11 @@ const receipt = require('./routers/receipt')(app)
 const contract = require('./routers/contract')(app)
 const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
+const costCode = require('./routers/costCode')(app)
 
 
 app.get("/", (req, res) => {
-  res.send("Welcome to DAE202AM1 API Server!");
+  res.send("Welcome to WMA201AM1 API Server!");
 });
 
 app.post('/api/v1/upload', upload.single('file'), function (req, res, next) {
