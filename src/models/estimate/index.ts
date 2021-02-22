@@ -9,7 +9,8 @@ const schema = new Schema({
   accountCode: Number,
   month: Number,
   accountName: String,
-  year: Number
+  year: Number,
+  category: Number,
 })
 schema.plugin(mongoosePaginate)
 const Estimate = mongoose.model("Estimate", schema)
