@@ -29,6 +29,9 @@ const schema = new Schema({
         valueLoss:String,
         value2:String,
         description:String,
+        collecter:String,
+        calculation:String,
+        period:String,
     }],
     collections:[{
         category:String,
