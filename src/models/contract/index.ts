@@ -29,7 +29,7 @@ const schema = new Schema({
         valueLoss:String,
         value2:String,
         description:String,
-        collecter:String,
+        collector:String,
         calculation:String,
         period:String,
     }],
