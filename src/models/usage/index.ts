@@ -16,6 +16,9 @@ const schema = new Schema({
   category: Number,
   year: Number,
   month: Number,
+  fileUrl:[String],
+  note: String,
+  flatRate: Number,
 })
 schema.plugin(mongoosePaginate)
 const Usage = mongoose.model("Usage", schema)
