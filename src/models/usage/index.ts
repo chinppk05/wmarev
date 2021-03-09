@@ -5,6 +5,7 @@ const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
   customer: {type:ObjectId,ref:"Customer"},
   meter: String,
+  taxId: String,
   qty: Number,
   name: String,
   firstName: String,
@@ -13,6 +14,8 @@ const schema = new Schema({
   period: String,
   area: String,
   category: Number,
+  year: Number,
+  month: Number,
 })
 schema.plugin(mongoosePaginate)
 const Usage = mongoose.model("Usage", schema)
