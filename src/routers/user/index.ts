@@ -6,6 +6,6 @@ module.exports = (app: Express) => {
   app.get(`/api/v1/user/:id`, ctrl.get)
   app.patch(`/api/v1/user/:id`, ctrl.update)
   app.delete(`/api/v1/user/:id`, ctrl.remove)
-  app.get(`/api/v1/user/`, ctrl.list)
-  app.post(`/api/v1/user-paginate`, ctrl.postPaginate)
+  app.get(`/api/v1/users/`, ctrl.list)
+  app.post(`/api/v1/users-paginate`, ctrl.postPaginate)
 }
