@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express'
-import DBModel from '../../models/collection/index'
+import DBModel from '../../models/user/index'
+import bcrypt from 'bcryptjs';
 import mongoose from "mongoose";
 
 export const create = (req: Request, res: Response) => {
@@ -28,23 +29,6 @@ export const get = (req: Request, res: Response) => {
   })
 }
 
-export const getByField = (req: Request, res: Response) => {
-  let field = req.params.field
-  let value = req.params.value
-  let search:any = {}
-  search[field] = value
-  DBModel.findOne(search).then(function (data: any) {
-    res.send(data)
-  })
-}
-
-export const postOne = (req: Request, res: Response) => {
-  let search = req.body.search
-  DBModel.findOne(search).then(function (data: any) {
-    res.send(data)
-  })
-}
-
 export const update = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)
@@ -56,7 +40,7 @@ export const update = (req: Request, res: Response) => {
 export const remove = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)
-  DBModel.deleteOne({ _id: id }, req.body).then((data:any)  => {
+  DBModel.deleteOne({ _id: id }, req.body).then((data:any) => {
     res.send(data)
   })
 }
@@ -72,29 +56,6 @@ export const postPaginate = (req: Request, res: Response) => {
     searchObj,
     { sort: { ...sort }, offset: skip, limit: limit, populate: '',lean:true}
   ).then(function (data: Array<any>) {
-    res.send(data);
-  });
-};
-
-export const postGroup = (req: Request, res: Response) => {
-  let group = req.body.group
-  let sum = req.body.sum
-  DBModel.aggregate(
-    [
-      {$group:{
-        _id: group,
-        count: {
-          $sum: 1
-        },
-        sum: {
-          $sum: sum
-        },
-        children: {
-          $addToSet: "$$ROOT"
-        }
-      }}
-    ]
-  ).exec(function (error: Error, data: Array<any>) {
     res.send(data);
   });
 };

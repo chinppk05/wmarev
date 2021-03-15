@@ -1,0 +1,14 @@
+
+{
+  "include": [
+  "src/**/*"
+],
+"compilerOptions": {
+  "noImplicitAny": true,
+  "target": "es6",
+  "module": "commonjs",
+  "esModuleInterop": true,
+  "moduleResolution": "node",
+  "sourceMap": true
+}
+}

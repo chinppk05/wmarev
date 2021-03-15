@@ -1,8 +1,14 @@
-const multer = require('multer')
+
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const express = require('express')
+// const express = require('express')
+import multer from "multer"
+import express from "express"
+import passport from "passport";
+import passportLocal from "passport-local";
+const localStrategy = require("passport-local").Strategy;
+
 var cors = require('cors')
 const app = express()
 const fs = require('fs')
@@ -47,6 +53,8 @@ const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
 const costCode = require('./routers/costCode')(app)
 const estimate = require('./routers/estimate')(app)
+const user = require('./routers/user')(app)
+const auth = require('./routers/auth')(app)
 
 
 
