@@ -64,6 +64,7 @@ export const update = (req: Request, res: Response) => {
         to: req.body,
         createdAt: new Date()
       })
+    })
   })
 }
 
