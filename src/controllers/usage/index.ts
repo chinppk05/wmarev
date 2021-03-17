@@ -52,7 +52,7 @@ export const update = (req: Request, res: Response) => {
   DBModel.findByIdAndUpdate(id, { ...req.body, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
     res.send(data)
     History.findOne({
-      collection: "usages",
+      name: "usages",
       documentId: id,
     }).then((latest: any) => {
       let version = 1
