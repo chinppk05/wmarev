@@ -5,6 +5,8 @@ const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
     date: Date,
     time: Number,
+    invoiceAmount:Number,
+    invoiceNumber:String,
     amount: Number,
     method: String,
     period: String,
