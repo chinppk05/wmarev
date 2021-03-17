@@ -19,6 +19,7 @@ const schema = new Schema({
   category: String,
   year: Number,
   month: Number,
+  remark:String,
   fileUrl: [String],
   note: String,
   flatRate: Number,

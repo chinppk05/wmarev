@@ -7,6 +7,7 @@ const schema = new Schema({
   name: String,
   documentId: String,
   username: String,
+  remark:String,
   version: Number,
   from: 'Mixed',
   to: 'Mixed',
