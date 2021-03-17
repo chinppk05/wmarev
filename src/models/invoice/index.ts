@@ -21,6 +21,7 @@ const schema = new Schema({
 
 })
 schema.pre("save", async function (next: NextFunction) {
+  let data = this
   var options = { upsert: true, new: true,useFindAndModify: false };
   let type = this.category.replace("ประเภทที่ ")
   Counter.findOneAndUpdate(
@@ -28,7 +29,9 @@ schema.pre("save", async function (next: NextFunction) {
     { $inc: { sequence: 1 } },
     options,
     (err: Error, doc: any) => {
-      this.number = new Date().getFullYear() + type + doc.sequence;
+      let year = (new Date().getFullYear() + 543).toString()
+      let yearString = year.substring(2, 4);
+      data.number = yearString + type + doc.sequence;
       next();
     }
   );
