@@ -7,9 +7,7 @@ export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const newObj:any = new DBModel(req.body);
   var options = { upsert: true, new: true,useFindAndModify: false };
-
   let type = req.body.category
-
   Counter.findOneAndUpdate(
     { name: "Receipt", year: new Date().getFullYear() },
     { $inc: { sequence: 1 } },
@@ -21,7 +19,6 @@ export const create = (req: Request, res: Response) => {
       let result = yearString + type + seq.padStart(7,"0")
       newObj.numberInit = result
       newObj.number = doc.sequence
-
       newObj.createdAt = new Date();
       newObj.modifiedAt = new Date();
       newObj.createdIP = ip;
@@ -30,12 +27,6 @@ export const create = (req: Request, res: Response) => {
       })
     }
   );
-  newObj.createdAt = new Date();
-  newObj.modifiedAt = new Date();
-  newObj.createdIP = ip;
-  newObj.save().then((document: any) => {
-    res.send(document)
-  })
 }
 
 export const list = (req: Request, res: Response) => {
