@@ -16,7 +16,6 @@ const schema = new Schema({
     customer: { type: ObjectId, ref: 'Customer' },
     qty: Number,
     rate: Number,
-    method:String,
     paidDate:Date,
     printDate:Date,
     createdAt: Date,
