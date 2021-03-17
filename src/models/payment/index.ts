@@ -11,6 +11,7 @@ const schema = new Schema({
     name:String,
     address:String,
     meter:String,
+    category:String,
     method: String,
     period: String,
     isNextStage: Boolean,
