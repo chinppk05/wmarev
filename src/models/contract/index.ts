@@ -43,6 +43,10 @@ const schema = new Schema({
         value2: String,
     }],
     documents: [String],
+
+    category1:Number,
+    category2:Number,
+    category3:Number,
 })
 schema.plugin(mongoosePaginate)
 const Contract = mongoose.model("Contract", schema)
