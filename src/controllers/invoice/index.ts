@@ -20,15 +20,15 @@ export const create = (req: Request, res: Response) => {
       let seq = (doc.sequence).toString()
       let result = yearString + type + seq.padStart("0",7)
       newObj.number = result
+
+      newObj.createdAt = new Date();
+      newObj.modifiedAt = new Date();
+      newObj.createdIP = ip;
+      newObj.save().then((document: any) => {
+        res.send(document)
+      })
     }
   );
-
-  newObj.createdAt = new Date();
-  newObj.modifiedAt = new Date();
-  newObj.createdIP = ip;
-  newObj.save().then((document: any) => {
-    res.send(document)
-  })
 }
 
 export const list = (req: Request, res: Response) => {
