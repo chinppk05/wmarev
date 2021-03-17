@@ -9,6 +9,7 @@ const schema = new Schema({
     category: String,
     code:String,
     name:String,
+    address:String,
     period:String,
     remainingAmount:Number,
     paymentAmount:Number,
