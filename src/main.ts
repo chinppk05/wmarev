@@ -51,12 +51,11 @@ const receipt = require('./routers/receipt')(app)
 const contract = require('./routers/contract')(app)
 const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
+const costsummarized = require('./routers/costsummarized')(app)
 const costCode = require('./routers/costCode')(app)
 const estimate = require('./routers/estimate')(app)
 const user = require('./routers/user')(app)
 const auth = require('./routers/auth')(app)
-
-
 
 app.get("/", (req, res) => {
   res.send("Welcome to WMA201AM1 API Server!");
