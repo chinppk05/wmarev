@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express'
-import DBModel from '../../models/collection/index'
+import DBModel from '../../models/history/index'
 import mongoose from "mongoose";
 
 export const create = (req: Request, res: Response) => {
