@@ -6,7 +6,8 @@ import Counter from "../counter";
 const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
   meter: String,
-  number: String,
+  number: Number,
+  numberInit: String,
   createdAt: Date,
   period: String,
   address: String,
