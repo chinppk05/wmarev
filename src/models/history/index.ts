@@ -3,7 +3,7 @@ const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
-  collection: String,
+  name: String,
   documentId: String,
   username: String,
   version: Number,

@@ -58,7 +58,7 @@ export const update = (req: Request, res: Response) => {
       let version = 1
       if (latest) {
         latest.create({
-          collection: "usages",
+          name: "usages",
           documentId: id,
           username: req.body.username,
           version: data._v,//latest.version + 1,
