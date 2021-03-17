@@ -22,6 +22,7 @@ const schema = new Schema({
   fileUrl: [String],
   note: String,
   flatRate: Number,
+  isNextStage: Boolean,
 });
 
 schema.pre("save", async function (next: NextFunction) {

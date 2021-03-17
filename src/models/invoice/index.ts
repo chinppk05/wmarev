@@ -10,7 +10,8 @@ const schema = new Schema({
   address: String,
   usage: {type:ObjectId,ref:"Usage"},
   condition: {type:ObjectId,ref:"Condition"},
-  totalAmount: Number
+  totalAmount: Number,
+  isNextStage: Boolean,
 
 })
 schema.plugin(mongoosePaginate)

@@ -10,6 +10,7 @@ const schema = new Schema({
     amount:Number,
     method:String,
     period:String,
+    isNextStage: Boolean,
     invoice:{type: ObjectId, ref: 'Invoice'},
 }) 
 schema.plugin(mongoosePaginate)

@@ -14,6 +14,7 @@ const schema = new Schema({
     usage:{type: ObjectId, ref: 'Usage'},
     customer: {type: ObjectId, ref: 'Customer'},
     printDate:Date,
+    isNextStage: Boolean,
 }) 
 schema.plugin(mongoosePaginate)
 const Receipt = mongoose.model("Receipt",schema)
