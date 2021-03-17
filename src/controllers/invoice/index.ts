@@ -17,7 +17,8 @@ export const create = (req: Request, res: Response) => {
     (err: Error, doc: any) => {
       let year = (new Date().getFullYear() + 543).toString()
       let yearString = year.substring(2, 4);
-      let result = yearString + type + doc.sequence.padStart("0",7)
+      let seq = (doc.sequence).toString()
+      let result = yearString + type + seq.padStart("0",7)
       newObj.number = result
     }
   );
