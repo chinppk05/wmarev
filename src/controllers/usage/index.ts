@@ -56,7 +56,7 @@ export const update = (req: Request, res: Response) => {
       documentId: id,
     }).sort("-version").then((latest: any) => {
       let version = 1
-      console.log(typeof latest,latest)
+      // console.log(typeof latest,latest)
       if(latest!=null) version = latest.version + 1
       History.create({
         name: "usages",
