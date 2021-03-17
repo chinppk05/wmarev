@@ -11,6 +11,8 @@ const schema = new Schema({
     name:String,
     address:String,
     period:String,
+    qty: Number,
+    rate: Number,
     remainingAmount:Number,
     paymentAmount:Number,
     invoiceNumber:String,
