@@ -19,7 +19,6 @@ export const create = (req: Request, res: Response) => {
       let result = yearString + type + seq.padStart(7,"0")
       newObj.numberInit = result
       newObj.number = doc.sequence
-
       newObj.createdAt = new Date();
       newObj.modifiedAt = new Date();
       newObj.createdIP = ip;
