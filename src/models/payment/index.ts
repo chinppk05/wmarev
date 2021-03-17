@@ -3,16 +3,21 @@ const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
-    customer: {type: ObjectId, ref: 'Customer'},
-    date:Date,
-    rate:Number,
+    date: Date,
     time: Number,
-    amount:Number,
-    method:String,
-    period:String,
+    amount: Number,
+    method: String,
+    period: String,
     isNextStage: Boolean,
-    invoice:{type: ObjectId, ref: 'Invoice'},
-}) 
+    invoice: { type: ObjectId, ref: 'Invoice' },
+    usage: { type: ObjectId, ref: 'Usage' },
+    customer: { type: ObjectId, ref: 'Customer' },
+    qty: Number,
+    rate: Number,
+    paidDate:Date,
+    printDate:Date,
+    createdAt: Date,
+})
 schema.plugin(mongoosePaginate)
-const Payment = mongoose.model("Payment",schema)
+const Payment = mongoose.model("Payment", schema)
 export default Payment
