@@ -6,8 +6,6 @@ import mongoose from "mongoose";
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const newObj:any = new DBModel(req.body);
-
-
   var options = { upsert: true, new: true,useFindAndModify: false };
   let type = req.body.category
   Counter.findOneAndUpdate(

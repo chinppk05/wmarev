@@ -1,10 +1,35 @@
 import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/receipt/index'
+import Counter from '../../models/counter/index'
 import mongoose from "mongoose";
 
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const newObj:any = new DBModel(req.body);
+  var options = { upsert: true, new: true,useFindAndModify: false };
+
+  let type = req.body.category
+
+  Counter.findOneAndUpdate(
+    { name: "Receipt", year: new Date().getFullYear() },
+    { $inc: { sequence: 1 } },
+    options,
+    (err: Error, doc: any) => {
+      let year = (new Date().getFullYear() + 543).toString()
+      let yearString = year.substring(2, 4);
+      let seq = (doc.sequence).toString()
+      let result = yearString + type + seq.padStart(7,"0")
+      newObj.numberInit = result
+      newObj.number = doc.sequence
+
+      newObj.createdAt = new Date();
+      newObj.modifiedAt = new Date();
+      newObj.createdIP = ip;
+      newObj.save().then((document: any) => {
+        res.send(document)
+      })
+    }
+  );
   newObj.createdAt = new Date();
   newObj.modifiedAt = new Date();
   newObj.createdIP = ip;

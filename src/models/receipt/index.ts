@@ -4,17 +4,22 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
     number:String,
+    numberInit:Number,
     meter:String,
+    category: String,
     code:String,
-    createdAt: Date,
+    name:String,
     period:String,
     remainingAmount:Number,
     paymentAmount:Number,
+    invoiceNumber:String,
     invoice:{type: ObjectId, ref: 'Invoice'},
     usage:{type: ObjectId, ref: 'Usage'},
     customer: {type: ObjectId, ref: 'Customer'},
+    paidDate:Date,
     printDate:Date,
     isNextStage: Boolean,
+    createdAt: Date,
 }) 
 schema.plugin(mongoosePaginate)
 const Receipt = mongoose.model("Receipt",schema)
