@@ -13,16 +13,16 @@ const schema = new Schema({
   period: String,
   address: String,
   category: String,
-  qty:Number,
-  rate:Number,
+  qty: Number,
+  rate: Number,
   year: Number,
   month: Number,
   area: { type: ObjectId, ref: "Contract" },
-  usage: {type:ObjectId,ref:"Usage"},
-  condition: {type:ObjectId,ref:"Condition"},
+  usage: { type: ObjectId, ref: "Usage" },
+  condition: { type: ObjectId, ref: "Condition" },
   totalAmount: Number,
   isNextStage: Boolean,
-  isPaid: Boolean,
+  isPaid: { type: Boolean, default: false },
 
 })
 schema.plugin(mongoosePaginate)
