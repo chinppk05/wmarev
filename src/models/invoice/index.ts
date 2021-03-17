@@ -17,6 +17,7 @@ const schema = new Schema({
   rate:Number,
   year: Number,
   month: Number,
+  area: { type: ObjectId, ref: "Contract" },
   usage: {type:ObjectId,ref:"Usage"},
   condition: {type:ObjectId,ref:"Condition"},
   totalAmount: Number,
