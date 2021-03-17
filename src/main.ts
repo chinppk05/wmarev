@@ -1,8 +1,14 @@
-const multer = require('multer')
+
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const express = require('express')
+// const express = require('express')
+import multer from "multer"
+import express from "express"
+import passport from "passport";
+import passportLocal from "passport-local";
+const localStrategy = require("passport-local").Strategy;
+
 var cors = require('cors')
 const app = express()
 const fs = require('fs')
@@ -16,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/wma',{useNewUrlParser:true,useUnifie
 app.use(cors())
 app.use(bodyParser.json())
 app.use(express.urlencoded())
-
+app.use(morgan('combined'))
 app.use('/api/v1/uploads', express.static('uploads'))
 
 
@@ -46,10 +52,13 @@ const contract = require('./routers/contract')(app)
 const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
 const costsummarized = require('./routers/costsummarized')(app)
-
+const costCode = require('./routers/costCode')(app)
+const estimate = require('./routers/estimate')(app)
+const user = require('./routers/user')(app)
+const auth = require('./routers/auth')(app)
 
 app.get("/", (req, res) => {
-  res.send("Welcome to DAE202AM1 API Server!");
+  res.send("Welcome to WMA201AM1 API Server!");
 });
 
 app.post('/api/v1/upload', upload.single('file'), function (req, res, next) {
