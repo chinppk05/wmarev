@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require("mongoose-paginate")
+import { NextFunction } from "express";
 const Schema = mongoose.Schema
+import Counter from "../counter";
 const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
   meter: String,
@@ -18,6 +20,19 @@ const schema = new Schema({
   isNextStage: Boolean,
 
 })
+schema.pre("save", async function (next: NextFunction) {
+  var options = { upsert: true, new: true,useFindAndModify: false };
+  let type = this.category.replace("ประเภทที่ ")
+  Counter.findOneAndUpdate(
+    { name: "Invoice", year: new Date().getFullYear() },
+    { $inc: { sequence: 1 } },
+    options,
+    (err: Error, doc: any) => {
+      this.number = new Date().getFullYear() + type + doc.sequence;
+      next();
+    }
+  );
+});
 schema.plugin(mongoosePaginate)
 const Invoice = mongoose.model("Invoice", schema)
 export default Invoice
