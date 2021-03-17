@@ -22,6 +22,7 @@ const schema = new Schema({
   remark:String,
   fileUrl: [String],
   note: String,
+  rate:Number,
   flatRate: Number,
   isNextStage: Boolean,
 });
