@@ -20,24 +20,6 @@ const schema = new Schema({
   isNextStage: Boolean,
 
 })
-schema.pre("save", async function (next: NextFunction) {
-  let data = this
-  var options = { upsert: true, new: true,useFindAndModify: false };
-  let type = this.category.replace("ประเภทที่ ")
-  Counter.findOneAndUpdate(
-    { name: "Invoice", year: new Date().getFullYear() },
-    { $inc: { sequence: 1 } },
-    options,
-    (err: Error, doc: any) => {
-      let year = (new Date().getFullYear() + 543).toString()
-      let yearString = year.substring(2, 4);
-      let result = yearString + type + doc.sequence
-      console.log(result)
-      data.number = yearString + type + doc.sequence;
-      next();
-    }
-  );
-});
 schema.plugin(mongoosePaginate)
 const Invoice = mongoose.model("Invoice", schema)
 export default Invoice
