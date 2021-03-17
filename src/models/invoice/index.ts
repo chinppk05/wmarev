@@ -22,6 +22,7 @@ const schema = new Schema({
   condition: {type:ObjectId,ref:"Condition"},
   totalAmount: Number,
   isNextStage: Boolean,
+  isPaid: Boolean,
 
 })
 schema.plugin(mongoosePaginate)
