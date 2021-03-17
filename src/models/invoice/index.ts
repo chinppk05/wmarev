@@ -31,6 +31,8 @@ schema.pre("save", async function (next: NextFunction) {
     (err: Error, doc: any) => {
       let year = (new Date().getFullYear() + 543).toString()
       let yearString = year.substring(2, 4);
+      let result = yearString + type + doc.sequence
+      console.log(result)
       data.number = yearString + type + doc.sequence;
       next();
     }
