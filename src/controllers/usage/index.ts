@@ -54,7 +54,7 @@ export const update = (req: Request, res: Response) => {
     History.findOne({
       name: "usages",
       documentId: id,
-    }).then((latest: any) => {
+    }).sort("-version").then((latest: any) => {
       let version = 1
       console.log(typeof latest,latest)
       if(latest!=null) version = latest.version + 1
