@@ -59,8 +59,8 @@ export const update = (req: Request, res: Response) => {
         name: "usages",
         documentId: id,
         username: req.body.username,
-        version: data._v,//latest.version + 1,
-        from: latest,
+        version: data._v + 1,//latest.version + 1,
+        from: data,
         to: req.body,
         createdAt: new Date()
       })
