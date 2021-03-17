@@ -55,11 +55,13 @@ export const update = (req: Request, res: Response) => {
       collection: "usages",
       documentId: id,
     }).then((latest: any) => {
+      let version = 1
+      if(latest) version = latest.version + 1
       History.create({
         name: "usages",
         documentId: id,
         username: req.body.username,
-        version: data._v + 1,//latest.version + 1,
+        version: version,
         from: data,
         to: req.body,
         createdAt: new Date()
