@@ -11,6 +11,7 @@ const schema = new Schema({
   createdAt: Date,
   taxId: String,
   period: String,
+  name: String,
   address: String,
   category: String,
   qty: Number,
