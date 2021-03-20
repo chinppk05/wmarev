@@ -49,6 +49,12 @@ const invoice = require('./routers/invoice')(app)
 const payment = require('./routers/payment')(app)
 const receipt = require('./routers/receipt')(app)
 const contract = require('./routers/contract')(app)
+
+const area = require('./routers/area')(app)
+const areaCondition = require('./routers/areaCondition')(app)
+const areaCollection = require('./routers/areaCollection')(app)
+const areaRate = require('./routers/areaRate')(app)
+
 const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
 const costsummarized = require('./routers/costsummarized')(app)
