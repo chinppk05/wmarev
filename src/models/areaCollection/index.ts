@@ -15,6 +15,8 @@ const schema = new Schema({
   value: String,
   value2: String,
 
+  createdAt:Date,
+  recordDate:Date,
 })
 schema.plugin(mongoosePaginate)
 const AreaCollection = mongoose.model("AreaCollection", schema)
