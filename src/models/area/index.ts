@@ -10,6 +10,7 @@ const schema = new Schema({
     contractEnd: Date,
     contractSigned: Date,
     contractLaunch: Date,
+    contractYear:Number,
     province: String,
     district: String,
     subDistrict: String,
