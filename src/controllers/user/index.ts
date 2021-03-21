@@ -58,7 +58,7 @@ export const postPaginate = (req: Request, res: Response) => {
   };
   DBModel.paginate(
     searchObj,
-
+    options
   ).then(function (data: Array<any>) {
     res.send(data);
   });
