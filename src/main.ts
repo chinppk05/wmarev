@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 // const express = require('express')
 import multer from "multer"
 import express from "express"
+import { DateTime } from "luxon"
 import passport from "passport";
 import passportLocal from "passport-local";
 const localStrategy = require("passport-local").Strategy;
@@ -17,7 +18,7 @@ const uuid = require('uuid')
 const uuidv4 = uuid.v4
 const port = 20310
 
-mongoose.connect('mongodb://localhost:27017/wma',{useNewUrlParser:true,useUnifiedTopology:true})
+mongoose.connect('mongodb://localhost:27017/wma', { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -28,13 +29,16 @@ app.use('/api/v1/uploads', express.static('uploads'))
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-      cb(null, 'uploads/')
+    cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
-      var uploadDir = `uploads/${req.body.name}`
-      if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, {recursive: true});
-      let rdm = (Math.ceil(Math.random()*1000)).toString().padStart(5,'0')
-      cb(null, `${req.body.name}/${uuidv4()}_${rdm}${path.extname(file.originalname)}`)
+    var sanitize = require("sanitize-filename");
+    var uploadDir = `uploads/${req.body.name}`
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+    let rdm = (Math.ceil(Math.random() * 1000)).toString().padStart(5, '0')
+    let escapedName = sanitize(file.originalname)
+    let fileName = DateTime.now().toFormat('yyyyLLddHHmmss') + "_" + escapedName + path.extname(file.originalname)
+    cb(null, `${req.body.name}/${fileName}`)
   }
 })
 var upload = multer({
@@ -70,15 +74,15 @@ app.get("/", (req, res) => {
 
 app.post('/api/v1/upload', upload.single('file'), function (req, res, next) {
   res.send({
-      status: 'success',
-      timestamp: new Date(),
-      file: req.file,
-      ...req.file
+    status: 'success',
+    timestamp: new Date(),
+    file: req.file,
+    ...req.file
   })
   next()
 })
 
 
-app.listen(port,()=>{
+app.listen(port, () => {
   console.log("Server started! at port " + port)
 })
