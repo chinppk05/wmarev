@@ -17,6 +17,8 @@ const schema = new Schema({
     postal: String,
     signedBy: String,
     signedPosition: String,
+    fileUrl1:[String],
+    fileUrl2:[String],
 })
 schema.plugin(mongoosePaginate)
 const Area = mongoose.model("Area", schema)
