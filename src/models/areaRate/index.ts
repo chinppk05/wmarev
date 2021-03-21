@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   name: String,
+  code: String,
   area: { type: ObjectId, ref: "Area" },
 
   treatment1: Number, //บำบัด ประเภท 1
