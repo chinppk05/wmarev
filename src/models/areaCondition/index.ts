@@ -6,8 +6,24 @@ const schema = new Schema({
   name: String,
   area: { type: ObjectId, ref: "Area" },
 
+  oerationDate:Date,
   operationYear:Number,
   calendarYear:Number,
+  contractYear:Number,
+
+  conditions: [{
+    category: String,
+    value: String,
+    valueProfit: String,
+    valueLoss: String,
+    value2: String,
+    description: String,
+    collector: String,
+    calculation: String,
+    period: String,
+}],
+
+
   category: String,
   contributionPercent: Number,
   contributionLimit: Number,
