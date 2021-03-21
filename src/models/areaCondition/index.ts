@@ -6,7 +6,7 @@ const schema = new Schema({
   name: String,
   area: { type: ObjectId, ref: "Area" },
 
-  oerationDate: Date,
+  operationDate: Date,
   operationYear: Number,
   calendarYear: Number,
   contractYear: Number,
