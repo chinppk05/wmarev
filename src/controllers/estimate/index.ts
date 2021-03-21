@@ -70,9 +70,13 @@ export const postPaginate = (req: Request, res: Response) => {
   let populate: any = req.body.populate;
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
+  const options = {
+    sort: { ...sort }, offset: skip, limit: limit, populate: populate, lean: true,
+    pagination: req.body.paginate!=undefined&&req.body.paginate===false,
+  };
   DBModel.paginate(
     searchObj,
-    { sort: { ...sort }, offset: skip, limit: limit, populate: '',lean:true}
+
   ).then(function (data: Array<any>) {
     res.send(data);
   });
