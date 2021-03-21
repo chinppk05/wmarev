@@ -72,6 +72,7 @@ export const postPaginate = (req: Request, res: Response) => {
     sort: { ...sort }, offset: skip, limit: limit, populate: populate, lean: true,
     pagination: req.body.paginate!=undefined&&req.body.paginate===false,
   };
+  console.log(options)
   DBModel.paginate(
     searchObj,
     options
