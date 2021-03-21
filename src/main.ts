@@ -36,7 +36,8 @@ var storage = multer.diskStorage({
     var uploadDir = `uploads/${req.body.name}`
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
     let rdm = (Math.ceil(Math.random() * 1000)).toString().padStart(5, '0')
-    let escapedName = sanitize(file.originalname)
+    let extension = path.extname(file.originalname)
+    let escapedName = sanitize(file.originalname).replace(extension,"")
     let fileName = DateTime.now().toFormat('yyyyLLddHHmmss') + "_" + escapedName + path.extname(file.originalname)
     cb(null, `${req.body.name}/${fileName}`)
   }
