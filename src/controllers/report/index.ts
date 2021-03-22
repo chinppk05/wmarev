@@ -62,7 +62,7 @@ let display1 = (debt: Array<any>) => {
       let end = DateTime.fromISO(arr[i+1].dt)
       let start = DateTime.fromISO(arr[i].dt)
       diff = DateTime.fromISO(arr[i+1].dt).diff(DateTime.fromISO(arr[i].dt),"months").toObject().day;
-      console.log(end,start,diff)
+      console.log(end.toFormat("LLL yy"),start.toFormat("LLL yy"),diff)
     }
 
     if(diff==1){
