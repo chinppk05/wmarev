@@ -69,6 +69,8 @@ const history = require('./routers/history')(app)
 const user = require('./routers/user')(app)
 const auth = require('./routers/auth')(app)
 
+const report = require('./routers/report')(app)
+
 app.get("/", (req, res) => {
   res.send("Welcome to WMA201AM1 API Server!");
 });
