@@ -57,10 +57,21 @@ let display1 = (debt: Array<any>) => {
   var isMiddle = false
   let arr = debt.slice().reverse() as Array<any>
   for (let i = 0; i < arr.length; i++) {
-    debtText += DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLL yy")
+    var diff:number = -1
+    if(i!=arr.length-1){
+      diff = DateTime.fromISO(arr[i+1].dt).diff(DateTime.fromISO(arr[i].dt),"months").toObject().day;
+    }
+    if(diff==1){
+      debtText += "-"
+    }
+    else{
+      debtText += DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLL yy")
+    }
+    
     let amt = (arr[i].rate * arr[i].qty) * 100
     let res = Math.round(amt + (0.07*amt))
     debtAmount += res/100
+    
   }
   return {
     debtText,
