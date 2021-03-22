@@ -24,7 +24,7 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
             dt:mo(el.year,el.month)
           }
         })
-        docs[i].debtArray = founds.filter((el: any) => el.meter == item.meter)
+        docs[i].debtArray = debtArray
         docs[i].debtText = "ทดสอบหนี้"
         docs[i].debtAmount = 299.50
       });
