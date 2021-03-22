@@ -71,9 +71,8 @@ let display1 = (debt: Array<any>) => {
       let end = DateTime.fromISO(arr[i+1].dt)
       let start = DateTime.fromISO(arr[i].dt)
       diff = start.diff(end,"months").toObject().months;
-      console.log(end.toFormat("LLL yy"),start.toFormat("LLL yy"),diff)
+      // console.log(end.toFormat("LLL yy"),start.toFormat("LLL yy"),diff)
     }
-
     if(diff==1){
       if(!isMiddle){
         debtText += "-"
@@ -85,11 +84,9 @@ let display1 = (debt: Array<any>) => {
       if(i!=0&&i!=(arr.length-1)) debtText += "/"
       isMiddle = false
     }
-    
     let amt = (arr[i].rate * arr[i].qty) * 100
     let res = Math.round(amt + (0.07*amt))
     debtAmount += res/100
-    
   }
   return {
     debtText,
