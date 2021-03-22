@@ -25,7 +25,6 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
           }
         })
         let { debtText, debtAmount} = display1(debtArray)
-        // docs[i].debtArray = debtArray
         docs[i].debtText = debtText
         docs[i].debtAmount = debtAmount
       });
@@ -36,11 +35,21 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
 export const getDebtByReceipt = (req: Request, res: Response) => {
   let list = req.body.list
   Receipt.find({ _id: { $in: list } }).lean().then((docs: any) => {
-    docs.forEach((element: any, i: number) => {
-      docs[i].debtText = "ทดสอบหนี้"
-      docs[i].debtAmount = 399.75
-    });
-    res.send(docs)
+    Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) }, isPaid: false }).lean().then((founds: any) => {
+      docs.forEach((item: any, i: number) => {
+        let debtArray = founds.filter((el: any) => el.meter == item.meter)
+        debtArray = debtArray.map((el: any) => {
+          return {
+            ...el,
+            dt: mo(el.year, el.month)
+          }
+        })
+        let { debtText, debtAmount} = display1(debtArray)
+        docs[i].debtText = debtText
+        docs[i].debtAmount = debtAmount
+      });
+      res.send(docs)
+    })
   })
 }
 
