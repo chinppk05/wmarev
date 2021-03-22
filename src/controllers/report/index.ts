@@ -66,10 +66,15 @@ let display1 = (debt: Array<any>) => {
     }
 
     if(diff==1){
-      debtText += "-"
+      if(!isMiddle){
+        debtText += "-"
+        isMiddle = true
+      }
     }
     else{
       debtText += DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLL yy")
+      if(i!=0) debtText += "/"
+      isMiddle = false
     }
     
     let amt = (arr[i].rate * arr[i].qty) * 100
