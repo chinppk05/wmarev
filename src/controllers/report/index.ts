@@ -45,7 +45,7 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
 
 let mo = (year: number, month: number) => {
   return DateTime.fromObject({
-    year,
+    year:year-543,
     month
   })
 }
