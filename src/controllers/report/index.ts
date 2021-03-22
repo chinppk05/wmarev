@@ -15,18 +15,19 @@ export const getDebtByMeter = (req: Request, res: Response) => {
 export const getDebtByInvoice = (req: Request, res: Response) => {
   let list = req.body.list
   Invoice.find({ _id: { $in: list } }).lean().then((docs: any) => {
-    Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) } }).lean().then((founds: any) => {
+    Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) }, isPaid: false }).lean().then((founds: any) => {
       docs.forEach((item: any, i: number) => {
         let debtArray = founds.filter((el: any) => el.meter == item.meter)
         debtArray = debtArray.map((el: any) => {
           return {
             ...el,
-            dt:mo(el.year,el.month)
+            dt: mo(el.year, el.month)
           }
         })
+        let { debtText, debtAmount} = display1(debtArray)
         docs[i].debtArray = debtArray
-        docs[i].debtText = "ทดสอบหนี้"
-        docs[i].debtAmount = 299.50
+        docs[i].debtText = debtText
+        docs[i].debtAmount = debtAmount
       });
       res.send(docs)
     })
@@ -45,12 +46,22 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
 
 let mo = (year: number, month: number) => {
   return DateTime.fromObject({
-    year:year-543,
+    year: year - 543,
     month
   })
 }
 
-let debt1 = new Promise((resolve, reject) => {
-
-  resolve("")
-})
+let display1 = (debt: Array<any>) => {
+  let debtText = ""
+  var debtAmount = 0
+  var isMiddle = false
+  let arr = debt.slice().reverse() as Array<any>
+  for (let i = 0; i < arr.length; i++) {
+    debtText += DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLL yy")
+    debtAmount += (arr[i].rate * arr[i].qty) + (0.07*(arr[i].rate * arr[i].qty))
+  }
+  return {
+    debtText,
+    debtAmount
+  }
+}
