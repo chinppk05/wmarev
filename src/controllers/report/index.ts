@@ -14,11 +14,14 @@ export const getDebtByMeter = (req: Request, res: Response) => {
 export const getDebtByInvoice = (req: Request, res: Response) => {
   let list = req.body.list
   Invoice.find({ _id: { $in: list }}).lean().then((docs:any)=>{
-    docs.forEach((element:any,i:number) => {
-      docs[i].debtText = "ทดสอบหนี้"
-      docs[i].debtAmount = 299.50
-    });
-    res.send(docs)
+    Invoice.find({meter:{$in:docs.map((el:any)=>el.meter)}}).lean().then((founds:any)=>{
+      docs.forEach((item:any,i:number) => {
+        docs[i].debtArray = founds.filter((el:any)=>el.meter==item.meter)
+        docs[i].debtText = "ทดสอบหนี้"
+        docs[i].debtAmount = 299.50
+      });
+      res.send(docs)
+    })
   })
 }
 export const getDebtByReceipt = (req: Request, res: Response) => {
@@ -31,3 +34,8 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
     res.send(docs)
   })
 }
+
+let debt1 = new Promise((resolve,reject)=>{
+  
+  resolve("")
+})
