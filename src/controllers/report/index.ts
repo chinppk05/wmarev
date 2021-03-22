@@ -25,7 +25,7 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
           }
         })
         let { debtText, debtAmount} = display1(debtArray)
-        docs[i].debtArray = debtArray
+        // docs[i].debtArray = debtArray
         docs[i].debtText = debtText
         docs[i].debtAmount = debtAmount
       });
@@ -59,8 +59,12 @@ let display1 = (debt: Array<any>) => {
   for (let i = 0; i < arr.length; i++) {
     var diff:number = -1
     if(i!=arr.length-1){
+      let end = DateTime.fromISO(arr[i+1].dt)
+      let start = DateTime.fromISO(arr[i].dt)
       diff = DateTime.fromISO(arr[i+1].dt).diff(DateTime.fromISO(arr[i].dt),"months").toObject().day;
+      console.log(end,start,diff)
     }
+
     if(diff==1){
       debtText += "-"
     }
