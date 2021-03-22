@@ -72,8 +72,8 @@ let display1 = (debt: Array<any>) => {
       }
     }
     else{
-      debtText += DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLL yy")
-      if(i!=0) debtText += "/"
+      debtText += DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
+      if(i!=0&&i!=(arr.length-1)) debtText += "/"
       isMiddle = false
     }
     
