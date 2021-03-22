@@ -15,7 +15,8 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
   let list = req.body.list
   Invoice.find({ _id: { $in: list }}).lean().then((docs:any)=>{
     docs.forEach((element:any,i:number) => {
-      docs[i].debt = "ทดสอบหนี้"
+      docs[i].debtText = "ทดสอบหนี้"
+      docs[i].debtAmount = 299.50
     });
     res.send(docs)
   })
@@ -24,7 +25,8 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
   let list = req.body.list
   Receipt.find({ _id: { $in: list }}).lean().then((docs:any)=>{
     docs.forEach((element:any,i:number) => {
-      docs[i].debt = "ทดสอบหนี้"
+      docs[i].debtText = "ทดสอบหนี้"
+      docs[i].debtAmount = 399.75
     });
     res.send(docs)
   })
