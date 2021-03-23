@@ -20,7 +20,7 @@ const io = require("socket.io")(http, {
     methods: ["GET", "POST"],
     credentials: true
   },
-  resource: '/api/v1/socket.io'
+  path: '/api/v1/socket.io'
 });
 
 const fs = require('fs')
