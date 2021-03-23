@@ -5,6 +5,7 @@ let endpoints = "invoices"
 
 module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}/`, ctrl.create)
+  app.post(`/api/v1/${endpoint}-many/`, ctrl.createMany)
   app.get(`/api/v1/${endpoint}/:id`, ctrl.get)
   app.get(`/api/v1/${endpoint}-by-field/:field/:value`, ctrl.getByField)
   app.post(`/api/v1/${endpoint}-find`, ctrl.postOne)
