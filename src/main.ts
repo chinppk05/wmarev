@@ -100,8 +100,8 @@ let connectCounter = 0
 
 io.on('connection', (socket: Socket) => {
   console.log('a user connected: ' + connectCounter);
-  socket.on('connect', function () { connectCounter++; });
-  socket.on('disconnect', function () { connectCounter--; });
+  socket.on('connected', function () { connectCounter++; });
+  socket.on('disconnected', function () { connectCounter--; });
 });
 
 http.listen(port, () => {
