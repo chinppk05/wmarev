@@ -9,9 +9,13 @@ import { DateTime } from "luxon"
 import passport from "passport";
 import passportLocal from "passport-local";
 const localStrategy = require("passport-local").Strategy;
-
+import { Socket } from "socket.io"
 var cors = require('cors')
 const app = express()
+
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
 const fs = require('fs')
 const path = require('path')
 const uuid = require('uuid')
@@ -37,7 +41,7 @@ var storage = multer.diskStorage({
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
     let rdm = (Math.ceil(Math.random() * 1000)).toString().padStart(5, '0')
     let extension = path.extname(file.originalname)
-    let escapedName = sanitize(file.originalname).replace(extension,"")
+    let escapedName = sanitize(file.originalname).replace(extension, "")
     let fileName = DateTime.now().toFormat('yyyyLLddHHmmss') + "_" + escapedName + path.extname(file.originalname)
     cb(null, `${req.body.name}/${fileName}`)
   }
@@ -85,6 +89,13 @@ app.post('/api/v1/upload', upload.single('file'), function (req, res, next) {
   next()
 })
 
+let connectCounter = 0
+
+io.on('connection', (socket: Socket) => {
+  console.log('a user connected: ' + connectCounter);
+  socket.on('connect', function () { connectCounter++; });
+  socket.on('disconnect', function () { connectCounter--; });
+});
 
 app.listen(port, () => {
   console.log("Server started! at port " + port)
