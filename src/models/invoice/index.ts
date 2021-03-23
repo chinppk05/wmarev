@@ -10,6 +10,7 @@ const schema = new Schema({
   numberInit: String,
   createdAt: Date,
   taxId: String,
+  code:String,
   period: String,
   name: String,
   address: String,

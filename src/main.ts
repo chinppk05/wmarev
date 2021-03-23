@@ -104,10 +104,11 @@ io.on('connection', (socket: Socket) => {
     connectCounter++;
     io.emit('userCount', connectCounter);
   });
-  socket.on('disconnect', function () { 
+  socket.on('disconnect', function () {
     connectCounter--;
-    if(connectCounter<0) connectCounter = 0
-    io.emit('userCount', connectCounter); });
+    if (connectCounter < 0) connectCounter = 0
+    io.emit('userCount', connectCounter);
+  });
 });
 
 http.listen(port, () => {

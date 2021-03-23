@@ -11,6 +11,7 @@ const schema = new Schema({
   taxId: String,
   qty: Number,
   name: String,
+  code:String,
   firstName: String,
   lastName: String,
   address: String,
