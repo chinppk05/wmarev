@@ -51,7 +51,7 @@ export const createMany = (req: Request, res: Response) => {
         newObj.modifiedAt = new Date();
         newObj.createdIP = ip;
         newObj.save().then((document: any) => {
-          res.send(document)
+          // res.send(document)
         })
       }
     );
