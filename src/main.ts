@@ -14,7 +14,14 @@ var cors = require('cors')
 const app = express()
 
 const http = require('http').Server(app);
-const io = require('socket.io')(http);
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "*", //origin: "http://localhost:8080",
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  // path: '/api/v1'
+});
 
 const fs = require('fs')
 const path = require('path')
