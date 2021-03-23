@@ -29,6 +29,40 @@ export const create = (req: Request, res: Response) => {
   );
 }
 
+
+export const createMany = (req: Request, res: Response) => {
+  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  let newList = req.body.list
+  var options = { upsert: true, new: true, useFindAndModify: false };
+  let count = 0
+  newList.forEach((el: any) => {
+    Counter.findOneAndUpdate(
+      { name: "Receipt", year: new Date().getFullYear() },
+      { $inc: { sequence: 1 } },
+      options,
+      (err: Error, doc: any) => {
+        const newObj: any = new DBModel(el);
+        let year = (new Date().getFullYear() + 543).toString()
+        let yearString = year.substring(2, 4);
+        let seq = (doc.sequence).toString()
+        let result = yearString + el.category + seq.padStart(7, "0")
+        newObj.numberInit = result
+        newObj.number = doc.sequence
+        newObj.createdAt = new Date();
+        newObj.modifiedAt = new Date();
+        newObj.createdIP = ip;
+        newObj.save().then((document: any) => {
+          // res.send(document)
+        })
+      }
+    );
+    count++
+    if (count == newList.length) {
+      res.send({ status: "success" })
+    }
+  })
+}
+
 export const list = (req: Request, res: Response) => {
   DBModel.find({})
     .then(function (data: Array<any>) {
