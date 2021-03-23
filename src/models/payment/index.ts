@@ -9,6 +9,7 @@ const schema = new Schema({
     invoiceNumber:String,
     amount: Number,
     name:String,
+    code:String,
     address:String,
     meter:String,
     category:String,
