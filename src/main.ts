@@ -106,6 +106,7 @@ io.on('connection', (socket: Socket) => {
   });
   socket.on('disconnect', function () { 
     connectCounter--;
+    if(connectCounter<0) connectCounter = 0
     io.emit('userCount', connectCounter); });
 });
 
