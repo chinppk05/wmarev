@@ -23,6 +23,7 @@ const schema = new Schema({
     paidDate:Date,
     printDate:Date,
     isNextStage: Boolean,
+    isPrint: Boolean,
     createdAt: Date,
 }) 
 schema.plugin(mongoosePaginate)
