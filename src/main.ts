@@ -97,6 +97,6 @@ io.on('connection', (socket: Socket) => {
   socket.on('disconnect', function () { connectCounter--; });
 });
 
-app.listen(port, () => {
+http.listen(port, () => {
   console.log("Server started! at port " + port)
 })
