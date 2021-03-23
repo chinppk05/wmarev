@@ -13,6 +13,7 @@ const schema = new Schema({
     address:String,
     meter:String,
     category:String,
+    categoryType: String,
     method: String,
     period: String,
     isNextStage: Boolean,

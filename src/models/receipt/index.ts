@@ -7,6 +7,7 @@ const schema = new Schema({
     numberInit:Number,
     meter:String,
     category: String,
+    categoryType: String,
     code:String,
     name:String,
     address:String,

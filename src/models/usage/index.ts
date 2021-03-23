@@ -18,6 +18,7 @@ const schema = new Schema({
   period: String,
   area: { type: ObjectId, ref: "Contract" },
   category: String,
+  categoryType: String,
   year: Number,
   month: Number,
   remark:String,
