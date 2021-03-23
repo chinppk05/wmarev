@@ -100,8 +100,8 @@ let connectCounter = 0
 
 io.on('connection', (socket: Socket) => {
   console.log('a user connected: ' + connectCounter);
+  connectCounter++;
   socket.on('connected', function () {
-    connectCounter++;
     io.emit('userCount', connectCounter);
   });
   socket.on('disconnect', function () { connectCounter--; });
