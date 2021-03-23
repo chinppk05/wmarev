@@ -33,7 +33,6 @@ export const createMany = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   let newList = req.body.list
   var options = { upsert: true, new: true, useFindAndModify: false };
-  let type = req.body.category
   let count = 0
   newList.forEach((el: any) => {
     Counter.findOneAndUpdate(
@@ -45,7 +44,7 @@ export const createMany = (req: Request, res: Response) => {
         let year = (new Date().getFullYear() + 543).toString()
         let yearString = year.substring(2, 4);
         let seq = (doc.sequence).toString()
-        let result = yearString + type + seq.padStart(7, "0")
+        let result = yearString + el.category + seq.padStart(7, "0")
         newObj.numberInit = result
         newObj.number = doc.sequence
         newObj.createdAt = new Date();
