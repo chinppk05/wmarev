@@ -20,7 +20,7 @@ const io = require("socket.io")(http, {
     methods: ["GET", "POST"],
     credentials: true
   },
-  // path: '/api/v1'
+  path: '/api/v1/socket.io'
 });
 
 const fs = require('fs')
@@ -82,7 +82,7 @@ const auth = require('./routers/auth')(app)
 
 const report = require('./routers/report')(app)
 
-app.get("/", (req, res) => {
+app.get("/api/v1/", (req, res) => {
   res.send("Welcome to WMA201AM1 API Server!");
 });
 
