@@ -14,5 +14,5 @@ const schema = new Schema({
 
 })
 schema.plugin(mongoosePaginate)
-const Collection = mongoose.model("Collection", schema)
-export default Collection
+const CollectionInvoice = mongoose.model("CollectionInvoice", schema)
+export default CollectionInvoice

@@ -7,4 +7,6 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}-debt-meter/`, ctrl.getDebtByMeter)
   app.post(`/api/v1/${endpoint}-debt-invoice/`, ctrl.getDebtByInvoice)
   app.post(`/api/v1/${endpoint}-debt-receipt/`, ctrl.getDebtByReceipt)
+  app.post(`/api/v1/${endpoint}-customer-latest/`, ctrl.getCustomerLatest)
+
 }

@@ -32,6 +32,30 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
     })
   })
 }
+
+export const getCustomerLatest = (req: Request, res: Response) => {
+  let search = req.params.search
+  let sort = req.params.sort
+  Invoice.findOne(search).sort(sort).lean().then((doc: any) => {
+    Invoice.find({ meter: doc.meter , isPaid: false }).lean().then((debtArray: any) => {
+        debtArray = debtArray.map((el: any) => {
+          return {
+            ...el,
+            dt: mo(el.year, el.month)
+          }
+        })
+        let { debtText, debtAmount} = display1(debtArray)
+        doc.debtText = debtText
+        doc.debtAmount = debtAmount
+      res.send(doc)
+    })
+  })
+}
+
+
+
+
+
 export const getDebtByReceipt = (req: Request, res: Response) => {
   let list = req.body.list
   Receipt.find({ _id: { $in: list } }).then((docs: any) => {
