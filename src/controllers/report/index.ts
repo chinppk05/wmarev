@@ -34,6 +34,7 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
         docs[i].debtText = debtText
         docs[i].d0 = display0(debtArray)
         docs[i].debtAmount = debtAmount
+        docs[i].debtArray = display2(debtArray)
       });
       res.send(docs)
     })
@@ -81,6 +82,7 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
         docs[i].debtText = debtText
         docs[i].d0 = display0(debtArray)
         docs[i].debtAmount = debtAmount
+        docs[i].debtArray = display2(debtArray)
       });
       res.send(docs)
     })
@@ -110,6 +112,20 @@ let display0 = (debt: Array<any>) => {
     debtText,
     debtAmount
   }
+}
+let display2 = (debt: Array<any>) => {
+  let debtArray:Array<any> = []
+  var isMiddle = false
+  let arr = debt.slice().reverse() as Array<any>
+  for (let i = 0; i < arr.length; i++) {
+    let amt = (arr[i].rate * arr[i].qty) * 100
+    let res = Math.round(amt + (0.07 * amt))
+    debtArray.push({
+      text:DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy"),
+      amount: (res / 100)
+    })
+  }
+  return debtArray
 }
 
 let display1 = (debt: Array<any>) => {
