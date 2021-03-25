@@ -53,10 +53,6 @@ export const getCustomerLatest = (req: Request, res: Response) => {
   })
 }
 
-
-
-
-
 export const getDebtByReceipt = (req: Request, res: Response) => {
   let list = req.body.list
   Receipt.find({ _id: { $in: list } }).lean().then((docs: any) => {
