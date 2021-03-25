@@ -12,6 +12,7 @@ const schema = new Schema({
     name:String,
     address:String,
     period:String,
+    signature:String,
     qty: Number,
     rate: Number,
     remainingAmount:Number,

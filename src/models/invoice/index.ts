@@ -13,6 +13,7 @@ const schema = new Schema({
   code:String,
   period: String,
   name: String,
+  signature:String,
   address: String,
   category: String,
   categoryType: String,
