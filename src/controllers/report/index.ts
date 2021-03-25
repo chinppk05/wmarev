@@ -98,7 +98,7 @@ export const getCustomerLatest = (req: Request, res: Response) => {
 export const getDebtByReceipt = (req: Request, res: Response) => {
   let list = req.body.list
   let print = req.body.isPrint!=undefined?req.body.isPrint:null
-  Receipt.find({ invoiceNumber: { $in: list } }).then((originals: any) => {
+  Receipt.find({ _id: { $in: list } }).then((originals: any) => {
     let docs = JSON.parse(JSON.stringify(originals))
     Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) }, isPaid: false }).sort("-year -month").lean().then((founds: any) => {
       docs.forEach((item: any, i: number) => {
