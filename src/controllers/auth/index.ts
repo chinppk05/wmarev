@@ -103,19 +103,21 @@ export const resetRequest = (req: Request, res: Response) => {
     });
   })
 }
-export const resetSubmission = async (req: Request, res: Response) => {
+export const resetSubmission = (req: Request, res: Response) => {
   //TODO: ตรวจสอบว่า รหัสใน url ตรงกับบน ฐานข้อมูล
   //TODO: ตรวจสอบว่า รหัสที่สร้างยังไม่ expire
   //TODO: บันทึกรหัสผ่านใหม่ให้ผู้ใช้
-  let id = req.body.id
+  let uuid = req.body.uuid
   let password = req.body.password
-  const hash = await bcrypt.hash(password, 8);
-  UserModel.updateOne({ _id: id }, { password: hash }).then((data: any) => {
-    res.send({
-      message: 'Reset Request Successfully',
-      data,
-      user: req.user,
-    });
+  ResetModel.findOne({uuid}).then(async (data:any)=>{
+    const hash = await bcrypt.hash(password, 8);
+    UserModel.updateOne({ username: data.username }, { password: hash }).then((data: any) => {
+      res.send({
+        message: 'Reset Request Successfully',
+        data,
+        user: req.user,
+      });
+    })
   })
 }
 
@@ -134,7 +136,7 @@ let SendEmail = function (id: string, uuid: string, sendTo: string) {
   var mailOptions = {
     from: "รีเซ็ตรหัสผ่านของ อจน. <noreply@jmandjm.com>",
     to: sendTo,
-    subject: 'อีเมล์อัตโนมัติจาก E-Ordering Thai PBS',
+    subject: 'อีเมล์อัตโนมัติจาก อจน.',
     html: `<h4> คุณสามารถคลิกที่ลิงค์ <a href="http://wma.jmandjm.com/reset/submit/${uuid}">รีเซ็ต</a> เพื่อรีเซ็ตรหัสผ่านได้ทันที <h4>`
   };
   transporter.sendMail(mailOptions, function (error: Error, info: any) {
