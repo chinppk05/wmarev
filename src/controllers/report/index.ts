@@ -95,6 +95,8 @@ export const getCustomerLatest = (req: Request, res: Response) => {
   })
 }
 
+
+//JTM อย่าเพิ่งแตะ++
 export const getDebtByReceipt = (req: Request, res: Response) => {
   let list = req.body.list
   let print = req.body.isPrint!=undefined?req.body.isPrint:null
