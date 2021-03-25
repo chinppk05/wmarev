@@ -75,7 +75,9 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
         debtArray = debtArray.map((el: any) => {
           return {
             ...el,
-            dt: mo(el.year, el.month)
+            dt: mo(el.year, el.month),
+            year:el.year,
+            month:el.month
           }
         })
         let { debtText, debtAmount } = display1(debtArray)
@@ -121,6 +123,7 @@ let display2 = (debt: Array<any>) => {
     let amt = (arr[i].rate * arr[i].qty) * 100
     let res = Math.round(amt + (0.07 * amt))
     debtArray.push({
+      dt:arr[i].dt,
       text:DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy"),
       amount: (res / 100)
     })
