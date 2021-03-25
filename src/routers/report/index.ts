@@ -6,7 +6,7 @@ let endpoints = "reports"
 module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}-debt-meter/`, ctrl.getDebtByMeter)
   app.post(`/api/v1/${endpoint}-debt-invoice/`, ctrl.getDebtByInvoice)
-  app.post(`/api/v1/${endpoint}-debt-invoice-number/`, ctrl.getDebtByInvoiceNumber)
+  app.post(`/api/v1/${endpoint}-debt-payment/`, ctrl.getDebtByPayment)
   app.post(`/api/v1/${endpoint}-debt-receipt/`, ctrl.getDebtByReceipt)
   app.post(`/api/v1/${endpoint}-customer-latest/`, ctrl.getCustomerLatest)
 

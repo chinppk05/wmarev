@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express'
 import Usage from '../../models/usage/index'
 import Invoice from '../../models/invoice/index'
 import Receipt from '../../models/receipt/index'
+import Payment from '../../models/payment/index'
 import History from '../../models/history/index'
 import mongoose from "mongoose";
 import luxon, { DateTime } from "luxon";
@@ -44,10 +45,10 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
 }
 
 
-export const getDebtByInvoiceNumber = (req: Request, res: Response) => {
+export const getDebtByPayment = (req: Request, res: Response) => {
   let list = req.body.list
   let print = req.body.isPrint!=undefined?req.body.isPrint:null
-  Invoice.find({ numberInit: { $in: list } }).then((originals: any) => {
+  Payment.find({ _id: { $in: list } }).then((originals: any) => {
     let docs = JSON.parse(JSON.stringify(originals))
     Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) } }).sort("-year -month").lean().then((founds: any) => {
       docs.forEach((item: any, i: number) => {
