@@ -7,9 +7,7 @@ const schema = new Schema({
   list: [String],
   reason: String,
   status: String,
-
   priority: String,
-
   requester: { type: ObjectId, ref: "user" },
   approver: { type: ObjectId, ref: "user" },
 
