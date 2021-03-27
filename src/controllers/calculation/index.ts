@@ -14,6 +14,19 @@ export const create = (req: Request, res: Response) => {
   })
 }
 
+export const upsert = (req: Request, res: Response) => {
+  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const newObj: any = new DBModel(req.body);
+  newObj.createdAt = new Date();
+  newObj.modifiedAt = new Date();
+  newObj.createdIP = ip;
+  let search = req.body.search
+  let doc = req.body.doc
+  DBModel.findOneAndUpdate(search, doc, { upsert: true }).then((document: any) => {
+    res.send(document)
+  })
+}
+
 export const list = (req: Request, res: Response) => {
   DBModel.find({})
     .then(function (data: Array<any>) {
@@ -57,7 +70,7 @@ export const update = (req: Request, res: Response) => {
     }).sort("-version").then((latest: any) => {
       let version = 1
       // console.log(typeof latest,latest)
-      if(latest!=null) version = latest.version + 1
+      if (latest != null) version = latest.version + 1
       History.create({
         name: "usages",
         documentId: id,
