@@ -80,6 +80,7 @@ const history = require('./routers/history')(app)
 const user = require('./routers/user')(app)
 const auth = require('./routers/auth')(app)
 const calculation = require('./routers/calculation')(app)
+const coverLetter = require('./routers/coverLetter')(app)
 const render = require('./routers/render')(app)
 
 const report = require('./routers/report')(app)
