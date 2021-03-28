@@ -38,7 +38,7 @@ export const list = (req: Request, res: Response) => {
 export const get = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)
-  DBModel.findById({ _id: id }).then(function (data: any) {
+  DBModel.findById({ _id: id }).populate("calculation").then(function (data: any) {
     res.send(data)
   })
 }
@@ -48,7 +48,7 @@ export const getByField = (req: Request, res: Response) => {
   let value = req.params.value
   let search: any = {}
   search[field] = value
-  DBModel.findOne(search).then(function (data: any) {
+  DBModel.findOne(search).populate("calculation").then(function (data: any) {
     res.send(data)
   })
 }

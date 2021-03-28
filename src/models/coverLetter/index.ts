@@ -12,7 +12,12 @@ const schema = new Schema({
   calculation: { type: ObjectId, ref: "Calculation" },
   method:'Mixed',
   details: String,
+  content:String,
+  repayment:Number,
+  signature:String,
+  remark:String,
   attachments: [String],
+  attachmentsName: [String],
   createdIP:String,
   createdAt:Date,
 })
