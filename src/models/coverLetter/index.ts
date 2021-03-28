@@ -15,6 +15,8 @@ const schema = new Schema({
   content:String,
   repayment:Number,
   signature:String,
+  approverName:String,
+    approverPosition:String,
   remark:String,
   attachments: [String],
   attachmentsName: [String],
