@@ -10,6 +10,7 @@ const schema = new Schema({
   subject: String,
   to: String,
   calculation: { type: ObjectId, ref: "Calculation" },
+  method:'Mixed',
   details: String,
   attachments: [String],
   createdIP:String,
