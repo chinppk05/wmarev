@@ -38,7 +38,7 @@ const schema = new Schema({
         fileUrl: [String],
         amount:Number,
         year:Number,
-        quater:Number,
+        quarter:Number,
         value: String,
         value2: String,
     }],

@@ -39,25 +39,25 @@ export const getCalculationList = (req: Request, res: Response) => {
               if (item.period == "รายไตรมาส" || item.period == "รายไตรมาศ") {
                 prep.push({
                   ...common,
-                  quater: 1
+                  quarter: 1
                 })
                 prep.push({
                   ...common,
-                  quater: 2
+                  quarter: 2
                 })
                 prep.push({
                   ...common,
-                  quater: 3
+                  quarter: 3
                 })
                 prep.push({
                   ...common,
-                  quater: 4
+                  quarter: 4
                 })
               }
               else {
                 prep.push({
                   ...common,
-                  quater: 0
+                  quarter: 0
                 })
               }
             }

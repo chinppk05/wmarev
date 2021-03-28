@@ -8,7 +8,7 @@ const schema = new Schema({
   operationYear: Number,
   contractYear: Number,
   calendarYear: Number,
-  quater: Number,
+  quarter: Number,
   ledgers: [
     {
       selected: Boolean,
