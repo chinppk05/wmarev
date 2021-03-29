@@ -77,8 +77,8 @@ export const getDebtByPayment = (req: Request, res: Response) => {
 }
 
 export const getCustomerLatest = (req: Request, res: Response) => {
-  let search = req.params.search
-  let sort = req.params.sort
+  let search = req.body.search
+  let sort = req.body.sort
   Invoice.findOne(search).sort(sort).lean().then((doc: any) => {
     Invoice.find({ meter: doc.meter, isPaid: false }).lean().then((debtArray: any) => {
       debtArray = debtArray.map((el: any) => {
