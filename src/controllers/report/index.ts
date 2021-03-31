@@ -12,7 +12,10 @@ export const getCustomerHistory = (req: Request, res: Response) => {
   let meter = req.body.meter
   Invoice.find({ meter }).sort("-year -month").lean().then((invoices:any)=>{
     Payment.find({ meter }).sort("-year -month").lean().then((payments:any)=>{
-      res.send({invoices,payments})
+      res.send({
+        invoices,
+        payments
+      })
     })
   })
 }
