@@ -5,6 +5,7 @@ const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
   code: String,
   name: String,
+  category: String,
 })
 schema.plugin(mongoosePaginate)
 const CostCode = mongoose.model("CostCode", schema)
