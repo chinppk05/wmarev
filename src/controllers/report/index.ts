@@ -10,8 +10,8 @@ import luxon, { DateTime } from "luxon";
 
 export const getCustomerHistory = (req: Request, res: Response) => {
   let meter = req.body.meter
-  Invoice.find({ meter }).sort("-year -month").lean().then((invoices:any)=>{
-    Payment.find({ meter }).sort("-year -month").lean().then((payments:any)=>{
+  Invoice.find({ meter }).sort("-year -month").lean().then((invoices: any) => {
+    Payment.find({ meter }).sort("-year -month").lean().then((payments: any) => {
       res.send({
         invoices,
         payments
@@ -28,12 +28,12 @@ export const getDebtByMeter = (req: Request, res: Response) => {
 }
 export const getDebtByInvoice = (req: Request, res: Response) => {
   let list = req.body.list
-  let print = req.body.isPrint!=undefined?req.body.isPrint:null
+  let print = req.body.isPrint != undefined ? req.body.isPrint : null
   Invoice.find({ _id: { $in: list } }).then((originals: any) => {
     let docs = JSON.parse(JSON.stringify(originals))
     Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) } }).sort("-year -month").lean().then((founds: any) => {
       docs.forEach((item: any, i: number) => {
-        if(print!=null){
+        if (print != null) {
           originals[i].isPrint = print
           originals[i].save()
         }
@@ -42,8 +42,8 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
           return {
             ...el,
             dt: mo(el.year, el.month),
-            year:el.year,
-            month:el.month
+            year: el.year,
+            month: el.month
           }
         })
         let { debtText, debtAmount } = display1(debtArray)
@@ -59,23 +59,24 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
 
 export const getDebtByPayment = (req: Request, res: Response) => {
   let invoice = req.body.invoice
-  let print = req.body.isPrint!=undefined?req.body.isPrint:null
+  let print = req.body.isPrint != undefined ? req.body.isPrint : null
   Invoice.findOne({ numberInit: invoice }).then((originals: any) => {
     let doc = JSON.parse(JSON.stringify(originals))
     Invoice.find({ meter: doc.meter }).sort("-year -month").lean().then((founds: any) => {
-        let debtArray = founds.filter((el: any) => el.meter == doc.meter)
-        debtArray = debtArray.map((el: any) => {
-          return {
-            ...el,
-            dt: mo(el.year, el.month),
-            year:el.year,
-            month:el.month
-          }})
-        let { debtText, debtAmount } = display1(debtArray)
-        doc.debtText = debtText
-        doc.d0 = display0(debtArray)
-        doc.debtAmount = debtAmount
-        doc.debtArray = display2(debtArray)
+      let debtArray = founds.filter((el: any) => el.meter == doc.meter)
+      debtArray = debtArray.map((el: any) => {
+        return {
+          ...el,
+          dt: mo(el.year, el.month),
+          year: el.year,
+          month: el.month
+        }
+      })
+      let { debtText, debtAmount } = display1(debtArray)
+      doc.debtText = debtText
+      doc.d0 = display0(debtArray)
+      doc.debtAmount = debtAmount
+      doc.debtArray = display2(debtArray)
       res.send(doc)
     })
   })
@@ -84,13 +85,13 @@ export const getDebtByPayment = (req: Request, res: Response) => {
 
 export const getDebtByPaymentList = (req: Request, res: Response) => {
   let list = req.body.list
-  let print = req.body.isPrint!=undefined?req.body.isPrint:null
+  let print = req.body.isPrint != undefined ? req.body.isPrint : null
   console.log("getDebtByPaymentList")
   Payment.find({ _id: { $in: list } }).then((originals: any) => {
     let docs = JSON.parse(JSON.stringify(originals))
     Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) } }).sort("-year -month").lean().then((founds: any) => {
       docs.forEach((item: any, i: number) => {
-        if(print!=null){
+        if (print != null) {
           originals[i].isPrint = print
           originals[i].save()
         }
@@ -99,8 +100,8 @@ export const getDebtByPaymentList = (req: Request, res: Response) => {
           return {
             ...el,
             dt: mo(el.year, el.month),
-            year:el.year,
-            month:el.month
+            year: el.year,
+            month: el.month
           }
         })
         let { debtText, debtAmount } = display1(debtArray)
@@ -137,12 +138,12 @@ export const getCustomerLatest = (req: Request, res: Response) => {
 //JTM อย่าเพิ่งแตะ++
 export const getDebtByReceipt = (req: Request, res: Response) => {
   let list = req.body.list
-  let print = req.body.isPrint!=undefined?req.body.isPrint:null
+  let print = req.body.isPrint != undefined ? req.body.isPrint : null
   Receipt.find({ _id: { $in: list } }).then((originals: any) => {
     let docs = JSON.parse(JSON.stringify(originals))
-    Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) }, isPaid: false }).sort("-year -month").lean().then((founds: any) => {
+    Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) }, isPaid: false, year: { $gte: 0 }, month: { $gte: 0 } }).sort("-year -month").lean().then((founds: any) => {
       docs.forEach((item: any, i: number) => {
-        if(print!=null){
+        if (print != null) {
           originals[i].isPrint = print
           originals[i].save()
         }
@@ -151,8 +152,8 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
           return {
             ...el,
             dt: mo(el.year, el.month),
-            year:el.year,
-            month:el.month
+            year: el.year,
+            month: el.month
           }
         })
         let { debtText, debtAmount } = display1(debtArray)
@@ -191,17 +192,17 @@ let display0 = (debt: Array<any>) => {
   }
 }
 let display2 = (debt: Array<any>) => {
-  let debtArray:Array<any> = []
+  let debtArray: Array<any> = []
   var isMiddle = false
   let arr = debt.slice().reverse() as Array<any>
   for (let i = 0; i < arr.length; i++) {
     let amt = (arr[i].rate * arr[i].qty) * 100
     let res = Math.round(amt + (0.07 * amt))
     debtArray.push({
-      dt:arr[i].dt,
-      year:arr[i].year,
-      month:arr[i].month,
-      text:DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy"),
+      dt: arr[i].dt,
+      year: arr[i].year,
+      month: arr[i].month,
+      text: DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy"),
       amount: (res / 100)
     })
   }
@@ -231,7 +232,7 @@ let display1 = (debt: Array<any>) => {
     else if (diff < -1) {
       debtText += DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
       debtText += "/"
-      debtText += DateTime.fromISO(arr[i+1].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
+      debtText += DateTime.fromISO(arr[i + 1].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
     }
     else {
       debtText += DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
