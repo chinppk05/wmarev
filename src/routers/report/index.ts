@@ -10,5 +10,8 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}-debt-paymentlist/`, ctrl.getDebtByPaymentList)
   app.post(`/api/v1/${endpoint}-debt-receipt/`, ctrl.getDebtByReceipt)
   app.post(`/api/v1/${endpoint}-customer-latest/`, ctrl.getCustomerLatest)
-
+  
+  
+  app.post(`/api/v1/${endpoint}-customer-history/`, ctrl.getCustomerHistory)
+  
 }
