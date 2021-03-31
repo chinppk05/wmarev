@@ -76,9 +76,8 @@ export const postCalculationList = (req: Request, res: Response) => {
   let quarter = req.body.search.quarter
   let month = req.body.search.month
   let area = req.body.search.area
-  Area.find({
-    _id:area==undefined?undefined:area
-  }).select("name _id").lean().then((data: any) => {
+  let searchArea = area!=undefined?{_id:area}:undefined
+  Area.find(searchArea).select("name _id").lean().then((data: any) => {
     AreaCondition.find().then((areaConditions: any) => {
       let prep: Array<any> = []
       data.forEach((element: any, i: number) => {
