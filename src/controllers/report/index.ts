@@ -47,11 +47,10 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
 export const getDebtByPayment = (req: Request, res: Response) => {
   let invoice = req.body.invoice
   let print = req.body.isPrint!=undefined?req.body.isPrint:null
-  Invoice.find({ numberInit: invoice }).then((originals: any) => {
-    let docs = JSON.parse(JSON.stringify(originals))
-    Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) } }).sort("-year -month").lean().then((founds: any) => {
-      docs.forEach((item: any, i: number) => {
-        let debtArray = founds.filter((el: any) => el.meter == item.meter)
+  Invoice.findOne({ numberInit: invoice }).then((originals: any) => {
+    let doc = JSON.parse(JSON.stringify(originals))
+    Invoice.find({ meter: doc.meter }).sort("-year -month").lean().then((founds: any) => {
+        let debtArray = founds.filter((el: any) => el.meter == doc.meter)
         debtArray = debtArray.map((el: any) => {
           return {
             ...el,
@@ -59,14 +58,13 @@ export const getDebtByPayment = (req: Request, res: Response) => {
             year:el.year,
             month:el.month
           }
-        })
         let { debtText, debtAmount } = display1(debtArray)
-        docs[i].debtText = debtText
-        docs[i].d0 = display0(debtArray)
-        docs[i].debtAmount = debtAmount
-        docs[i].debtArray = display2(debtArray)
+        doc.debtText = debtText
+        doc.d0 = display0(debtArray)
+        doc.debtAmount = debtAmount
+        doc.debtArray = display2(debtArray)
       });
-      res.send(docs)
+      res.send(doc)
     })
   })
 }
