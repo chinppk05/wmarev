@@ -72,6 +72,7 @@ export const getDebtByPayment = (req: Request, res: Response) => {
 export const getDebtByPaymentList = (req: Request, res: Response) => {
   let list = req.body.list
   let print = req.body.isPrint!=undefined?req.body.isPrint:null
+  console.log("getDebtByPaymentList")
   Payment.find({ _id: { $in: list } }).then((originals: any) => {
     let docs = JSON.parse(JSON.stringify(originals))
     Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) } }).sort("-year -month").lean().then((founds: any) => {
