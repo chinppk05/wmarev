@@ -12,9 +12,12 @@ export const getCustomerHistory = (req: Request, res: Response) => {
   let meter = req.body.meter
   Invoice.find({ meter }).sort("-year -month").lean().then((invoices: any) => {
     Payment.find({ meter }).sort("-year -month").lean().then((payments: any) => {
-      res.send({
-        invoices,
-        payments
+      Receipt.find({ meter }).sort("-year -month").lean().then((receipts: any) => {
+        res.send({
+          invoices,
+          payments,
+          receipts
+        })
       })
     })
   })
@@ -169,8 +172,8 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
 
 let mo = (year: number, month: number) => {
   return DateTime.fromObject({
-    year: year??5555 - 543,
-    month:month??1
+    year: year ?? 5555 - 543,
+    month: month ?? 1
   })
 }
 
