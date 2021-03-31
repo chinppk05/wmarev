@@ -141,7 +141,7 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
   let print = req.body.isPrint != undefined ? req.body.isPrint : null
   Receipt.find({ _id: { $in: list } }).then((originals: any) => {
     let docs = JSON.parse(JSON.stringify(originals))
-    Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) }, isPaid: false, year: { $gte: 0 }, month: { $gte: 0 } }).sort("-year -month").lean().then((founds: any) => {
+    Invoice.find({ meter: { $in: docs.map((el: any) => el.meter) }, isPaid: false, year: { $gt: 0 }, month: { $gt: 0 } }).sort("-year -month").lean().then((founds: any) => {
       docs.forEach((item: any, i: number) => {
         if (print != null) {
           originals[i].isPrint = print
