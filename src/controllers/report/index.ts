@@ -7,6 +7,16 @@ import History from '../../models/history/index'
 import mongoose from "mongoose";
 import luxon, { DateTime } from "luxon";
 
+
+export const getCustomerHistory = (req: Request, res: Response) => {
+  let meter = req.body.meter
+  Invoice.find({ meter }).then((invoices:any)=>{
+    Payment.find({ meter }).then((payments:any)=>{
+      res.send({invoices,payments})
+    })
+  })
+}
+
 export const getDebtByMeter = (req: Request, res: Response) => {
   let meter = req.body.meter
   let list = req.body.list
