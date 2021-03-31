@@ -57,13 +57,12 @@ export const getDebtByPayment = (req: Request, res: Response) => {
             dt: mo(el.year, el.month),
             year:el.year,
             month:el.month
-          }
+          }})
         let { debtText, debtAmount } = display1(debtArray)
         doc.debtText = debtText
         doc.d0 = display0(debtArray)
         doc.debtAmount = debtAmount
         doc.debtArray = display2(debtArray)
-      });
       res.send(doc)
     })
   })
