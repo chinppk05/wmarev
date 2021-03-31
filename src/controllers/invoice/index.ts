@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/invoice/index'
+import Invoice from '../../models/invoice/index'
 import Counter from '../../models/counter/index'
 import mongoose from "mongoose";
 
@@ -34,30 +35,35 @@ export const createMany = (req: Request, res: Response) => {
   let newList = req.body.list
   var options = { upsert: true, new: true, useFindAndModify: false };
   let count = 0
+  let responseArr:Array<any> = []
   newList.forEach((el: any) => {
     Counter.findOneAndUpdate(
       { name: "Invoice", year: new Date().getFullYear() },
       { $inc: { sequence: 1 } },
       options,
       (err: Error, doc: any) => {
-        const newObj: any = new DBModel(el);
-        let year = (new Date().getFullYear() + 543).toString()
-        let yearString = year.substring(2, 4);
-        let seq = (doc.sequence).toString()
-        let result = yearString + el.category + seq.padStart(7, "0")
-        newObj.numberInit = result
-        newObj.number = doc.sequence
-        newObj.createdAt = new Date();
-        newObj.modifiedAt = new Date();
-        newObj.createdIP = ip;
-        newObj.save().then((document: any) => {
-          // res.send(document)
-        })
+        Invoice.findOneAndUpdate(
+          {
+            year:el.year,
+            month:el.month,
+            meter:el.meter
+          },
+          {
+            ...el,
+            createdAt:new Date(),
+            modifiedAt:new Date(),
+            createdIP:ip,
+            _id:undefined
+          },
+          {upsert:true,new:true}
+          ).then((data:any)=>{
+            responseArr.push(data)
+          })
       }
     );
     count++
     if (count == newList.length) {
-      res.send({ status: "success" })
+      res.send({ status: "success",data:responseArr })
     }
   })
 }
