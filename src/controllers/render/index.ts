@@ -77,7 +77,7 @@ export const postCalculationList = (req: Request, res: Response) => {
   let month = req.body.search.month
   let area = req.body.search.area
   Area.find({
-    area:area
+    _id:area
   }).select("name _id").lean().then((data: any) => {
     AreaCondition.find().then((areaConditions: any) => {
       let prep: Array<any> = []
