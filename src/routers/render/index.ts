@@ -4,6 +4,6 @@ let endpoint = "render"
 let endpoints = "renders"
 
 module.exports = (app: Express) => {
-  app.get(`/api/v1/${endpoint}-calculation-list/`, ctrl.getCalculationList)
+  app.post(`/api/v1/${endpoint}-calculation-list/`, ctrl.getCalculationList)
 
 }
