@@ -92,7 +92,7 @@ export const postPaginate = (req: Request, res: Response) => {
     { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: true }
   ).then(function (data: Array<any>) {
     //TODO: เปลี่ยน Function ที่ Performance สูงกว่านี้
-    // Invoice.find({meter:{$in:data.map(d=>d.meter)}})
+    //Invoice.find({meter:{$in:data.map(d=>d.meter)}})
     Invoice.find({})
       .then(function (invoices: Array<any>) {
         data.forEach((us,i)=>{
