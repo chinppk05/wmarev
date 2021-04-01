@@ -15,6 +15,9 @@ const schema = new Schema({
   effluent2: Number, //น้ำทิ้ง ประเภท 2
   effluent3: Number, //น้ำทิ้ง ประเภท 3
 
+  tretmentType:String,
+  effluentType:String
+
 })
 schema.plugin(mongoosePaginate)
 const AreaRate = mongoose.model("AreaRate", schema)
