@@ -90,22 +90,23 @@ export const postPaginate = (req: Request, res: Response) => {
   DBModel.paginate(
     searchObj,
     { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: true }
-  ).then(function (data: Array<any>) {
+  ).then(function (data: any) {
     //TODO: เปลี่ยน Function ที่ Performance สูงกว่านี้
     //Invoice.find({meter:{$in:data.map(d=>d.meter)}})
+    let docs = data.docs
     Invoice.find({})
       .then(function (invoices: Array<any>) {
         console.log("invoices ",invoices.length)
-        data.forEach((us,i)=>{
+        docs.forEach((us:any,i:number)=>{
           let found = invoices.find(inv=>(inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter))
           if(found!=undefined){
-            data[i].isPrint = found.isPrint
+            docs[i].isPrint = found.isPrint
           }
           else{
-            data[i].isPrint = false
+            docs[i].isPrint = false
           }
         })
-        res.send(data)
+        res.send(docs)
       })
   });
 };
