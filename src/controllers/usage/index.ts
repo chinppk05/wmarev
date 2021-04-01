@@ -102,7 +102,12 @@ export const postPaginate = (req: Request, res: Response) => {
             return (inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter)
           })
           if(found!=undefined){
-            docs[i].isPrint = found.isPrint??false
+            if(found.isPrint==undefined){
+              docs[i].isPrint = false
+            }
+            else{
+              docs[i].isPrint = found.isPrint
+            }
           }
           else{
             docs[i].isPrint = false
