@@ -96,7 +96,6 @@ export const postPaginate = (req: Request, res: Response) => {
     let docs = data.docs
     Invoice.find({}).lean()
       .then(function (invoices: Array<any>) {
-        console.log("invoices ",invoices.length)
         docs.forEach((us:any,i:number)=>{
           let found = invoices.find(inv=>{
             console.log((inv.year,us.year,inv.month,us.month,inv.meter,us.meter))
