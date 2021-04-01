@@ -27,6 +27,7 @@ const schema = new Schema({
   rate:Number,
   flatRate: Number,
   isNextStage: Boolean,
+  createdAt: Date,
 });
 
 schema.pre("save", async function (next: NextFunction) {
