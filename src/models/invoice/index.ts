@@ -26,7 +26,7 @@ const schema = new Schema({
   condition: { type: ObjectId, ref: "Condition" },
   totalAmount: Number,
   isNextStage: Boolean,
-  isPrint: Boolean,
+  isPrint: { type: Boolean, default: false },
   isPaid: { type: Boolean, default: false },
 
 })
