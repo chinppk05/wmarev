@@ -8,7 +8,6 @@ const schema = new Schema({
   meter: String,
   number: Number,
   numberInit: String,
-  createdAt: Date,
   taxId: String,
   code:String,
   period: String,
@@ -17,9 +16,9 @@ const schema = new Schema({
   address: String,
   category: String,
   categoryType: String,
-  qty: Number,
-  rate: Number,
-  year: Number,
+  qty: { type: Number, default: 0 },
+  rate:{ type: Number, default: 0 },
+  year:{ type: Number, default: 0 },
   month: Number,
   area: { type: ObjectId, ref: "Contract" },
   usage: { type: ObjectId, ref: "Usage" },
@@ -28,6 +27,7 @@ const schema = new Schema({
   isNextStage: Boolean,
   isPrint: { type: Boolean, default: false },
   isPaid: { type: Boolean, default: false },
+  createdAt: Date,
 
 })
 schema.plugin(mongoosePaginate)
