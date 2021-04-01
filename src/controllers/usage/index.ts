@@ -95,6 +95,7 @@ export const postPaginate = (req: Request, res: Response) => {
     //Invoice.find({meter:{$in:data.map(d=>d.meter)}})
     Invoice.find({})
       .then(function (invoices: Array<any>) {
+        console.log("invoices ",invoices.length)
         data.forEach((us,i)=>{
           let found = invoices.find(inv=>(inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter))
           if(found!=undefined){
