@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/usage/index'
+import Invoice from '../../models/invoice/index'
 import History from '../../models/history/index'
 import mongoose from "mongoose";
 
@@ -90,7 +91,21 @@ export const postPaginate = (req: Request, res: Response) => {
     searchObj,
     { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: true }
   ).then(function (data: Array<any>) {
-    res.send(data);
+    //TODO: เปลี่ยน Function ที่ Performance สูงกว่านี้
+    // Invoice.find({meter:{$in:data.map(d=>d.meter)}})
+    Invoice.find({})
+      .then(function (invoices: Array<any>) {
+        data.forEach((us,i)=>{
+          let found = invoices.find(inv=>(inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter))
+          if(found!=undefined){
+            data[i].isPrint = found.isPrint
+          }
+          else{
+            data[i].isPrint = false
+          }
+        })
+        res.send(data)
+      })
   });
 };
 
