@@ -15,7 +15,7 @@ const schema = new Schema({
   effluent2: Number, //น้ำทิ้ง ประเภท 2
   effluent3: Number, //น้ำทิ้ง ประเภท 3
 
-  tretmentType:String,
+  treatmentType:String,
   effluentType:String
 
 })
