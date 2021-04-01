@@ -109,7 +109,10 @@ export const postPaginate = (req: Request, res: Response) => {
             docs[i].isPrint = false
           }
         })
-        res.send(docs)
+        res.send({
+          docs:docs,
+          total:data.total
+        })
       })
   });
 };
