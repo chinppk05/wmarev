@@ -100,7 +100,7 @@ export const postPaginate = (req: Request, res: Response) => {
         docs.forEach((us:any,i:number)=>{
           let found = invoices.find(inv=>(inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter))
           if(found!=undefined){
-            docs[i].isPrint = found.isPrint
+            docs[i].isPrint = found.isPrint??false
           }
           else{
             docs[i].isPrint = false
