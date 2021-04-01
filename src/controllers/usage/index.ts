@@ -98,7 +98,6 @@ export const postPaginate = (req: Request, res: Response) => {
       .then(function (invoices: Array<any>) {
         docs.forEach((us:any,i:number)=>{
           let found = invoices.find(inv=>{
-            console.log((inv.year,us.year,inv.month,us.month,inv.meter,us.meter))
             return (inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter)
           })
           if(found!=undefined){
