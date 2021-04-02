@@ -47,6 +47,7 @@ export const createMany = (req: Request, res: Response) => {
           month: el.month,
           meter: el.meter,
         }).lean().then((data:any)=>{
+          console.log(data.length)
           if(data.length!=0){
             let year = (new Date().getFullYear() + 543).toString();
             let yearString = year.substring(2, 4);
