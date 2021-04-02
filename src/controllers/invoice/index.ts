@@ -47,7 +47,7 @@ export const createMany = (req: Request, res: Response) => {
           month: el.month,
           meter: el.meter,
         }).lean().then((data:any)=>{
-          console.log(data.length)
+          console.log("length",data.length)
           if(data.length!=0){
             let year = (new Date().getFullYear() + 543).toString();
             let yearString = year.substring(2, 4);
@@ -60,7 +60,7 @@ export const createMany = (req: Request, res: Response) => {
             newObj.modifiedAt = new Date();
             newObj.createdIP = ip;
             newObj.save().then((document: any) => {
-              res.send(document);
+              console.log(document)
             });
           }else{
             Invoice.updateOne(
