@@ -46,37 +46,48 @@ export const createMany = (req: Request, res: Response) => {
           year: el.year,
           month: el.month,
           meter: el.meter,
-        }).lean().then((data:any)=>{
-          console.log("length",data.length)
-          if(data.length!=0){
-            let year = (new Date().getFullYear() + 543).toString();
-            let yearString = year.substring(2, 4);
-            let seq = doc.sequence.toString();
-            let result = yearString + el.category + seq.padStart(7, "0");
-            const newObj: any = new DBModel(el);
-            newObj.numberInit = result;
-            newObj.number = doc.sequence;
-            newObj.createdAt = new Date();
-            newObj.modifiedAt = new Date();
-            newObj.createdIP = ip;
-            newObj.save().then((document: any) => {
-              console.log(document)
-            });
-          }else{
-            Invoice.updateOne(
-              {
-                year:el.year,
-                month:el.month,
-                meter:el.meter
-              },
-              {
-                ...el
-              }
-              ).then((data:any)=>{
-                responseArr.push(data)
-            })
-          }
         })
+          .lean()
+          .then((data: any) => {
+            console.log("length", data.length);
+            if (data.length != 0) {
+              let year = (new Date().getFullYear() + 543).toString();
+              let yearString = year.substring(2, 4);
+              let seq = doc.sequence.toString();
+              let result = yearString + el.category + seq.padStart(7, "0");
+              const newObj: any = new DBModel(el);
+              newObj.numberInit = result;
+              newObj.number = doc.sequence;
+              newObj.createdAt = new Date();
+              newObj.modifiedAt = new Date();
+              newObj.createdIP = ip;
+              let prep = {
+                ...el,
+                numberInit: result,
+                number: doc.sequence,
+                createdAt: new Date(),
+                modifiedAt: new Date(),
+                createdIP: ip,
+              };
+              console.log(newObj);
+              Invoice.create(prep).then((document: any) => {
+                console.log(document);
+              });
+            } else {
+              Invoice.updateOne(
+                {
+                  year: el.year,
+                  month: el.month,
+                  meter: el.meter,
+                },
+                {
+                  ...el,
+                }
+              ).then((data: any) => {
+                responseArr.push(data);
+              });
+            }
+          });
         // Invoice.findOneAndUpdate(
         //   {
         //     year:el.year,
