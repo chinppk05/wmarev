@@ -27,6 +27,7 @@ const schema = new Schema({
   rate:Number,
   flatRate: Number,
   isNextStage: Boolean,
+  calculationType:String,
   createdAt: Date,
 });
 
