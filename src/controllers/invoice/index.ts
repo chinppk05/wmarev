@@ -52,8 +52,7 @@ export const createMany = (req: Request, res: Response) => {
             ...el,
             createdAt:new Date(),
             modifiedAt:new Date(),
-            createdIP:ip,
-            _id:undefined
+            createdIP:ip
           },
           {upsert:true,new:true}
           ).then((data:any)=>{
