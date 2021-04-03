@@ -174,7 +174,7 @@ export const postPaginate = (req: Request, res: Response) => {
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
   const options = {
-    sort: { ...sort },
+    sort: sort,
     offset: skip,
     limit: limit,
     populate: populate,
