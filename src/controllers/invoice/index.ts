@@ -181,6 +181,7 @@ export const postPaginate = (req: Request, res: Response) => {
     lean: true,
     pagination: req.body.paginate != undefined && req.body.paginate === false,
   };
+  console.log(sort)
   DBModel.paginate(searchObj, options).then(function (data: Array<any>) {
     res.send(data);
   });
