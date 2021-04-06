@@ -23,6 +23,8 @@ const schema = new Schema({
     invoice:{type: ObjectId, ref: 'Invoice'},
     usage:{type: ObjectId, ref: 'Usage'},
     customer: {type: ObjectId, ref: 'Customer'},
+    year:{ type: Number, default: 0 },
+    month: Number,
     paidDate:Date,
     printDate:Date,
     isNextStage: Boolean,
