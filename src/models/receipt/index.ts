@@ -16,6 +16,8 @@ const schema = new Schema({
     qty: Number,
     rate: Number,
     remainingAmount:Number,
+    debtText:String,
+    debtAmount:Number,
     paymentAmount:Number,
     invoiceNumber:String,
     invoice:{type: ObjectId, ref: 'Invoice'},
