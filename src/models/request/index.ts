@@ -18,6 +18,7 @@ const schema = new Schema({
   approvedDate: Date,
   requestDate: Date,
   remark: String,
+  note: String,
   views: Number,
 
   createdIP: String,
