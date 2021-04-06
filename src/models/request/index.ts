@@ -11,6 +11,7 @@ const schema = new Schema({
   requester: { type: ObjectId, ref: "user" },
   approver: { type: ObjectId, ref: "user" },
 
+  fileUrl:String,
   from:"Mixed",
   to:"Mixed",
 
