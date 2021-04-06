@@ -8,8 +8,8 @@ const schema = new Schema({
   reason: String,
   status: String,
   priority: String,
-  requester: { type: ObjectId, ref: "user" },
-  approver: { type: ObjectId, ref: "user" },
+  requester: { type: ObjectId, ref: "User" },
+  approver: { type: ObjectId, ref: "User" },
 
   fileUrl:String,
   from:"Mixed",
