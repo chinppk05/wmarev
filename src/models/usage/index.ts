@@ -22,7 +22,7 @@ const schema = new Schema({
   year: Number,
   month: Number,
   remark:String,
-  fileUrl: [String],
+  fileUrl:String,
   note: String,
   rate:Number,
   flatRate: Number,
