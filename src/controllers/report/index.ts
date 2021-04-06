@@ -51,9 +51,11 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
           }
         })
         let { debtText, debtAmount } = display1(debtArray)
-        docs[i].debtText = debtText
+        if(docs[i].debtAmount==undefined){
+            docs[i].debtText = debtText
+            docs[i].debtAmount = debtAmount
+        }
         docs[i].d0 = display0(debtArray)
-        docs[i].debtAmount = debtAmount
         docs[i].debtArray = display2(debtArray)
       });
       res.send(docs)

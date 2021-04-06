@@ -60,6 +60,8 @@ export const createMany = (req: Request, res: Response) => {
               newObj.number = doc.sequence;
               newObj.createdAt = new Date();
               newObj.modifiedAt = new Date();
+              newObj.debtText = "1"
+              newObj.debtAmount = 0
               newObj.createdIP = ip;
               let prep = {
                 ...el,
