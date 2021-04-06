@@ -16,6 +16,10 @@ const schema = new Schema({
   address: String,
   category: String,
   categoryType: String,
+
+  debtText:String,
+  debtAmount:Number,
+  
   qty: { type: Number, default: 0 },
   rate:{ type: Number, default: 0 },
   year:{ type: Number, default: 0 },
