@@ -246,6 +246,7 @@ let display1 = (debt: Array<any>) => {
     let amt = (arr[i].rate * arr[i].qty) * 100
     let res = Math.round(amt + (0.07 * amt))
     debtAmount += res / 100
+    console.log(arr[i].dt,DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy"))
   }
   return {
     debtText,
