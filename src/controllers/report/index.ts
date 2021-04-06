@@ -45,7 +45,7 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
         debtArray = debtArray.map((el: any) => {
           return {
             ...el,
-            dt: mo(el.year, el.month),
+            dt: mo(el.year - 543, el.month),
             year: el.year,
             month: el.month
           }
@@ -71,7 +71,7 @@ export const getDebtByPayment = (req: Request, res: Response) => {
       debtArray = debtArray.map((el: any) => {
         return {
           ...el,
-          dt: mo(el.year, el.month),
+          dt: mo(el.year - 543, el.month),
           year: el.year,
           month: el.month
         }
@@ -103,7 +103,7 @@ export const getDebtByPaymentList = (req: Request, res: Response) => {
         debtArray = debtArray.map((el: any) => {
           return {
             ...el,
-            dt: mo(el.year, el.month),
+            dt: mo(el.year - 543, el.month),
             year: el.year,
             month: el.month
           }
@@ -127,7 +127,7 @@ export const getCustomerLatest = (req: Request, res: Response) => {
       debtArray = debtArray.map((el: any) => {
         return {
           ...el,
-          dt: mo(el.year, el.month)
+          dt: mo(el.year - 543, el.month)
         }
       })
       let { debtText, debtAmount } = display1(debtArray)
@@ -155,7 +155,7 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
         debtArray = debtArray.map((el: any) => {
           return {
             ...el,
-            dt: mo(el.year, el.month),
+            dt: mo(el.year - 543 , el.month),
             year: el.year,
             month: el.month
           }
@@ -246,7 +246,7 @@ let display1 = (debt: Array<any>) => {
     let amt = (arr[i].rate * arr[i].qty) * 100
     let res = Math.round(amt + (0.07 * amt))
     debtAmount += res / 100
-    console.log(arr[i].dt,DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy"))
+    // console.log(arr[i].dt,DateTime.fromISO(arr[i].dt).reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy"))
   }
   return {
     debtText,
