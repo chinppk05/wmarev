@@ -11,6 +11,9 @@ const schema = new Schema({
   requester: { type: ObjectId, ref: "user" },
   approver: { type: ObjectId, ref: "user" },
 
+  from:"Mixed",
+  to:"Mixed",
+
   approvedDate: Date,
   requestDate: Date,
   remark: String,
