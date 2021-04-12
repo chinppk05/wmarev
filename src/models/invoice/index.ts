@@ -13,7 +13,6 @@ const schema = new Schema({
   sequence: String,
   taxId: String,
   code: String,
-  period: String,
   name: String,
   signature: String,
   address: String,
@@ -55,6 +54,20 @@ schema.pre("save", async function (next: NextFunction) {
       next();
     }
   );
+});
+
+schema.set('toJSON', {
+  getters: true,
+  transform: (doc: any, ret: any) => {
+    if (ret.calculationType == "บาท/ลบ.ม.")
+      ret.amount = ret.rate * ret.qty
+    else
+      ret.amount = ret.flatRate
+    ret.taxAmount = ret.amount * 0.07
+    ret.treatmentAmount = ret.amount * 1.07
+    delete ret.__v;
+    return ret;
+  },
 });
 
 schema.plugin(mongoosePaginate)
