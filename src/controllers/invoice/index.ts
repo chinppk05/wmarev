@@ -180,7 +180,7 @@ export const postPaginate = (req: Request, res: Response) => {
     offset: skip,
     limit: limit,
     populate: populate,
-    lean: true,
+    lean: false,
     pagination: req.body.paginate != undefined && req.body.paginate === false,
   };
   console.log(sort)

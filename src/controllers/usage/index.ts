@@ -89,7 +89,7 @@ export const postPaginate = (req: Request, res: Response) => {
   let skip: number = parseInt(req.body.skip);
   DBModel.paginate(
     searchObj,
-    { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: true }
+    { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: false }
   ).then(function (data: any) {
     //TODO: เปลี่ยน Function ที่ Performance สูงกว่านี้
     //Invoice.find({meter:{$in:data.map(d=>d.meter)}})

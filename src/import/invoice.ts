@@ -1,6 +1,7 @@
 const Excel = require('exceljs');
 const mongoose = require('mongoose')
-import Invoice from "../models/invoice/index";
+import Invoice from "../models/invoice";
+import Usage from "../models/usage";
 
 mongoose.connect('mongodb://localhost:27017/wma', { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.set('useNewUrlParser', true);
@@ -8,6 +9,8 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 (async () => {
+  await Invoice.deleteMany({}).exec()
+  await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile("./invoice.xlsx");
   let sheet = workbook.getWorksheet("Data")
@@ -30,29 +33,55 @@ mongoose.set('useCreateIndex', true);
     { header: 'CategoryType', key: 'categoryType', width: 10 },
   ];
 
-  sheet.eachRow(function (row: any, rowNumber: number) {
+  sheet.eachRow(async function (row: any, rowNumber: number) {
     if (rowNumber > 1) {
-      Invoice.create({
-        sequence: row.getCell(2),
-        year: row.getCell(3),
-        month: row.getCell(4),
-        meter: row.getCell(5),
-        name: row.getCell(6),
-        address: row.getCell(7),
-        qty: row.getCell(8),
-        rate: row.getCell(9),
-        flatRate: row.getCell(10),
-        debtText: row.getCell(11),
-        debtAmount: row.getCell(12),
-        totalAmount: row.getCell(13),
-        category: row.getCell(14),
-        categoryType: row.getCell(15),
-      }).then((data:any)=>{
-        console.log("done ", rowNumber)
-      }).catch((error:any)=>{
-        console.log(error)
-      })
-      console.log(rowNumber)
+      const used = process.memoryUsage().heapUsed / 1024 / 1024;
+      console.log("row", rowNumber)
+      try {
+        await Invoice.create({
+          sequence: row.getCell(2),
+          year: row.getCell(3),
+          month: row.getCell(4),
+          meter: row.getCell(5),
+          name: row.getCell(6),
+          address: row.getCell(7),
+          qty: row.getCell(8),
+          rate: row.getCell(9),
+          flatRate: row.getCell(10),
+          debtText: row.getCell(11),
+          debtAmount: row.getCell(12),
+          totalAmount: row.getCell(13),
+          category: row.getCell(14),
+          categoryType: row.getCell(15),
+        }).then(() => {
+          console.log(`invoice ${rowNumber}: The script uses approximately ${Math.round(used * 100) / 100} MB`);
+        })
+      } catch (error) {
+        console.log("invoice create error", error)
+      }
+      try {
+        await Usage.create({
+          sequence: row.getCell(2),
+          year: row.getCell(3),
+          month: row.getCell(4),
+          meter: row.getCell(5),
+          name: row.getCell(6),
+          address: row.getCell(7),
+          qty: row.getCell(8),
+          rate: row.getCell(9),
+          flatRate: row.getCell(10),
+          debtText: row.getCell(11),
+          debtAmount: row.getCell(12),
+          totalAmount: row.getCell(13),
+          category: row.getCell(14),
+          categoryType: row.getCell(15),
+        }).then(() => {
+          console.log(`usage ${rowNumber}: The script uses approximately ${Math.round(used * 100) / 100} MB`);
+        })
+      } catch (error) {
+        console.log("usage create error", error)
+      }
+      console.log("done", rowNumber)
     }
   })
 })()
