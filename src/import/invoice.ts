@@ -74,7 +74,7 @@ let saveInvoice = async () => {
       delete mongoose.modelSchemas['Invoice'];
       setTimeout(() => {
         saveInvoice()
-      }, 100);
+      }, 5);
     })
   }
   else{
@@ -93,7 +93,7 @@ let saveUsage = async () => {
       delete mongoose.modelSchemas['Usage'];
       setTimeout(() => {
         saveUsage()
-      }, 100);
+      }, 5);
     })
   }
   else{
