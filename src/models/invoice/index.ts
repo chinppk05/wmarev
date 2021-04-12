@@ -1,40 +1,62 @@
+import { NextFunction } from "express";
+import Counter from "../counter";
+import { getDecimal, setDecimal } from "../../helpers/decimal"
+import { DateTime } from "luxon"
 const mongoose = require('mongoose')
 const mongoosePaginate = require("mongoose-paginate")
-import { NextFunction } from "express";
 const Schema = mongoose.Schema
-import Counter from "../counter";
+const Decimal = mongoose.Schema.Types.Decimal
 const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
   meter: String,
   number: Number,
-  numberInit: String,
+  sequence: String,
   taxId: String,
-  code:String,
+  code: String,
   period: String,
   name: String,
-  signature:String,
+  signature: String,
   address: String,
   category: String,
   categoryType: String,
 
-  debtText:String,
-  debtAmount:Number,
-  
-  qty: { type: Number, default: 0 },
-  rate:{ type: Number, default: 0 },
-  year:{ type: Number, default: 0 },
+  debtText: String,
+  debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+
+  qty: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  year: { type: Number, default: 0 },
   month: Number,
   area: { type: ObjectId, ref: "Contract" },
   usage: { type: ObjectId, ref: "Usage" },
   condition: { type: ObjectId, ref: "Condition" },
-  totalAmount: Number,
+  totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   isNextStage: Boolean,
   isPrint: { type: Boolean, default: false },
   isPaid: { type: Boolean, default: false },
-  calculationType:String,
+  calculationType: String,
   createdAt: Date,
 
 })
+
+schema.pre("save", async function (next: NextFunction) {
+  var options = { upsert: true, new: true, useFindAndModify: false };
+  Counter.findOneAndUpdate(
+    { name: "Invoice", year: this.year },
+    { $inc: { sequence: 1 } },
+    options,
+    (err: Error, doc: any) => {
+      let sequence
+      if (this.sequence) sequence = this.sequence
+      else
+        sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
+      let recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this.year - 543 }).toJSDate()
+      Invoice.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
+      next();
+    }
+  );
+});
+
 schema.plugin(mongoosePaginate)
 const Invoice = mongoose.model("Invoice", schema)
 export default Invoice

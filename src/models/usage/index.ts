@@ -1,13 +1,15 @@
-const mongoose = require("mongoose");
-const mongoosePaginate = require("mongoose-paginate");
 import { NextFunction } from "express";
 import Counter from "../counter";
+import { getDecimal, setDecimal } from "../../helpers/decimal"
+import { DateTime } from "luxon"
+const mongoose = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate");
 const Schema = mongoose.Schema;
 const Decimal = mongoose.Schema.Types.Decimal
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   customer: { type: ObjectId, ref: "Customer" },
-  number: Number,
+  sequence: String,
   meter: String,
   taxId: String,
   name: String,
@@ -21,12 +23,13 @@ const schema = new Schema({
   categoryType: String,
   year: Number,
   month: Number,
+  recordDate: Date,
   remark: String,
   fileUrl: String,
   note: String,
-  qty: { type: Decimal, get: getDecimal, set: setDecimal },
-  rate: { type: Decimal, get: getDecimal, set: setDecimal },
-  flatRate: { type: Decimal, get: getDecimal, set: setDecimal },
+  qty: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  flatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   isNextStage: Boolean,
   calculationType: String,
   createdAt: Date,
@@ -35,33 +38,33 @@ const schema = new Schema({
 schema.pre("save", async function (next: NextFunction) {
   var options = { upsert: true, new: true, useFindAndModify: false };
   Counter.findOneAndUpdate(
-    { name: "Usage", year: new Date().getFullYear() },
+    { name: "Usage", year: this.year },
     { $inc: { sequence: 1 } },
     options,
     (err: Error, doc: any) => {
-      this.number = doc.sequence;
+      let sequence
+      if (this.sequence) sequence = this.sequence
+      else
+        sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
+      let recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this.year - 543 }).toJSDate()
+      Usage.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
       next();
     }
   );
 });
-schema.plugin(mongoosePaginate);
-const Usage = mongoose.model("Usage", schema);
 
 schema.set('toJSON', {
   getters: true,
   transform: (doc: any, ret: any) => {
-    ret.amount = ret.rate * ret.qty
+    if (ret.calculationType == "บาท/ลบ.ม.")
+      ret.amount = ret.rate * ret.qty
+    else
+      ret.amount = ret.flatRate
     delete ret.__v;
     return ret;
   },
 });
 
-function getDecimal(num: any) {
-  return parseFloat(num)/100;
-}
-
-function setDecimal(num: number) {
-  return Math.round(num * 100);
-}
-
+schema.plugin(mongoosePaginate);
+const Usage = mongoose.model("Usage", schema);
 export default Usage;
