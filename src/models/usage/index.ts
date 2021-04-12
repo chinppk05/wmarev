@@ -10,9 +10,8 @@ const schema = new Schema({
   number: Number,
   meter: String,
   taxId: String,
-  qty: Decimal,
   name: String,
-  code:String,
+  code: String,
   firstName: String,
   lastName: String,
   address: String,
@@ -22,18 +21,19 @@ const schema = new Schema({
   categoryType: String,
   year: Number,
   month: Number,
-  remark:String,
-  fileUrl:String,
+  remark: String,
+  fileUrl: String,
   note: String,
-  rate:Decimal,
-  flatRate: Decimal,
+  qty: { type: Decimal, get: getDecimal, set: setDecimal },
+  rate: { type: Decimal, get: getDecimal, set: setDecimal },
+  flatRate: { type: Decimal, get: getDecimal, set: setDecimal },
   isNextStage: Boolean,
-  calculationType:String,
+  calculationType: String,
   createdAt: Date,
 });
 
 schema.pre("save", async function (next: NextFunction) {
-  var options = { upsert: true, new: true,useFindAndModify: false };
+  var options = { upsert: true, new: true, useFindAndModify: false };
   Counter.findOneAndUpdate(
     { name: "Usage", year: new Date().getFullYear() },
     { $inc: { sequence: 1 } },
@@ -47,15 +47,21 @@ schema.pre("save", async function (next: NextFunction) {
 schema.plugin(mongoosePaginate);
 const Usage = mongoose.model("Usage", schema);
 
-// Usage.set('toJSON', {
-//   getters: true,
-//   transform: (doc:any, ret:any) => {
-//     if (ret.price) {
-//       ret.price = ret.price.toString();
-//     }
-//     delete ret.__v;
-//     return ret;
-//   },
-// });
+schema.set('toJSON', {
+  getters: true,
+  transform: (doc: any, ret: any) => {
+    ret.amount = ret.rate * ret.qty
+    delete ret.__v;
+    return ret;
+  },
+});
+
+function getDecimal(num: any) {
+  return parseFloat(num)/100;
+}
+
+function setDecimal(num: number) {
+  return Math.round(num * 100);
+}
 
 export default Usage;
