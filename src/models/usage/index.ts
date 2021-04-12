@@ -3,13 +3,14 @@ const mongoosePaginate = require("mongoose-paginate");
 import { NextFunction } from "express";
 import Counter from "../counter";
 const Schema = mongoose.Schema;
+const Decimal = mongoose.Schema.Types.Decimal
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   customer: { type: ObjectId, ref: "Customer" },
   number: Number,
   meter: String,
   taxId: String,
-  qty: Number,
+  qty: Decimal,
   name: String,
   code:String,
   firstName: String,
@@ -24,8 +25,8 @@ const schema = new Schema({
   remark:String,
   fileUrl:String,
   note: String,
-  rate:Number,
-  flatRate: Number,
+  rate:Decimal,
+  flatRate: Decimal,
   isNextStage: Boolean,
   calculationType:String,
   createdAt: Date,
@@ -45,4 +46,16 @@ schema.pre("save", async function (next: NextFunction) {
 });
 schema.plugin(mongoosePaginate);
 const Usage = mongoose.model("Usage", schema);
+
+// Usage.set('toJSON', {
+//   getters: true,
+//   transform: (doc:any, ret:any) => {
+//     if (ret.price) {
+//       ret.price = ret.price.toString();
+//     }
+//     delete ret.__v;
+//     return ret;
+//   },
+// });
+
 export default Usage;
