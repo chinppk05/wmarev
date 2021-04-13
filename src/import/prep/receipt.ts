@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
-const Excel = require('exceljs');
+// const Excel = require('exceljs');
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('db');
 import axios from "axios"
 import { DateTime } from "luxon"
 import { parse } from "node:path";
+import Excel from "exceljs"
 
 
 const moveFrom = "./excel";
@@ -19,7 +20,7 @@ const moveFrom = "./excel";
   let headerChecker: Array<any> = []
   let filesArray: Array<any> = []
   let prepArray: Array<any> = []
-  let mapper = []
+  let mapper:Array<any> = []
   try {
     const files = await fs.promises.readdir(moveFrom);
     for (const file of files) {
