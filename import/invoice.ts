@@ -54,6 +54,7 @@ let prepArray: Array<any> = [];
         totalAmount: row.getCell(13),
         category: row.getCell(14),
         categoryType: row.getCell(15),
+        vatRate:0.07,
       })
       console.log(`reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }

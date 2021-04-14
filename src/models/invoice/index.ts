@@ -30,6 +30,7 @@ const schema = new Schema({
   usage: { type: ObjectId, ref: "Usage" },
   condition: { type: ObjectId, ref: "Condition" },
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   isNextStage: Boolean,
   isPrint: { type: Boolean, default: false },
   isPaid: { type: Boolean, default: false },
@@ -58,16 +59,6 @@ schema.pre("save", async function (next: NextFunction) {
 
 schema.set('toJSON', {
   getters: true,
-  transform: (doc: any, ret: any) => {
-    if (ret.calculationType == "บาท/ลบ.ม.")
-      ret.amount = ret.rate * ret.qty
-    else
-      ret.amount = ret.flatRate
-    ret.taxAmount = ret.amount * 0.07
-    ret.treatmentAmount = ret.amount * 1.07
-    delete ret.__v;
-    return ret;
-  },
 });
 
 schema.plugin(mongoosePaginate)

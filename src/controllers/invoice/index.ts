@@ -181,11 +181,21 @@ export const postPaginate = (req: Request, res: Response) => {
     limit: limit,
     populate: populate,
     lean: false,
-    pagination: req.body.paginate != undefined && req.body.paginate === false,
   };
-  console.log(sort)
-  DBModel.paginate(searchObj, options).then(function (data: Array<any>) {
-    res.send(data);
+  DBModel.paginate(searchObj, options).then(function (data: any) {
+    let docs = JSON.parse(JSON.stringify(data.docs))
+    DBModel.find(searchObj).then((data2: any) => {
+      let data3 = JSON.parse(JSON.stringify(data2))
+      res.send({
+        docs: docs,
+        total: data.total,
+        totalCount: data3.length,
+        ids: data3.map((el: any) => el._id ?? ""),
+        totalQty: data3.map((el: any) => el.qty ?? 0).reduce((a: number, b: number) => a + b, 0),
+        totalAmount: data3.map((el: any) => el.totalAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
+        totalDebt: data3.map((el: any) => (el.totalAmount ?? 0) + (el.debtAmount ?? 0)).reduce((a: number, b: number) => a + b, 0)
+      })
+    })
   });
 };
 

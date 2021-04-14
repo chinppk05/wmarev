@@ -92,7 +92,7 @@ export const postPaginate = (req: Request, res: Response) => {
     { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: false }
   ).then(function (data: any) {
     let docs = JSON.parse(JSON.stringify(data.docs))
-    Invoice.find({meter:{$in:docs.map((d:any)=>d.meter)}}).lean()
+    Invoice.find({meter:{$in:docs.map((d:any)=>d.meter)}})
       .then(function (invoices: Array<any>) {
         docs.forEach((us:any,i:number)=>{
           let found = invoices.find(inv=>{
