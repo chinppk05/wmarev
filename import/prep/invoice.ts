@@ -16,7 +16,7 @@ const moveFrom = "./excel";
   let headerChecker: Array<any> = []
   let filesArray: Array<any> = []
   let prepArray: Array<any> = []
-  let mapper:Array<any> = []
+  let mapper: Array<any> = []
   try {
     const files = await fs.promises.readdir(moveFrom);
     for (const file of files) {
@@ -61,26 +61,29 @@ const moveFrom = "./excel";
                   startRow = rowNumber
                   let tmp: Array<string> = []
                   headerRow.eachCell(function (cell, colNumber) {
-                    tmp.push(cell.text)
-                    // console.log('Cell ' + colNumber + ' = ' + cell.text);
-                    if ((cell.text ?? "").trim() === "เลขที่ใบแจ้งหนี้")
-                      mapper[0] = colNumber
-                    if ((cell.text ?? "").trim() === "เลขที่ผู้ใช้น้ำ")
-                      mapper[1] = colNumber
-                    if ((cell.text ?? "").trim() === "ชื่อ - นามสกุล")
-                      mapper[2] = colNumber
-                    if ((cell.text ?? "").trim() === "ที่อยู่")
-                      mapper[3] = colNumber
-                    if ((cell.text ?? "").trim() === "(ลบ.ม.)")
-                      mapper[4] = colNumber
-                    if ((cell.text ?? "").trim() === "ประเภท 2" || (cell.text ?? "").trim() === "ประเภท 3")
-                      mapper[5] = colNumber
-                    if ((cell.text ?? "").trim() === "(เดือน)")
-                      mapper[6] = colNumber
-                    if ((cell.text ?? "").trim() === "ยอดค้างชำระ" || (cell.text ?? "").trim() === "เงินคงค้าง" || (cell.text ?? "").trim() === "รวม 7 %")
-                      mapper[7] = colNumber
-                    if ((cell.text ?? "").trim() === "รวมเงิน")
-                      mapper[8] = colNumber
+
+                    if (cell.value != null) {
+                      tmp.push(cell.text)
+                      // console.log('Cell ' + colNumber + ' = ' + cell.text);
+                      if ((cell.text ?? "").trim() === "เลขที่ใบแจ้งหนี้")
+                        mapper[0] = colNumber
+                      if ((cell.text ?? "").trim() === "เลขที่ผู้ใช้น้ำ")
+                        mapper[1] = colNumber
+                      if ((cell.text ?? "").trim() === "ชื่อ - นามสกุล")
+                        mapper[2] = colNumber
+                      if ((cell.text ?? "").trim() === "ที่อยู่")
+                        mapper[3] = colNumber
+                      if ((cell.text ?? "").trim() === "(ลบ.ม.)")
+                        mapper[4] = colNumber
+                      if ((cell.text ?? "").trim() === "ประเภท 2" || (cell.text ?? "").trim() === "ประเภท 3")
+                        mapper[5] = colNumber
+                      if ((cell.text ?? "").trim() === "(เดือน)")
+                        mapper[6] = colNumber
+                      if ((cell.text ?? "").trim() === "ยอดค้างชำระ" || (cell.text ?? "").trim() === "เงินคงค้าง" || (cell.text ?? "").trim() === "รวม 7 %")
+                        mapper[7] = colNumber
+                      if ((cell.text ?? "").trim() === "รวมเงิน")
+                        mapper[8] = colNumber
+                    }
                   });
                   headerChecker.push(tmp)
                 }
@@ -91,18 +94,18 @@ const moveFrom = "./excel";
                   if (row.getCell(1).value != null) {
                     let debtText = row.getCell(mapper[6]).value as any
                     if (debtText != null) {
-                      if (typeof debtText.getMonth === 'function'){
+                      if (typeof debtText.getMonth === 'function') {
                         let dt = DateTime.fromJSDate(debtText)
-                        let dtOffset = dt.set({year:dt.year+600-543}).reconfigure({ outputCalendar: "buddhist" }).setLocale("th")
+                        let dtOffset = dt.set({ year: dt.year + 600 - 543 }).reconfigure({ outputCalendar: "buddhist" }).setLocale("th")
                         debtText = dtOffset.toFormat("LLLyy").split(".").join("")
-                        console.log(debtText)
+                        // console.log(debtText)
                       }
                     }
 
                     var myRegexp = /1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
                     var match = myRegexp.exec(fromPath);
                     // prep.year = parseInt("25" + (fromPath as string).slice(6, 8))
-                    prep.year = parseInt("25" + (fromPath as string).slice(-8,-6))
+                    prep.year = parseInt("25" + (fromPath as string).slice(-8, -6))
                     prep.month = getMonth(match[1])
                     prep.sequence = row.getCell(mapper[0]).text
                     prep.meter = row.getCell(mapper[1]).text
