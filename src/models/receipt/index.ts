@@ -28,6 +28,8 @@ const schema = new Schema({
   previousAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   paymentAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  invoiceAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  
   invoiceNumber: String,
   invoice: { type: ObjectId, ref: 'Invoice' },
   usage: { type: ObjectId, ref: 'Usage' },
@@ -59,6 +61,10 @@ schema.pre("save", async function (next: NextFunction) {
       next();
     }
   );
+});
+
+schema.set('toJSON', {
+  getters: true,
 });
 
 schema.plugin(mongoosePaginate)

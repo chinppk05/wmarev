@@ -2,6 +2,7 @@ const Excel = require('exceljs');
 const mongoose = require('mongoose')
 import Payment from "../src/models/payment"
 import Receipt from "../src/models/receipt"
+import Invoice from "../src/models/invoice"
 
 mongoose.connect('mongodb://localhost:27017/wma', { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.set('useNewUrlParser', true);
@@ -42,8 +43,9 @@ let prepArray: Array<any> = [];
         category: row.getCell("Q").value,
         categoryType: row.getCell("R").value,
         calculationType: row.getCell("S").value,
+        invoiceNumber: row.getCell("T").value,
       })
-      console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),`reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+      console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value), `reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
   })
   savePayment()
@@ -54,16 +56,22 @@ let savePayment = async () => {
   // console.log(prepArray[i].year,prepArray[i].month)
   const used = process.memoryUsage().heapUsed / 1024 / 1024;
   if (prepArray[i] != undefined) {
-    let payment = new Payment(prepArray[i])
-    await payment.save().then(() => {
-      console.log(`payments ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
-      i++
-      delete mongoose.models['Payment'];
-      delete mongoose.connection.collections['payments'];
-      delete mongoose.modelSchemas['Payment'];
-      setTimeout(() => {
-        savePayment()
-      }, 1);
+    await Invoice.findOne({ year: prepArray[i].year, month: prepArray[i].month, meter: prepArray[i].meter }).then(async (data: any) => {
+      let payment
+      if (data != null)
+        payment = new Payment({ ...prepArray[i], invoiceNumber: data.sequence })
+      else
+        payment = new Payment({ ...prepArray[i], invoiceNumber: "notfound" })
+      await payment.save().then(() => {
+        console.log(`${(data??{sequence:"notfound"}).sequence} ${prepArray[i].year} ${prepArray[i].month} /payments ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+        i++
+        delete mongoose.models['Payment'];
+        delete mongoose.connection.collections['payments'];
+        delete mongoose.modelSchemas['Payment'];
+        setTimeout(() => {
+          savePayment()
+        }, 1);
+      })
     })
   }
   else {

@@ -69,7 +69,7 @@ export const postPaginate = (req: Request, res: Response) => {
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
   const options = {
-    sort: { ...sort }, offset: skip, limit: limit, populate: populate, lean: true,
+    sort: { ...sort }, offset: skip, limit: limit, populate: populate, lean: false,
     pagination: req.body.paginate!=undefined&&req.body.paginate===false,
   };
   DBModel.paginate(
@@ -85,7 +85,8 @@ export const postPaginate = (req: Request, res: Response) => {
         totalCount: data3.length,
         ids: data3.map((el: any) => el._id ?? ""),
         totalQty: data3.map((el: any) => el.qty ?? 0).reduce((a: number, b: number) => a + b, 0),
-        totalAmount: data3.map((el: any) => el.totalAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
+        totalAmount: data3.map((el: any) => el.invoiceAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
+        totalPayment: data3.map((el: any) => el.paymentAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalDebt: data3.map((el: any) => (el.totalAmount ?? 0) + (el.debtAmount ?? 0)).reduce((a: number, b: number) => a + b, 0)
       })
     })

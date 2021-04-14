@@ -12,6 +12,7 @@ const schema = new Schema({
   time: Number,
   sequence: String,
   invoiceAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  
   invoiceNumber: String,
   amount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   name: String,
@@ -29,6 +30,7 @@ const schema = new Schema({
   qty: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  paymentAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   paidDate: Date,
   printDate: Date,
   calculationType: String,
@@ -56,6 +58,11 @@ schema.pre("save", async function (next: NextFunction) {
     }
   );
 });
+
+schema.set('toJSON', {
+  getters: true,
+});
+
 
 schema.plugin(mongoosePaginate)
 const Payment = mongoose.model("Payment", schema)
