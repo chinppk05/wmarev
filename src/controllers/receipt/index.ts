@@ -119,7 +119,7 @@ export const postPaginate = (req: Request, res: Response) => {
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
   const options = {
-    sort: { ...sort }, offset: skip, limit: limit, populate: populate, lean: true,
+    sort: { ...sort }, offset: skip, limit: limit, populate: populate, lean: false,
     pagination: req.body.paginate!=undefined&&req.body.paginate===false,
   };
   DBModel.paginate(
