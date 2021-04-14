@@ -14,13 +14,13 @@ let prepArray: Array<any> = [];
   await Payment.deleteMany({}).exec()
   await Receipt.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname+"/prep/receipt.xlsx");
+  await workbook.xlsx.readFile(__dirname + "/prep/receipt.xlsx");
   let sheet = workbook.getWorksheet("Data")
 
   sheet.eachRow(function (row: any, rowNumber: number) {
     if (rowNumber > 1) {
       const used = process.memoryUsage().heapUsed / 1024 / 1024;
-      
+
       prepArray.push({
         sequence: row.getCell(2).value,
         year: row.getCell(3).value,
@@ -36,13 +36,14 @@ let prepArray: Array<any> = [];
         debtAmount: row.getCell("L").value,
         vatRate: row.getCell("M").value,
         totalAmount: row.getCell("N").value,
+        invoiceAmount: (row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),
         paymentAmount: row.getCell("O").value,
         paymentDate: row.getCell("P").value,
         category: row.getCell("Q").value,
         categoryType: row.getCell("R").value,
         calculationType: row.getCell("S").value,
       })
-      console.log(`reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+      console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),`reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
   })
   savePayment()
@@ -65,7 +66,7 @@ let savePayment = async () => {
       }, 1);
     })
   }
-  else{
+  else {
     saveReceipt()
   }
 }
@@ -84,7 +85,7 @@ let saveReceipt = async () => {
       }, 1);
     })
   }
-  else{
-    console.log('done!',i,j)
+  else {
+    console.log('done!', i, j)
   }
 }

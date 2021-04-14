@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/main.ts",
-    "initinvoice": "ts-node src/import/invoice.ts",
+    "initinvoice": "ts-node import/invoice.ts",
+    "initreceipt": "ts-node import/receipt.ts",
     "initdb": "ts-node import/invoice.ts && ts-node import/receipt.ts"
   },
   "author": "NCC",
