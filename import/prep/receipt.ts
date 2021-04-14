@@ -20,7 +20,7 @@ const moveFrom = "./excel";
   let headerChecker: Array<any> = []
   let filesArray: Array<any> = []
   let prepArray: Array<any> = []
-  let mapper:Array<any> = []
+  let mapper: Array<any> = []
   try {
     const files = await fs.promises.readdir(moveFrom);
     for (const file of files) {
@@ -96,10 +96,10 @@ const moveFrom = "./excel";
                   if (t === "ค่าบริการ") mapper[4] = colNumber
                   if (t === "(เดือน)") mapper[5] = colNumber
                   if (t === "รวมภาษี 7% แล้ว" || t === "ยอดเงินที่ค้าง" || t === "ที่ค้าง" || t === "ชำระยอดเงินที่ค้าง") mapper[6] = colNumber
-                  
+                  if (t === "รับจริง" && colNumber < 19) mapper[7] = colNumber
+                  if (t === "วันที่ชำระเงิน") mapper[8] = colNumber
+
                 }
-
-
               });
               headerChecker.push(tmp)
               // console.log(worksheet.name, "start at ", startRow, mapper)
@@ -110,16 +110,24 @@ const moveFrom = "./excel";
                     var myRegexp = /1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
                     var match = myRegexp.exec(fromPath);
                     prep.rate = rate
-                    prep.year = parseInt("25" + (fromPath as string).slice(-8,-6))
+                    prep.year = parseInt("25" + (fromPath as string).slice(-8, -6))
                     prep.month = getMonth(match[1])
                     prep.sequence = row.getCell(mapper[0]).text
                     prep.meter = row.getCell(mapper[1]).text
                     prep.name = row.getCell(mapper[2]).text
                     prep.debtText = row.getCell(mapper[5]).text
+                    prep.paymentDate = getPaymentDate(row.getCell(mapper[8]).text)
                     let tmpDebtAmount = row.getCell(mapper[6]).value
-                    prep.debtAmount = tmpDebtAmount==null?0:tmpDebtAmount
-                    if(typeof prep.debtAmount != "number")
-                    console.log("prep.debtAmount",prep.debtAmount,"col ",mapper[6],prep.sequence)
+                    prep.debtAmount = tmpDebtAmount == null ? 0 : tmpDebtAmount
+                    if (typeof prep.debtAmount != "number") {
+                      console.log("prep.debtAmount", prep.debtAmount, "col ", mapper[6], prep.sequence)
+                      prep.debtAmount = -1
+                    }
+
+                    prep.paymentAmount = parseFloat(row.getCell(mapper[7]).text)
+                    if (Number.isNaN(parseFloat(row.getCell(mapper[7]).text))) prep.paymentAmount = prep.debtAmount
+
+                    
                     try {
                       let tmpAmount = row.getCell(mapper[4])
                       if (tmpAmount.result != undefined) prep.totalAmount = tmpAmount.result
@@ -150,7 +158,7 @@ const moveFrom = "./excel";
                     else {
                       prep.qty = parseInt(prep.qty)
                     }
-                    if(prep.debtText=="0") prep.debtText = "-"
+                    if (prep.debtText == "0") prep.debtText = "-"
                     prepArray.push(prep)
                   }
                 }
@@ -183,6 +191,8 @@ const moveFrom = "./excel";
       { header: 'DebtAmount', key: 'debtAmount', width: 10 },
       { header: 'VatRate', key: 'vatRate', width: 10 },
       { header: 'TotalAmount', key: 'totalAmount', width: 10 },
+      { header: 'PaymentAmount', key: 'paymentAmount', width: 10 },
+      { header: 'PaymentDate', key: 'paymentDate', width: 10 },
       { header: 'Category', key: 'category', width: 10 },
       { header: 'CategoryType', key: 'categoryType', width: 10 },
       { header: 'CalculationType', key: 'calculationType', width: 10 },
@@ -218,6 +228,19 @@ const moveFrom = "./excel";
 //     db.run("INSERT INTO bar VALUES (?)", 1);
 //   });
 // });
+
+let getPaymentDate = (str: string) => {
+  let input = str.split(" ").join("").split(".").join("")
+
+  var myRegexp = /(\d+)(.+?)(\d+)/g ///1-(.*?)\)/g;
+  var match = myRegexp.exec(input);
+  if (match != null) {
+    let dt = DateTime.fromObject({ year: parseInt(match[3]) + 2500, month: getMonth(match[2]), day: parseInt(match[1]) ?? 1 })
+    return dt.toJSDate()
+  }
+  else
+    return new Date()
+}
 
 let getMonth = (str: string) => {
   switch (str) {
