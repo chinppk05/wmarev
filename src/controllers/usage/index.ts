@@ -91,10 +91,8 @@ export const postPaginate = (req: Request, res: Response) => {
     searchObj,
     { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: false }
   ).then(function (data: any) {
-    //TODO: เปลี่ยน Function ที่ Performance สูงกว่านี้
-    //Invoice.find({meter:{$in:data.map(d=>d.meter)}})
-    let docs = data.docs
-    Invoice.find({}).lean()
+    let docs = JSON.parse(JSON.stringify(data.docs))
+    Invoice.find({meter:{$in:docs.map((d:any)=>d.meter)}}).lean()
       .then(function (invoices: Array<any>) {
         docs.forEach((us:any,i:number)=>{
           let found = invoices.find(inv=>{
@@ -112,9 +110,14 @@ export const postPaginate = (req: Request, res: Response) => {
             docs[i].isPrint = false
           }
         })
-        res.send({
-          docs:docs,
-          total:data.total
+        DBModel.find(searchObj).then((data2:any)=>{
+          res.send({
+            docs:docs,
+            total:data.total,
+            totalCount:data2.length,
+            ids:data2.map((el:any)=>el._id??""),
+            totalQty:data2.map((el:any)=>el.qty??0).reduce((a:number,b:number)=>a+b,0)
+          })
         })
       })
   });
