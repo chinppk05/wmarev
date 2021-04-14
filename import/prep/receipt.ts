@@ -1,10 +1,13 @@
 const fs = require('fs');
 const path = require('path');
+// const Excel = require('exceljs');
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('db');
 import axios from "axios"
 import { DateTime } from "luxon"
+import { parse } from "node:path";
 import Excel from "exceljs"
+
 
 const moveFrom = "./excel";
 (async () => {
@@ -13,6 +16,7 @@ const moveFrom = "./excel";
   let countType2 = 0
   let countType3 = 0
   let foundStart2 = 0
+  let startNumber = 1
   let headerChecker: Array<any> = []
   let filesArray: Array<any> = []
   let prepArray: Array<any> = []
@@ -26,7 +30,9 @@ const moveFrom = "./excel";
 
       if (stat.isFile()) {
         if (path.extname(fromPath) == ".xlsx") {
+
           filesArray.push(fromPath)
+
 
           console.log("'%s' is a xlsx file.", fromPath);
           const workbook = new Excel.Workbook();
@@ -36,99 +42,120 @@ const moveFrom = "./excel";
           workbook.eachSheet(function (worksheet, sheetId) {
             let okay = false
             let category = "-1"
-            if (worksheet.name == "type1") countType1++
-            else if (worksheet.name == "type2" || worksheet.name == "ทะเบียนคุมใบแจ้งหนี้ประเภท 2" || worksheet.name == "ทะเบียนคุมใบแจ้งหนี้ ประเภท 2") {
-              countType2++
-              category = "2"
-              okay = true
-            }
-            else if (worksheet.name == "type3" || worksheet.name == "ทะเบียนคุมใบแจ้งหนี้ประเภท 3" || worksheet.name == "ทะเบียนคุมใบแจ้งหนี้ ประเภท 3") {
-              countType3++
-              category = "3"
-              okay = true
-            }
-            else {
-              // console.log(worksheet.name)
-            }
+            let rate = -1
+
+            let sheet = workbook.getWorksheet(sheetId)
+            let column = worksheet.getColumn('C');
+            column.eachCell(function (cell, rowNumber) {
+              if (cell.value != null) {
+                if (((cell ?? {}).text || "sss").search("wma") != -1) {
+                  if (cell.text.slice(6, 7) == '3' && !okay) {
+                    countType3++
+                    category = "3"
+                    startRow = rowNumber
+                    rate = 4.0
+                    okay = true
+                  }
+                  else if (cell.text.slice(6, 7) == '2' && !okay) {
+                    countType2++
+                    category = "2"
+                    startRow = rowNumber
+                    rate = 3.5
+                    okay = true
+                  }
+                }
+              }
+            });
 
             if (okay) {
-              let sheet = workbook.getWorksheet(sheetId)
-              let column = worksheet.getColumn('A');
-              column.eachCell(function (cell, rowNumber) {
-                if (cell.value === 1) {
-                  foundStart2++
-                  let headerRow = worksheet.getRow(rowNumber - 1)
-                  startRow = rowNumber
-                  let tmp: Array<string> = []
-                  headerRow.eachCell(function (cell, colNumber) {
-                    tmp.push(cell.value)
-                    // console.log('Cell ' + colNumber + ' = ' + cell.value);
-                    if ((cell.value ?? "").trim() === "เลขที่ใบแจ้งหนี้")
-                      mapper[0] = colNumber
-                    if ((cell.value ?? "").trim() === "เลขที่ผู้ใช้น้ำ")
-                      mapper[1] = colNumber
-                    if ((cell.value ?? "").trim() === "ชื่อ - นามสกุล")
-                      mapper[2] = colNumber
-                    if ((cell.value ?? "").trim() === "ที่อยู่")
-                      mapper[3] = colNumber
-                    if ((cell.value ?? "").trim() === "(ลบ.ม.)")
-                      mapper[4] = colNumber
-                    if ((cell.value ?? "").trim() === "ประเภท 2" || (cell.value ?? "").trim() === "ประเภท 3")
-                      mapper[5] = colNumber
-                    if ((cell.value ?? "").trim() === "(เดือน)")
-                      mapper[6] = colNumber
-                    if ((cell.value ?? "").trim() === "ยอดค้างชำระ" || (cell.value ?? "").trim() === "เงินคงค้าง" || (cell.value ?? "").trim() === "รวม 7 %")
-                      mapper[7] = colNumber
-                    if ((cell.value ?? "").trim() === "รวมเงิน")
-                      mapper[8] = colNumber
-                  });
-                  headerChecker.push(tmp)
+              let headerRow = worksheet.getRow(startRow - 1)
+              let tmp: Array<string> = []
+              let c6 = headerRow.getCell(6).text
+              let c7 = headerRow.getCell(7).text
+              let c8 = headerRow.getCell(8).text
+              let c9 = headerRow.getCell(9).text
+              let c10 = headerRow.getCell(10).text
+              let hasQty = false
+              let isDebtIncludeVat = false
+              if (c8 == "ลบ.ม." || c9 == "ลบ.ม." || c10 == "ลบ.ม.") {
+                hasQty = true
+              }
+              if (c6 == "รวมภาษี 7% แล้ว" || c7 == "รวมภาษี 7% แล้ว") {
+                isDebtIncludeVat = true
+              }
+              headerRow.eachCell(function (cell, colNumber) {
+                tmp.push(cell.text)
+                if (cell.value != null) {
+                  let t = ((cell ?? {}).text || "").trim()
+                  if (t === "เลขที่ใบเสร็จ") mapper[0] = colNumber
+                  if (t === "เลขที่ผู้ใช้น้ำ") mapper[1] = colNumber
+                  if (t === "ชื่อ-นามสกุล") mapper[2] = colNumber
+                  if (hasQty) {
+                    if (t === "ลบ.ม.") mapper[3] = colNumber
+                  }
+                  if (t === "ค่าบริการ") mapper[4] = colNumber
+                  if (t === "(เดือน)") mapper[5] = colNumber
+                  if (t === "รวมภาษี 7% แล้ว" || t === "ยอดเงินที่ค้าง" || t === "ที่ค้าง" || t === "ชำระยอดเงินที่ค้าง") mapper[6] = colNumber
+                  
                 }
+
+
               });
+              headerChecker.push(tmp)
+              // console.log(worksheet.name, "start at ", startRow, mapper)
               worksheet.eachRow(function (row, rowNumber) {
                 let prep: any = {}
                 if (rowNumber >= startRow) {
                   if (row.getCell(1).value != null) {
-                    let debtText = row.getCell(mapper[6]).value
-                    if (debtText != null) {
-                      if (typeof debtText.getMonth === 'function'){
-                        let dt = DateTime.fromJSDate(debtText)
-                        let dtOffset = dt.set({year:dt.year+600-543}).reconfigure({ outputCalendar: "buddhist" }).setLocale("th")
-                        debtText = dtOffset.toFormat("LLLyy").split(".").join("")
-                        console.log(debtText)
-                      }
-                    }
-
                     var myRegexp = /1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
                     var match = myRegexp.exec(fromPath);
-                    // prep.year = parseInt("25" + (fromPath as string).slice(6, 8))
+                    prep.rate = rate
                     prep.year = parseInt("25" + (fromPath as string).slice(-8,-6))
                     prep.month = getMonth(match[1])
                     prep.sequence = row.getCell(mapper[0]).text
                     prep.meter = row.getCell(mapper[1]).text
                     prep.name = row.getCell(mapper[2]).text
-                    prep.address = mapper[3] != undefined ? row.getCell(mapper[3]).text : ""
-                    prep.qty = parseInt(row.getCell(mapper[4]).text) || 0
-                    prep.rate = parseFloat(row.getCell(mapper[5]).text) || 0
-                    prep.debtText = debtText
-                    prep.debtAmount = parseFloat(row.getCell(mapper[7]).text) || 0
-                    prep.totalAmount = parseFloat(row.getCell(mapper[8]).text) || 0
+                    prep.debtText = row.getCell(mapper[5]).text
+                    let tmpDebtAmount = row.getCell(mapper[6]).value
+                    prep.debtAmount = tmpDebtAmount==null?0:tmpDebtAmount
+                    if(typeof prep.debtAmount != "number")
+                    console.log("prep.debtAmount",prep.debtAmount,"col ",mapper[6],prep.sequence)
+                    try {
+                      let tmpAmount = row.getCell(mapper[4])
+                      if (tmpAmount.result != undefined) prep.totalAmount = tmpAmount.result
+                      else prep.totalAmount = tmpAmount.value == null ? 0 : tmpAmount.text
+                    } catch (error) {
+                      prep.totalAmount = -55
+                      console.log(error)
+                    }
+                    if (hasQty) {
+                      prep.qty = row.getCell(mapper[3]).text
+                    } else {
+                      prep.qty = prep.totalAmount / prep.rate
+                    }
                     prep.category = category
                     prep.categoryType = "น้ำเสีย"
                     prep.calculationType = "บาท/ลบ.ม."
-
-                    if (prep.qty == 0 && prep.totalAmount > 0) {
+                    prep.vatRate = 0.07
+                    if ((prep.qty == 0 && prep.totalAmount > 0) || prep.meter == "12170367739") {
                       prep.categoryType = "น้ำทิ้ง"
-                      prep.flatRate = parseFloat(row.getCell(mapper[8]).text) || 0
+                      // prep.flatRate = parseFloat(row.getCell(mapper[8]).text) || 0
+                      prep.qty = 0
+                      prep.flatRate = 125
                       prep.calculationType = "บาท/เดือน"
                     }
+                    if (prep.qty == "") {
+                      prep.qty = 0
+                    }
+                    else {
+                      prep.qty = parseInt(prep.qty)
+                    }
+                    if(prep.debtText=="0") prep.debtText = "-"
                     prepArray.push(prep)
                   }
                 }
               })
             }
-
-
           });
         }
       }
@@ -154,6 +181,7 @@ const moveFrom = "./excel";
       { header: 'FlatRate', key: 'flatRate', width: 10 },
       { header: 'DebtText', key: 'debtText', width: 10 },
       { header: 'DebtAmount', key: 'debtAmount', width: 10 },
+      { header: 'VatRate', key: 'vatRate', width: 10 },
       { header: 'TotalAmount', key: 'totalAmount', width: 10 },
       { header: 'Category', key: 'category', width: 10 },
       { header: 'CategoryType', key: 'categoryType', width: 10 },
@@ -164,16 +192,15 @@ const moveFrom = "./excel";
       to: 'P1',
     }
     headerChecker.forEach((element, i) => {
-      sheet2.addRow([filesArray[i], ...element]);
+      sheet2.addRow([filesArray[Math.floor(i / 2)], ...element]);
     });
 
 
     prepArray.forEach((element, i) => {
       sheet1.addRow(element);
     });
-
-
-    await workbook.xlsx.writeFile("result.xlsx");
+    console.log(countType2, countType3)
+    await workbook.xlsx.writeFile("receipt.xlsx");
   }
   catch (e) {
     console.error("We've thrown! Whoops!", e);
