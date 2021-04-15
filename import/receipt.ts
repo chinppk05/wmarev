@@ -44,6 +44,8 @@ let prepArray: Array<any> = [];
         categoryType: row.getCell("R").value,
         calculationType: row.getCell("S").value,
         invoiceNumber: row.getCell("T").value,
+        code: "01-kb",
+        isNextStage: true, isPrint: true
       })
       console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value), `reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
@@ -63,7 +65,7 @@ let savePayment = async () => {
       else
         payment = new Payment({ ...prepArray[i], invoiceNumber: "notfound" })
       await payment.save().then(() => {
-        console.log(`${(data??{sequence:"notfound"}).sequence} ${prepArray[i].year} ${prepArray[i].month} /payments ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+        console.log(`${(data ?? { sequence: "notfound" }).sequence} ${prepArray[i].year} ${prepArray[i].month} /payments ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
         i++
         delete mongoose.models['Payment'];
         delete mongoose.connection.collections['payments'];

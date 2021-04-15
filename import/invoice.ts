@@ -14,7 +14,7 @@ let prepArray: Array<any> = [];
   await Invoice.deleteMany({}).exec()
   await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname+"/prep/invoice.xlsx");
+  await workbook.xlsx.readFile(__dirname + "/prep/invoice.xlsx");
   let sheet = workbook.getWorksheet("Data")
 
   sheet.columns = [
@@ -38,7 +38,7 @@ let prepArray: Array<any> = [];
   sheet.eachRow(function (row: any, rowNumber: number) {
     if (rowNumber > 1) {
       const used = process.memoryUsage().heapUsed / 1024 / 1024;
-      
+
       prepArray.push({
         sequence: row.getCell(2),
         year: row.getCell(3),
@@ -54,7 +54,9 @@ let prepArray: Array<any> = [];
         totalAmount: row.getCell(13),
         category: row.getCell(14),
         categoryType: row.getCell(15),
-        vatRate:0.07,
+        vatRate: 0.07,
+        code: "01-kb",
+        isNextStage: true, isPrint: true
       })
       console.log(`reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
@@ -78,7 +80,7 @@ let saveInvoice = async () => {
       }, 1);
     })
   }
-  else{
+  else {
     saveUsage()
   }
 }
@@ -97,7 +99,7 @@ let saveUsage = async () => {
       }, 1);
     })
   }
-  else{
-    console.log('done!',i,j)
+  else {
+    console.log('done!', i, j)
   }
 }

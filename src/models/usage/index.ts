@@ -31,6 +31,7 @@ const schema = new Schema({
   rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   flatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   isNextStage: Boolean,
+  // isPrint: Boolean,
   calculationType: String,
   createdAt: Date,
 });

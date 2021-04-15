@@ -4,6 +4,7 @@ import AreaCondition from '../../models/areaCondition/index'
 import Invoice from '../../models/invoice/index'
 import mongoose from "mongoose";
 import luxon, { DateTime } from "luxon";
+import Usage from '../../models/usage';
 
 export const getCalculationList = (req: Request, res: Response) => {
   let list = req.body.list
@@ -19,9 +20,9 @@ export const getCalculationList = (req: Request, res: Response) => {
         })
         if (foundCondition != undefined) {
           foundCondition.conditions.forEach((item: any, j: number) => {
-            if(item.period == "รายไตรมาศ"){
+            if (item.period == "รายไตรมาศ") {
               areaConditions[x].conditions[j].period = "รายไตรมาส"
-              areaConditions[x].save().then((data:any)=>console.log("updated"))
+              areaConditions[x].save().then((data: any) => console.log("updated"))
             }
             let common = {
               j,
@@ -30,10 +31,10 @@ export const getCalculationList = (req: Request, res: Response) => {
               contractYear: foundCondition.contractYear,
               operationYear: foundCondition.operationYear,
               operationDate: foundCondition.operationDate,
-              period:item.period,
-              year:DateTime.fromJSDate(foundCondition.operationDate).plus({year:j}).toObject().year+543,
-              newConditionDate:DateTime.fromISO(item.operationDate),
-              test:foundCondition.operationYear < j
+              period: item.period,
+              year: DateTime.fromJSDate(foundCondition.operationDate).plus({ year: j }).toObject().year + 543,
+              newConditionDate: DateTime.fromISO(item.operationDate),
+              test: foundCondition.operationYear < j
             }
             if (foundCondition.operationYear <= j) {
               if (item.period == "รายไตรมาส" || item.period == "รายไตรมาศ") {
@@ -76,7 +77,7 @@ export const postCalculationList = (req: Request, res: Response) => {
   let quarter = req.body.search.quarter
   let month = req.body.search.month
   let area = req.body.search.area
-  let searchArea = area!=undefined?{_id:area}:undefined
+  let searchArea = area != undefined ? { _id: area } : undefined
   Area.find(searchArea).select("name _id").lean().then((data: any) => {
     AreaCondition.find().then((areaConditions: any) => {
       let prep: Array<any> = []
@@ -89,9 +90,9 @@ export const postCalculationList = (req: Request, res: Response) => {
         })
         if (foundCondition != undefined) {
           foundCondition.conditions.forEach((item: any, j: number) => {
-            if(item.period == "รายไตรมาศ"){
+            if (item.period == "รายไตรมาศ") {
               areaConditions[x].conditions[j].period = "รายไตรมาส"
-              areaConditions[x].save().then((data:any)=>console.log("updated"))
+              areaConditions[x].save().then((data: any) => console.log("updated"))
             }
             let common = {
               j,
@@ -100,10 +101,10 @@ export const postCalculationList = (req: Request, res: Response) => {
               contractYear: foundCondition.contractYear,
               operationYear: foundCondition.operationYear,
               operationDate: foundCondition.operationDate,
-              period:item.period,
-              year:DateTime.fromJSDate(foundCondition.operationDate).plus({year:j}).toObject().year+543,
-              newConditionDate:DateTime.fromISO(item.operationDate),
-              test:foundCondition.operationYear < j
+              period: item.period,
+              year: DateTime.fromJSDate(foundCondition.operationDate).plus({ year: j }).toObject().year + 543,
+              newConditionDate: DateTime.fromISO(item.operationDate),
+              test: foundCondition.operationYear < j
             }
             if (foundCondition.operationYear <= j) {
               if (item.period == "รายไตรมาส" || item.period == "รายไตรมาศ") {
@@ -134,10 +135,95 @@ export const postCalculationList = (req: Request, res: Response) => {
           });
         }
       });
-      if(year!=undefined) prep = prep.filter(el=>el.year==year)
-      if(month!=undefined) prep = prep.filter(el=>el.month==month)
-      if(quarter!=undefined) prep = prep.filter(el=>el.quarter==quarter)
+      if (year != undefined) prep = prep.filter(el => el.year == year)
+      if (month != undefined) prep = prep.filter(el => el.month == month)
+      if (quarter != undefined) prep = prep.filter(el => el.quarter == quarter)
       res.send(prep)
     })
   })
+}
+
+
+export const getCustomerList = (req: Request, res: Response) => {
+
+  let searchObj = req.body.search
+  let sort: any = req.body.sort;
+  let limit: number = parseInt(req.body.limit);
+  let skip: number = parseInt(req.body.skip);
+  console.log(searchObj)
+  Usage.aggregate(
+    [
+      {
+        $match: searchObj
+      },
+      {
+        $sort: {
+          year: 1,
+          month: 1
+        }
+      }, {
+        $group: {
+          _id: "$meter",
+          qty: {
+            $sum: { $toDouble: { $divide: ["$qty", 100] } }
+          },
+          amount: {
+            $sum: {
+              $toDouble:
+              {
+                $divide: [
+                  { $multiply: ["$qty", "$rate"] },
+                  100 * 100
+                ]
+              }
+            }
+          },
+          history: {
+            $addToSet:
+            {
+              name: "ค่าบริการ",
+              year: "$year",
+              month: "$month",
+              value: {
+                $toDouble:
+                {
+                  $divide: [
+                    { $multiply: ["$qty", "$rate"] },
+                    100 * 100
+                  ]
+                }
+              }
+            }
+          },
+          name: {
+            $first: "$name"
+          },
+          meter: {
+            $first: "$meter"
+          },
+          address: {
+            $first: "$address"
+          },
+        }
+      }, {
+        $sort: {
+          name: 1
+        }
+      }, { $skip: skip }, { $limit: limit }
+    ]
+  ).exec(function (error: Error, data: Array<any>) {
+    Usage.aggregate(
+      [
+        {
+          $match: searchObj
+        }, {
+          $group: {
+            _id: "$meter",
+          }
+        }
+      ]
+    ).exec(function (error2: Error, data2: Array<any>) {
+      res.send({docs:data,total:data2.length});
+    });
+  });
 }

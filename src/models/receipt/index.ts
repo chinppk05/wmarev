@@ -24,12 +24,15 @@ const schema = new Schema({
   rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   remainingAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  
+  debtText: String,
   debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+
   previousAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   paymentAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   invoiceAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-  
+
   invoiceNumber: String,
   invoice: { type: ObjectId, ref: 'Invoice' },
   usage: { type: ObjectId, ref: 'Usage' },
@@ -38,8 +41,9 @@ const schema = new Schema({
   month: Number,
   paidDate: Date,
   printDate: Date,
+  paymentDate: Date,
   isNextStage: Boolean,
-  isPrint: Boolean,
+  isPrint: { type: Boolean, default: false },
   calculationType: String,
   description: String,
   createdAt: Date,
@@ -61,6 +65,13 @@ schema.pre("save", async function (next: NextFunction) {
       next();
     }
   );
+});
+
+schema.virtual('taxDebt').get(function() {
+  return parseFloat((this.debtAmount*this.vatRate).toFixed(2))
+});
+schema.virtual('taxAmount').get(function() {
+  return parseFloat((this.qty*this.rate*this.vatRate).toFixed(2))
 });
 
 schema.set('toJSON', {

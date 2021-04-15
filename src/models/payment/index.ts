@@ -31,6 +31,10 @@ const schema = new Schema({
   rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   paymentAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+
+  debtText: String,
+  debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+
   paidDate: Date,
   printDate: Date,
   calculationType: String,
