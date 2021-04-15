@@ -235,7 +235,7 @@ let getPaymentDate = (str: string) => {
   var myRegexp = /(\d+)(.+?)(\d+)/g ///1-(.*?)\)/g;
   var match = myRegexp.exec(input);
   if (match != null) {
-    let dt = DateTime.fromObject({ year: parseInt(match[3]) + 2500, month: getMonth(match[2]), day: parseInt(match[1]) ?? 1 })
+    let dt = DateTime.fromObject({ year: parseInt(match[3]) + 2500 - 543, month: getMonth(match[2]), day: parseInt(match[1]) ?? 1 })
     return dt.toJSDate()
   }
   else
