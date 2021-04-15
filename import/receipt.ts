@@ -70,9 +70,11 @@ let savePayment = async () => {
         delete mongoose.models['Payment'];
         delete mongoose.connection.collections['payments'];
         delete mongoose.modelSchemas['Payment'];
-        setTimeout(() => {
-          savePayment()
-        }, 1);
+        Invoice.updateOne({ year: prepArray[i].year, month: prepArray[i].month, meter: prepArray[i].meter }, { $set: { isPaid: true, paidReceipt: prepArray[i].sequence } }).then(async (data: any) => {
+          setTimeout(() => {
+            savePayment()
+          }, 1);
+        })
       })
     })
   }

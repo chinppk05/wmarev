@@ -34,6 +34,7 @@ const schema = new Schema({
   isNextStage: Boolean,
   isPrint: { type: Boolean, default: false },
   isPaid: { type: Boolean, default: false },
+  paidReceipt: String,
   calculationType: String,
   createdAt: Date,
 
