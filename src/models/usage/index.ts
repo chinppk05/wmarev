@@ -34,6 +34,8 @@ const schema = new Schema({
   // isPrint: Boolean,
   calculationType: String,
   createdAt: Date,
+  notes:String,
+  ref:String
 });
 
 schema.pre("save", async function (next: NextFunction) {

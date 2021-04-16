@@ -12,6 +12,7 @@ const schema = new Schema({
   number: Number,
   sequence: String,
   meter: String,
+  status: String,
   category: String,
   categoryType: String,
   code: String,
@@ -43,6 +44,11 @@ const schema = new Schema({
   printDate: Date,
   paymentDate: Date,
   isNextStage: Boolean,
+
+  isRequested: { type: Boolean, default: false },
+  isApproved: { type: Boolean, default: false },
+  isSigned: { type: Boolean, default: false },
+
   isPrint: { type: Boolean, default: false },
   calculationType: String,
   description: String,

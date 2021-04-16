@@ -37,6 +37,8 @@ const schema = new Schema({
   paidReceipt: String,
   calculationType: String,
   createdAt: Date,
+  ref: String,
+  notes: String,
 
 })
 
@@ -52,6 +54,7 @@ schema.pre("save", async function (next: NextFunction) {
       else
         sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
       let recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this.year - 543 }).toJSDate()
+      console.log(sequence)
       Invoice.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
       next();
     }

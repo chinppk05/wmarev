@@ -79,6 +79,7 @@ const auth = require('./routers/auth')(app)
 const calculation = require('./routers/calculation')(app)
 const coverLetter = require('./routers/coverLetter')(app)
 const render = require('./routers/render')(app)
+const process = require('./routers/process')(app)
 
 const report = require('./routers/report')(app)
 
