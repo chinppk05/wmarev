@@ -59,8 +59,14 @@ schema.pre("save", async function (next: NextFunction) {
     (err: Error, doc: any) => {
       let sequence
       if (this.sequence) sequence = this.sequence
-      else
-        sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
+      else{
+        try {
+          sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
+        } catch (error) {
+          sequence = "error"
+        }
+      }
+        
       // console.log(this)
       let recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this.year - 543 }).toJSDate()
       Payment.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
