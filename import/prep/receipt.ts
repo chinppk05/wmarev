@@ -159,6 +159,7 @@ const moveFrom = "./excel";
                       prep.qty = parseInt(prep.qty)
                     }
                     if (prep.debtText == "0") prep.debtText = "-"
+                    prep.billAmout = prep.rate * prep.qty
                     prepArray.push(prep)
                   }
                 }

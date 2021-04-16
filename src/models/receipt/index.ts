@@ -26,6 +26,7 @@ const schema = new Schema({
   remainingAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   
+  billAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   debtText: String,
   debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
 
@@ -44,6 +45,7 @@ const schema = new Schema({
   printDate: Date,
   paymentDate: Date,
   isNextStage: Boolean,
+  
 
   isRequested: { type: Boolean, default: false },
   isApproved: { type: Boolean, default: false },
@@ -53,6 +55,11 @@ const schema = new Schema({
   calculationType: String,
   description: String,
   createdAt: Date,
+  isPaidOver:Boolean,
+  isPaidUnder:Boolean,
+  isPaidExact:Boolean,
+  notes:String,
+  ref:String
 })
 
 schema.pre("save", async function (next: NextFunction) {

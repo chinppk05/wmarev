@@ -192,8 +192,9 @@ export const postPaginate = (req: Request, res: Response) => {
         totalCount: data3.length,
         ids: data3.map((el: any) => el._id ?? ""),
         totalQty: data3.map((el: any) => el.qty ?? 0).reduce((a: number, b: number) => a + b, 0),
+        totalBill: data3.map((el: any) => el.billAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalAmount: data3.map((el: any) => el.totalAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
-        totalDebt: data3.map((el: any) => (el.totalAmount ?? 0) + (el.debtAmount ?? 0)).reduce((a: number, b: number) => a + b, 0)
+        totalDebt: data3.map((el: any) => (el.billAmount ?? 0) + (el.debtAmount ?? 0)).reduce((a: number, b: number) => a + b, 0)
       })
     })
   });

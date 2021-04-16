@@ -19,6 +19,9 @@ const schema = new Schema({
   category: String,
   categoryType: String,
 
+  invoice: { type: ObjectId, ref: 'Invoice' },
+  usage: { type: ObjectId, ref: 'Usage' },
+
   debtText: String,
   debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
 
@@ -27,7 +30,6 @@ const schema = new Schema({
   year: { type: Number, default: 0 },
   month: Number,
   area: { type: ObjectId, ref: "Contract" },
-  usage: { type: ObjectId, ref: "Usage" },
   condition: { type: ObjectId, ref: "Condition" },
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },

@@ -12,7 +12,6 @@ const schema = new Schema({
   time: Number,
   sequence: String,
   invoiceAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-  
   invoiceNumber: String,
   amount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   name: String,
@@ -35,6 +34,8 @@ const schema = new Schema({
   debtText: String,
   debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
 
+  billAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+
   paidDate: Date,
   printDate: Date,
   calculationType: String,
@@ -42,6 +43,11 @@ const schema = new Schema({
   createdAt: Date,
   year: Number,
   month: Number,
+  isPaidOver:Boolean,
+  isPaidUnder:Boolean,
+  isPaidExact:Boolean,
+  notes:String,
+  ref:String
 })
 
 schema.pre("save", async function (next: NextFunction) {
