@@ -65,14 +65,14 @@ let savePayment = async () => {
       else
         payment = new Payment({ ...prepArray[i], invoiceNumber: "notfound" })
       await payment.save().then(() => {
-        console.log(`${(data ?? { sequence: "notfound" }).sequence} ${prepArray[i].year} ${prepArray[i].month} /payments ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
-        i++
         delete mongoose.models['Payment'];
         delete mongoose.connection.collections['payments'];
         delete mongoose.modelSchemas['Payment'];
         Invoice.updateOne({ year: prepArray[i].year, month: prepArray[i].month, meter: prepArray[i].meter }, { $set: { isPaid: true, paidReceipt: prepArray[i].sequence } }).then(async (data: any) => {
           setTimeout(() => {
             savePayment()
+            console.log(`${(data ?? { sequence: "notfound" }).sequence} ${prepArray[i].year} ${prepArray[i].month} /payments ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+            i++
           }, 1);
         })
       })
