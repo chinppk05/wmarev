@@ -1,7 +1,7 @@
-import * as ctrl from "../../controllers/collectionInvoice"
-import {Express} from "express"
-let endpoint = "collectionInvoice"
-let endpoints = "collectionInvoices"
+import * as ctrl from "../../controllers/collectionType"
+import { Express } from "express"
+let endpoint = "collectionType"
+let endpoints = "collectionTypes"
 
 module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}/`, ctrl.create)

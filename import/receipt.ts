@@ -51,6 +51,7 @@ let prepArray: Array<any> = [];
     }
   })
   savePayment()
+  saveReceipt()
 })()
 var i = 0
 var j = 0
@@ -87,7 +88,7 @@ let savePayment = async () => {
     })
   }
   else {
-    saveReceipt()
+    // saveReceipt()
   }
 }
 let saveReceipt = async () => {
