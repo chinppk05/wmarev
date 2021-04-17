@@ -65,8 +65,8 @@ export const getCalculationList = (req: Request, res: Response) => {
           });
         }
       });
-
-      res.send(prep)
+      
+      res.send(data)
     })
   })
 }
@@ -77,6 +77,8 @@ export const postCalculationList = (req: Request, res: Response) => {
   let quarter = req.body.search.quarter
   let month = req.body.search.month
   let area = req.body.search.area
+  let limit = req.body.limit
+  let skip = req.body.skip
   let searchArea = area != undefined ? { _id: area } : undefined
   Area.find(searchArea).select("name _id").lean().then((data: any) => {
     AreaCondition.find().then((areaConditions: any) => {
@@ -104,7 +106,7 @@ export const postCalculationList = (req: Request, res: Response) => {
               period: item.period,
               year: DateTime.fromJSDate(foundCondition.operationDate).plus({ year: j }).toObject().year + 543,
               newConditionDate: DateTime.fromISO(item.operationDate),
-              test: foundCondition.operationYear < j
+              test: foundCondition.operationYear < j,
             }
             if (foundCondition.operationYear <= j) {
               if (item.period == "รายไตรมาส" || item.period == "รายไตรมาศ") {
@@ -138,7 +140,20 @@ export const postCalculationList = (req: Request, res: Response) => {
       if (year != undefined) prep = prep.filter(el => el.year == year)
       if (month != undefined) prep = prep.filter(el => el.month == month)
       if (quarter != undefined) prep = prep.filter(el => el.quarter == quarter)
-      res.send(prep)
+      
+      let filtered = prep.filter((el,i)=>{
+        // console.log(i,skip,limit)
+        if(i>skip){
+          if(i<=skip+limit){
+            return true
+          }
+        }
+        return false
+      })
+      res.send({
+        docs:filtered,
+        total:prep.length
+      })
     })
   })
 }

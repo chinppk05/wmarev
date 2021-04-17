@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+import { getDecimal, setDecimal } from "../../helpers/decimal"
+const Decimal = mongoose.Schema.Types.Decimal
 const mongoosePaginate = require("mongoose-paginate")
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
@@ -9,37 +11,47 @@ const schema = new Schema({
   contractYear: Number,
   calendarYear: Number,
   quarter: Number,
+  isKrob2: Boolean,
+  isKrob3: Boolean,
+  isKrob4: Boolean,
   ledgers: [
     {
       selected: Boolean,
       code: String,
       name: String,
-      totalAmount: Number,
+      totalAmount: { type: Number, default: 0 },
       category: String,
       months: [
         {
           month: Number,
           year: Number,
-          amount: Number,
+          amount: { type: Number, default: 0 },
         }
       ]
     }
   ],
-  SAOLedgers: [
+  endorsedLedgers: [
     {
       selected: Boolean,
       code: String,
       name: String,
-      totalAmount: Number,
+      totalAmount: { type: Number, default: 0 },
+      category: String,
       months: [
         {
           month: Number,
           year: Number,
-          amount: Number,
+          amount: { type: Number, default: 0 },
         }
       ]
     }
   ],
+
+  expenses: {
+    name: String,
+    amount: { type: Number, default: 0 },
+  },
+  areaTotalExpenses: Number,
 
   allocationPerUnit: Number,
   allocationCost: Number,
@@ -90,6 +102,12 @@ const schema = new Schema({
   createdIP: String,
   createdAt: Date,
 })
+
+// schema.set('toJSON', {
+//   getters: true,
+//   setters: true,
+// });
+
 schema.plugin(mongoosePaginate)
 const Calculation = mongoose.model("Calculation", schema)
 export default Calculation

@@ -49,13 +49,13 @@ export const getByField = (req: Request, res: Response) => {
   let search: any = {}
   search[field] = value
   DBModel.findOne(search).then(function (data: any) {
-    res.send(data)
+    res.send(JSON.parse(JSON.stringify(data)))
   })
 }
 
 export const postOne = (req: Request, res: Response) => {
   let search = req.body.search
-  DBModel.findOne(search).then(function (data: any) {
+  DBModel.findOne(search).lean().then(function (data: any) {
     res.send(data)
   })
 }
@@ -63,25 +63,8 @@ export const postOne = (req: Request, res: Response) => {
 export const update = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)
-  DBModel.findByIdAndUpdate(id, { ...req.body, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
+  DBModel.updateOne({ _id: id }, { ...req.body, modifiedAt:new Date(), $inc: { _v: 1 } }).then((data:any) => {
     res.send(data)
-    History.findOne({
-      name: "usages",
-      documentId: id,
-    }).sort("-version").then((latest: any) => {
-      let version = 1
-      // console.log(typeof latest,latest)
-      if (latest != null) version = latest.version + 1
-      History.create({
-        name: "usages",
-        documentId: id,
-        username: req.body.username,
-        version: version,
-        from: data,
-        to: req.body,
-        createdAt: new Date()
-      })
-    })
   })
 }
 
@@ -102,7 +85,7 @@ export const postPaginate = (req: Request, res: Response) => {
   let skip: number = parseInt(req.body.skip);
   DBModel.paginate(
     searchObj,
-    { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: true }
+    { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: false }
   ).then(function (data: Array<any>) {
     res.send(data);
   });
