@@ -79,7 +79,7 @@ let savePayment = async () => {
             // }, 1);
           })
         } catch (error) {
-          console.log("payment error")
+          console.log("payment error", error)
         }
       })
     })
