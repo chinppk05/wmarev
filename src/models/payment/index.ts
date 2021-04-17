@@ -43,11 +43,11 @@ const schema = new Schema({
   createdAt: Date,
   year: Number,
   month: Number,
-  isPaidOver:Boolean,
-  isPaidUnder:Boolean,
-  isPaidExact:Boolean,
-  notes:String,
-  ref:String
+  isPaidOver: Boolean,
+  isPaidUnder: Boolean,
+  isPaidExact: Boolean,
+  notes: String,
+  ref: String
 })
 
 schema.pre("save", async function (next: NextFunction) {
@@ -59,16 +59,21 @@ schema.pre("save", async function (next: NextFunction) {
     (err: Error, doc: any) => {
       let sequence
       if (this.sequence) sequence = this.sequence
-      else{
+      else {
         try {
           sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
         } catch (error) {
           sequence = "error"
         }
       }
-        
+
       // console.log(this)
-      let recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this.year - 543 }).toJSDate()
+      let recordDate
+      try {
+        recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this.year - 543 }).toJSDate()
+      } catch (error) {
+        recordDate = DateTime.fromObject({ day: 15, month: this.month, year: 2500 }).toJSDate()
+      }
       Payment.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
       next();
     }
