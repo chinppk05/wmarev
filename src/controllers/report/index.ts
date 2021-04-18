@@ -120,7 +120,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": 1,
         },
       },
-      { $limit: 12 },
+      { $limit: 24 },
     ]).exec()
   );
   promises.push(
@@ -144,7 +144,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": 1,
         },
       },
-      { $limit: 12 },
+      { $limit: 24 },
     ]).exec()
   );
   promises.push(
@@ -178,7 +178,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": -1,
         },
       },
-      { $limit: 12 },
+      { $limit: 24 },
     ]).exec()
   );
   promises.push(
@@ -224,7 +224,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": -1,
         },
       },
-      { $limit: 12 },
+      { $limit: 24 },
     ]).exec()
   );
   promises.push(
@@ -264,13 +264,19 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           },
         },
       },
-      { $limit: 12 },
+      {
+        $sort: {
+          "_id.year": -1,
+          "_id.month": -1,
+        },
+      },
+      { $limit: 24 },
     ]).exec()
   );
 
   Promise.all(promises).then((responses) => {
     res.send({
-      usages12mo: responses[0].map((el: any) => {
+      usages12mo: responses[0].slice().reverse().map((el: any) => {
         return {
           // name:`${el._id.year}/${el._id.month}`,
           name: DateTime.fromObject({
@@ -283,7 +289,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           value: parseFloat(el.sum),
         };
       }),
-      invoices12mo: responses[1].map((el: any) => {
+      invoices12mo: responses[1].slice().reverse().map((el: any) => {
         return {
           // name:`${el._id.year}/${el._id.month}`,
           name: DateTime.fromObject({
@@ -296,7 +302,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           value: parseFloat(el.sum),
         };
       }),
-      types12mo: responses[2].map((el: any) => {
+      types12mo: responses[2].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
             year: el._id.year - 543,
@@ -311,7 +317,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           total: parseFloat(el.total),
         };
       }),
-      amounts12mo: responses[3].map((el: any) => {
+      amounts12mo: responses[3].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
             year: el._id.year - 543,
@@ -326,7 +332,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           total: parseFloat(el.total),
         };
       }),
-      paid12mo: responses[4].map((el: any) => {
+      paid12mo: responses[4].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
             year: el._id.year - 543,
