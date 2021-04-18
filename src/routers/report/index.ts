@@ -19,8 +19,9 @@ module.exports = (app: Express) => {
   app.get(`/api/v1/${endpoint}-income-collectionstatus/`, ctrl.getCollectionStatus)
   app.get(`/api/v1/${endpoint}-income-collectionstatistic/`, ctrl.getCollectionStatistic)
   app.get(`/api/v1/${endpoint}-income-compareplanresult/`, ctrl.getComparePlanResult)
+  app.get(`/api/v1/${endpoint}-income-areamonthly/`, ctrl.getAreaMonthly)
   
-
+  
   
   
 }
