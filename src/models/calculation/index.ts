@@ -60,6 +60,12 @@ const schema = new Schema({
   areaExpenses: Number,
   totalExpenses: Number,
   totalIncome: Number,
+
+  contributionText:String,
+  contributionAmount:String,
+
+
+
   areaCost01: Number,
   areaCost02: Number,
   areaCost03: Number,
