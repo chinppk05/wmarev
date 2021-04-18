@@ -6,6 +6,82 @@ import Payment from '../../models/payment/index'
 import History from '../../models/history/index'
 import mongoose from "mongoose";
 import luxon, { DateTime } from "luxon";
+import Calculation from '../../models/calculation'
+import AreaCollection from '../../models/areaCollection'
+
+export const getCollectionStatus = (req: Request, res: Response) => {
+  Calculation.find({}).then((calculations: Array<any>) => {
+    AreaCollection.find({}).then((collections: Array<any>) => {
+      let totalIncome = calculations.map((el: any) => el.contributionAmount ?? 0).reduce((a: number, b: number) => a + b, 0)
+
+      let outstandingCollect = collections.filter(el => el.year < (new Date().getFullYear() + 543)).map((el: any) => el.amount ?? 0).reduce((a: number, b: number) => a + b, 0)
+      let totalCollect = collections.filter(el => el.year == (new Date().getFullYear() + 543)).map((el: any) => el.amount ?? 0).reduce((a: number, b: number) => a + b, 0)
+      let income = calculations.filter(el => el.calendarYear == (new Date().getFullYear() + 543)).map((el: any) => el.contributionAmount ?? 0).reduce((a: number, b: number) => a + b, 0)
+      let outstanding = calculations.filter(el => el.calendarYear < (new Date().getFullYear() + 543)).map((el: any) => el.contributionAmount ?? 0).reduce((a: number, b: number) => a + b, 0)
+      res.send({
+        outstanding: outstanding - outstandingCollect,
+        income: income,
+        totalIncome: totalIncome,
+        collected: totalCollect,
+      })
+    })
+  })
+}
+export const getCollectionStatistic = (req: Request, res: Response) => {
+  AreaCollection.aggregate([
+    {
+      $group: {
+        _id: "$year",
+        sum: {
+          $sum: "$amount"
+        },
+      }
+    }
+  ]).exec((error: Error, collections: Array<any>) => {
+    res.send(collections)
+  })
+}
+
+export const getComparePlanResult = (req: Request, res: Response) => {
+
+  Calculation.aggregate([
+    {
+      $group: {
+        _id: { year: "$calendarYear", quarter: "$quarter", month: { $month: "$createdAt" } },
+        sum: {
+          $sum: "$contributionAmount"
+        }
+      }
+    }
+  ]).exec((error: Error, calculations: Array<any>) => {
+
+    AreaCollection.aggregate([
+      {
+        $group: {
+          _id: { year: "$year", month: { $month: "$recordDate" }, recordYear: {$add:[{ $year: "$recordDate" },543]} },
+          sum: {
+            $sum: "$amount"
+          }
+        }
+      }
+    ]).exec((error: Error, collections: Array<any>) => {
+      res.send({ calculation: calculations, collection: collections })
+    })
+  })
+  // AreaCollection.aggregate([
+  //   {
+  //     $group: {
+  //       _id: "$year",
+  //       sum: {
+  //         $sum: "$amount"
+  //       }
+  //     }
+  //   }
+  // ]).exec((error: Error, collections: Array<any>) => {
+  //   res.send(collections)
+  // })
+}
+
 
 
 export const getCustomerHistory = (req: Request, res: Response) => {
@@ -51,9 +127,9 @@ export const getDebtByInvoice = (req: Request, res: Response) => {
           }
         })
         let { debtText, debtAmount } = display1(debtArray)
-        if(docs[i].debtAmount==undefined){
-            docs[i].debtText = debtText
-            docs[i].debtAmount = debtAmount
+        if (docs[i].debtAmount == undefined) {
+          docs[i].debtText = debtText
+          docs[i].debtAmount = debtAmount
         }
         docs[i].d0 = display0(debtArray)
         docs[i].debtArray = display2(debtArray)
@@ -157,7 +233,7 @@ export const getDebtByReceipt = (req: Request, res: Response) => {
         debtArray = debtArray.map((el: any) => {
           return {
             ...el,
-            dt: mo(el.year - 543 , el.month),
+            dt: mo(el.year - 543, el.month),
             year: el.year,
             month: el.month
           }

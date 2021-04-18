@@ -50,9 +50,21 @@ const schema = new Schema({
   expenses: [
     {
       name: String,
+      symbol: String,
       amount: { type: Number, default: 0 },
     },
   ],
+
+
+  modifications: [
+    {
+      name: String,
+      symbol: String,
+      amount: { type: Number, default: 0 },
+    },
+  ],
+
+
   areaTotalExpenses: Number,
 
   allocationPerUnit: Number,

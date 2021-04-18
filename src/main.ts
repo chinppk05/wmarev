@@ -81,6 +81,7 @@ const coverLetter = require('./routers/coverLetter')(app)
 const render = require('./routers/render')(app)
 const process = require('./routers/process')(app)
 
+const risk = require('./routers/risk')(app)
 const report = require('./routers/report')(app)
 
 app.get("/api/v1/", (req, res) => {
