@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('db');
+// var sqlite3 = require('sqlite3').verbose();
+// var db = new sqlite3.Database('db');
 import axios from "axios"
 import { DateTime } from "luxon"
 import Excel from "exceljs"
@@ -176,7 +176,7 @@ const moveFrom = "./excel";
     });
 
 
-    await workbook.xlsx.writeFile("result.xlsx");
+    await workbook.xlsx.writeFile("invoice.xlsx");
   }
   catch (e) {
     console.error("We've thrown! Whoops!", e);
