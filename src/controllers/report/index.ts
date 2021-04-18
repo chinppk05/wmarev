@@ -103,21 +103,247 @@ export const getComparePlanResult = (req: Request, res: Response) => {
 };
 
 export const getBillingDashboard = (req: Request, res: Response) => {
-  let promises:Array<Promise<any>> = []
-  promises.push(Usage.aggregate([]).exec())
+  let promises: Array<Promise<any>> = [];
+  promises.push(
+    Usage.aggregate([
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          sum: {
+            $sum: { $divide: ["$qty", 100] },
+          },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+      { $limit: 12 },
+    ]).exec()
+  );
+  promises.push(
+    Invoice.aggregate([
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          sum: {
+            $sum: {
+              $multiply: [
+                { $divide: ["$qty", 100] },
+                { $divide: ["$rate", 100] },
+              ],
+            },
+          },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+      { $limit: 12 },
+    ]).exec()
+  );
+  promises.push(
+    Invoice.aggregate([
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          category1: {
+            $sum: {
+              $cond: [{ $eq: ["$category", "1"] }, 1, 0],
+            },
+          },
+          category2: {
+            $sum: {
+              $cond: [{ $eq: ["$category", "2"] }, 1, 0],
+            },
+          },
+          category3: {
+            $sum: {
+              $cond: [{ $eq: ["$category", "3"] }, 1, 0],
+            },
+          },
+          total: {
+            $sum: 1
+          },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": -1,
+          "_id.month": -1,
+        },
+      },
+      { $limit: 12 },
+    ]).exec()
+  );
+  promises.push(
+    Invoice.aggregate([
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          category1: {
+            $sum: {
+              $cond: [
+                { $eq: ["$category", "1"] },
+                { $multiply: ["$qty", "$rate", 0.01, 0.01] },
+                0,
+              ],
+            },
+          },
+          category2: {
+            $sum: {
+              $cond: [
+                { $eq: ["$category", "2"] },
+                { $multiply: ["$qty", "$rate", 0.01, 0.01] },
+                0,
+              ],
+            },
+          },
+          category3: {
+            $sum: {
+              $cond: [
+                { $eq: ["$category", "3"] },
+                { $multiply: ["$qty", "$rate", 0.01, 0.01] },
+                0,
+              ],
+            },
+          },
+          total: {
+            $sum: { $multiply: ["$qty", "$rate", 0.01, 0.01] },
+          },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": -1,
+          "_id.month": -1,
+        },
+      },
+      { $limit: 12 },
+    ]).exec()
+  );
+  promises.push(
+    Payment.aggregate([
+      {
+        $group: {
+          _id: { year: "$year", month: "$month" },
+          category1: {
+            $sum: {
+              $cond: [
+                { $eq: ["$category", "1"] },
+                { $multiply: ["$qty", "$rate", 0.01, 0.01] },
+                0,
+              ],
+            },
+          },
+          category2: {
+            $sum: {
+              $cond: [
+                { $eq: ["$category", "2"] },
+                { $multiply: ["$qty", "$rate", 0.01, 0.01] },
+                0,
+              ],
+            },
+          },
+          category3: {
+            $sum: {
+              $cond: [
+                { $eq: ["$category", "3"] },
+                { $multiply: ["$qty", "$rate", 0.01, 0.01] },
+                0,
+              ],
+            },
+          },
+          total: {
+            $sum: { $multiply: ["$qty", "$rate", 0.01, 0.01] },
+          },
+        },
+      },
+      { $limit: 12 },
+    ]).exec()
+  );
 
-  Promise.all(promises).then(responses=>{
-    console.log(responses[0])
+  Promise.all(promises).then((responses) => {
     res.send({
-      usages12mo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      type1_12mo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      type2_12mo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      type3_12mo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      invoice12mo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      paid12mo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      usages12mo: responses[0].map((el: any) => {
+        return {
+          // name:`${el._id.year}/${el._id.month}`,
+          name: DateTime.fromObject({
+            year: el._id.year - 543,
+            month: el._id.month,
+          })
+            .reconfigure({ outputCalendar: "buddhist" })
+            .setLocale("th")
+            .toFormat("LLLyy"),
+          value: parseFloat(el.sum),
+        };
+      }),
+      invoices12mo: responses[1].map((el: any) => {
+        return {
+          // name:`${el._id.year}/${el._id.month}`,
+          name: DateTime.fromObject({
+            year: el._id.year - 543,
+            month: el._id.month,
+          })
+            .reconfigure({ outputCalendar: "buddhist" })
+            .setLocale("th")
+            .toFormat("LLLyy"),
+          value: parseFloat(el.sum),
+        };
+      }),
+      types12mo: responses[2].map((el: any) => {
+        return {
+          name: DateTime.fromObject({
+            year: el._id.year - 543,
+            month: el._id.month,
+          })
+            .reconfigure({ outputCalendar: "buddhist" })
+            .setLocale("th")
+            .toFormat("LLLyy"),
+          category1: el.category1,
+          category2: el.category2,
+          category3: el.category3,
+          total: parseFloat(el.total),
+        };
+      }),
+      amounts12mo: responses[3].map((el: any) => {
+        return {
+          name: DateTime.fromObject({
+            year: el._id.year - 543,
+            month: el._id.month,
+          })
+            .reconfigure({ outputCalendar: "buddhist" })
+            .setLocale("th")
+            .toFormat("LLLyy"),
+          category1: parseFloat(el.category1),
+          category2: parseFloat(el.category2),
+          category3: parseFloat(el.category3),
+          total: parseFloat(el.total),
+        };
+      }),
+      paid12mo: responses[4].map((el: any) => {
+        return {
+          name: DateTime.fromObject({
+            year: el._id.year - 543,
+            month: el._id.month,
+          })
+            .reconfigure({ outputCalendar: "buddhist" })
+            .setLocale("th")
+            .toFormat("LLLyy"),
+          category1: parseFloat(el.category1),
+          category2: parseFloat(el.category2),
+          category3: parseFloat(el.category3),
+          total: parseFloat(el.total),
+        };
+      }),
       customer12mo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     });
-  })
+  });
 };
 
 export const getCustomerHistory = (req: Request, res: Response) => {
