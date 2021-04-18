@@ -62,7 +62,7 @@ const schema = new Schema({
   totalIncome: Number,
 
   contributionText:String,
-  contributionAmount:String,
+  contributionAmount:Number,
 
 
 
