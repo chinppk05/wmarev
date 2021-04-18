@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
-import { getDecimal, setDecimal } from "../../helpers/decimal"
-const Decimal = mongoose.Schema.Types.Decimal
-const mongoosePaginate = require("mongoose-paginate")
-const Schema = mongoose.Schema
-const ObjectId = Schema.Types.ObjectId
+const mongoose = require("mongoose");
+import { getDecimal, setDecimal } from "../../helpers/decimal";
+const Decimal = mongoose.Schema.Types.Decimal;
+const mongoosePaginate = require("mongoose-paginate");
+const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   area: { type: ObjectId, ref: "area" },
   areaCondition: { type: ObjectId, ref: "areaCondition" },
@@ -26,9 +26,9 @@ const schema = new Schema({
           month: Number,
           year: Number,
           amount: { type: Number, default: 0 },
-        }
-      ]
-    }
+        },
+      ],
+    },
   ],
   endorsedLedgers: [
     {
@@ -42,15 +42,17 @@ const schema = new Schema({
           month: Number,
           year: Number,
           amount: { type: Number, default: 0 },
-        }
-      ]
-    }
+        },
+      ],
+    },
   ],
 
-  expenses: {
-    name: String,
-    amount: { type: Number, default: 0 },
-  },
+  expenses: [
+    {
+      name: String,
+      amount: { type: Number, default: 0 },
+    },
+  ],
   areaTotalExpenses: Number,
 
   allocationPerUnit: Number,
@@ -61,10 +63,8 @@ const schema = new Schema({
   totalExpenses: Number,
   totalIncome: Number,
 
-  contributionText:String,
-  contributionAmount:Number,
-
-
+  contributionText: String,
+  contributionAmount: Number,
 
   areaCost01: Number,
   areaCost02: Number,
@@ -107,16 +107,13 @@ const schema = new Schema({
 
   createdIP: String,
   createdAt: Date,
-})
+});
 
 // schema.set('toJSON', {
 //   getters: true,
 //   setters: true,
 // });
 
-schema.plugin(mongoosePaginate)
-const Calculation = mongoose.model("Calculation", schema)
-export default Calculation
-
-
-
+schema.plugin(mongoosePaginate);
+const Calculation = mongoose.model("Calculation", schema);
+export default Calculation;
