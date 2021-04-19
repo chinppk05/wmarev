@@ -125,7 +125,6 @@ export const getAreaMonthly = (req: Request, res: Response) => {
   })
 };
 
-
 export const getBillingDashboard = (req: Request, res: Response) => {
   let promises: Array<Promise<any>> = [];
   promises.push(
@@ -406,6 +405,7 @@ export const getDebtByMeter = (req: Request, res: Response) => {
   Invoice.find({ _id: { $in: list } });
   res.send({});
 };
+
 export const getDebtByInvoice = (req: Request, res: Response) => {
   let list = req.body.list;
   let sort = req.body.sort;
@@ -513,7 +513,6 @@ export const getCustomerLatest = (req: Request, res: Response) => {
   let sort = req.body.sort;
   Invoice.findOne(search)
     .sort(sort)
-    .lean()
     .then((doc: any) => {
       Invoice.find({ meter: doc.meter, isPaid: false })
         .lean()
