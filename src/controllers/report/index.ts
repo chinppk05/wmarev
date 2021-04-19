@@ -515,7 +515,6 @@ export const getCustomerLatest = (req: Request, res: Response) => {
     .sort(sort)
     .then((doc: any) => {
       Invoice.find({ meter: doc.meter, isPaid: false })
-        .lean()
         .then((debtArray: any) => {
           debtArray = debtArray.map((el: any) => {
             return {
