@@ -28,8 +28,10 @@ export const createInvoice = (req: Request, res: Response) => {
         let resolved = values.map((element, i) => {
           let usage = usages[i]
           findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
+          let amount = usage.qty * usage.rate
+          
           let result = {
-            ...usage, ref: "processed", usage: usage._id, _id: undefined, status: "สร้างใหม่", totalAmount: usage.qty * usage.rate, debtText: display0(debt[i]).debtText, debtAmount: display0(debt[i]).debtAmount
+            ...usage, ref: "processed", usage: usage._id, _id: undefined, status: "สร้างใหม่", totalAmount: amount, debtText: display0(debt[i]).debtText, debtAmount: display0(debt[i]).debtAmount
           }
           delete result.sequence
           return result
