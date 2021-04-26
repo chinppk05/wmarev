@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 // const express = require('express')
 import multer from "multer"
-import express from "express"
+import express from "express" 
 import { DateTime } from "luxon"
 import passport from "passport";
 import passportLocal from "passport-local";
@@ -84,11 +84,11 @@ const process = require('./routers/process')(app)
 const risk = require('./routers/risk')(app)
 const report = require('./routers/report')(app)
 
-app.get("/api/v1/", (req, res) => {
+app.get("/api/v1/", (req:any, res:any) => {
   res.send("Welcome to WMA201AM1 API Server!");
 });
 
-app.post('/api/v1/upload', upload.single('file'), function (req, res, next) {
+app.post('/api/v1/upload', upload.single('file'), function (req:any, res:any, next:any) {
   res.send({
     status: 'success',
     timestamp: new Date(),
