@@ -98,7 +98,7 @@ const moveFrom = "./excel";
                   if (t === "รวมภาษี 7% แล้ว" || t === "ยอดเงินที่ค้าง" || t === "ที่ค้าง" || t === "ชำระยอดเงินที่ค้าง") mapper[6] = colNumber
                   if (t === "รับจริง" && colNumber < 19) mapper[7] = colNumber
                   if (t === "วันที่ชำระเงิน") mapper[8] = colNumber
-
+                  if (t === "ตามใบแจ้งหนี้") mapper[9] = colNumber
                 }
               });
               headerChecker.push(tmp)
@@ -160,6 +160,13 @@ const moveFrom = "./excel";
                     }
                     if (prep.debtText == "0") prep.debtText = "-"
                     prep.billAmout = prep.rate * prep.qty
+
+                    if(mapper[9]!=undefined){
+                      prep.invoiceAmount = row.getCell(mapper[9]).text
+                    }else{
+                      prep.invoiceAmount = prep.rate * prep.qty
+                    }
+
                     prepArray.push(prep)
                   }
                 }
@@ -197,6 +204,7 @@ const moveFrom = "./excel";
       { header: 'Category', key: 'category', width: 10 },
       { header: 'CategoryType', key: 'categoryType', width: 10 },
       { header: 'CalculationType', key: 'calculationType', width: 10 },
+      { header: 'InvoiceAmount(ตามใบแจ้งหนี้)', key: 'invoiceAmount', width: 10 },
     ];
     sheet1.autoFilter = {
       from: 'A1',
