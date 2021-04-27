@@ -193,6 +193,13 @@ export const postPaginate = (req: Request, res: Response) => {
         ids: data3.map((el: any) => el._id ?? ""),
         totalQty: data3.map((el: any) => el.qty ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalBill: data3.map((el: any) => el.billAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
+        totalTax: data3.map((el: any) => {
+          let amount = (el.qty * el.rate * 0.07)
+          let calc = Math.floor(amount * 100) / 100
+          let calc2 = parseFloat(calc.toFixed(2))
+          return calc2
+        }).reduce((a: number, b: number) => a + b, 0),
+        
         totalAmount: data3.map((el: any) => {
           if(el.calculationType=="บาท/ลบ.ม.")
             return ((el.qty ?? 0) * (el.rate ?? 0)) * ( 1 + (el.vatRate ?? 0) )
