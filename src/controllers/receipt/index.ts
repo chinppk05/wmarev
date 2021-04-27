@@ -138,7 +138,14 @@ export const postPaginate = (req: Request, res: Response) => {
         totalQty: data3.map((el: any) => el.qty ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalAmount: data3.map((el: any) => el.invoiceAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalPayment: data3.map((el: any) => el.paymentAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
-        totalDebt: data3.map((el: any) => el.debtAmount ?? 0).reduce((a: number, b: number) => a + b, 0)
+        totalDebt: data3.map((el: any) => el.debtAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
+        totalTax: data3.map((el: any) => {
+          let amount = (el.qty * el.rate * 0.07)
+          let calc = Math.floor(amount * 100) / 100
+          let calc2 = parseFloat(calc.toFixed(2))
+          return calc2
+        }).reduce((a: number, b: number) => a + b, 0),
+        
       })
     })
   });
