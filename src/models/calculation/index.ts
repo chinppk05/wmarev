@@ -62,6 +62,7 @@ const schema = new Schema({
       name: String,
       symbol: String,
       amount: { type: Number, default: 0 },
+      eAmount: { type: Number, default: 0 },
     },
   ],
 
