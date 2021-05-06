@@ -52,6 +52,7 @@ const schema = new Schema({
       name: String,
       symbol: String,
       amount: { type: Number, default: 0 },
+      eAmount: { type: Number, default: 0 },
     },
   ],
 
@@ -83,7 +84,16 @@ const schema = new Schema({
   eAllocationPerUnit: Number,
   eAllocationCost: Number,
   eWmaExpenses: Number,
-  
+  eAreaExpenses: Number,
+  eTotalExpenses: Number,
+  eTotalIncome: Number,
+
+  eAreaCost01: Number,
+  eAreaCost02: Number,
+  eAreaCost03: Number,
+  eIncome01: Number,
+  eIncome02: Number,
+
 
   areaCost01: Number,
   areaCost02: Number,
