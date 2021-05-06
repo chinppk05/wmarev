@@ -78,6 +78,13 @@ const schema = new Schema({
   contributionText: String,
   contributionAmount: Number,
 
+  //สตง.รับรอง
+  eTreatmentQty: Number,
+  eAllocationPerUnit: Number,
+  eAllocationCost: Number,
+  eWmaExpenses: Number,
+  
+
   areaCost01: Number,
   areaCost02: Number,
   areaCost03: Number,
