@@ -80,6 +80,7 @@ const schema = new Schema({
   contributionAmount: Number,
 
   //สตง.รับรอง
+  eContributionAmount: Number,
   eTreatmentQty: Number,
   eAllocationPerUnit: Number,
   eAllocationCost: Number,
