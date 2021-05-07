@@ -93,7 +93,7 @@ export const postPaginate = (req: Request, res: Response) => {
     { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: false }
   ).then(function (data: any) {
     let docs = JSON.parse(JSON.stringify(data.docs))
-    Invoice.find({meter:{$in:docs.map((d:any)=>d.meter)}})
+    Invoice.find({year:searchObj.year, month:searchObj.month, meter:{$in:docs.map((d:any)=>d.meter)}})
       .then(function (invoices: Array<any>) {
         console.timeEnd("paginateInit")
         console.time("paginateCalcualtion")
