@@ -87,6 +87,7 @@ export const postPaginate = (req: Request, res: Response) => {
   let populate: any = req.body.populate;
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
+  console.time("paginateInit")
   DBModel.paginate(
     searchObj,
     { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: false }
@@ -94,6 +95,8 @@ export const postPaginate = (req: Request, res: Response) => {
     let docs = JSON.parse(JSON.stringify(data.docs))
     Invoice.find({meter:{$in:docs.map((d:any)=>d.meter)}})
       .then(function (invoices: Array<any>) {
+        console.timeEnd("paginateInit")
+        console.time("paginateCalcualtion")
         docs.forEach((us:any,i:number)=>{
           let found = invoices.find(inv=>{
             return (inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter)
@@ -110,7 +113,10 @@ export const postPaginate = (req: Request, res: Response) => {
             docs[i].isPrint = false
           }
         })
+        console.timeEnd("paginateCalcualtion")
+        console.time("paginateFinal")
         DBModel.find(searchObj).then((data2:any)=>{
+          console.timeEnd("paginateFinal")
           res.send({
             docs:docs,
             total:data.total,
