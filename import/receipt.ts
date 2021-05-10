@@ -37,13 +37,12 @@ let prepArray: Array<any> = [];
         debtAmount: row.getCell("L").value,
         vatRate: row.getCell("M").value,
         totalAmount: row.getCell("N").value,
-        invoiceAmount: (row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),
         paymentAmount: row.getCell("O").value,
         paymentDate: row.getCell("P").value,
         category: row.getCell("Q").value,
         categoryType: row.getCell("R").value,
         calculationType: row.getCell("S").value,
-        invoiceNumber: row.getCell("T").value,
+        invoiceAmount: row.getCell("T").value, // invoiceAmount: (row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),
         code: "01-kb",
         isNextStage: true, isPrint: true
       })
