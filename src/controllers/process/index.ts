@@ -65,7 +65,7 @@ export const createInvoice = (req: Request, res: Response) => {
 export const printInvoice = async (req: Request, res: Response) => {
   let list = req.body.list
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  await Invoice.updateMany({ _id: { $in: list } }, { $set: { isPrint: true, isNextStage: true } }).exec()
+  await Invoice.updateMany({ _id: { $in: list } }, { $set: { isPrint: true, isNextStage: true, printDate:new Date() } }).exec()
 
   let searchObj = { _id: { $in: list } };
   let sort: any = req.body.sort;
@@ -84,7 +84,7 @@ export const printInvoice = async (req: Request, res: Response) => {
     Invoice.find(searchObj).then((data2: any) => {
       let data3 = JSON.parse(JSON.stringify(data2))
       let usages = docs.map((el: any) => el.usage)
-      Usage.updateMany({ _id: { $in: usages } }, { $set: { isPrint: true, isNextStage: true } }).then(() => {
+      Usage.updateMany({ _id: { $in: usages } }, { $set: { isPrint: true, isNextStage: true, printDate:new Date() } }).then(() => {
         res.send({
           docs: docs,
           total: data.total,
