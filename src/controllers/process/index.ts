@@ -41,6 +41,7 @@ export const createInvoice = (req: Request, res: Response) => {
             if (element != undefined) {
               let prep = resolved.map(el => {
                 delete el._id
+                el.createdAt = new Date()
                 return el
               })
               actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec())
