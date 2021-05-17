@@ -46,6 +46,7 @@ const schema = new Schema({
   isPaidOver: Boolean,
   isPaidUnder: Boolean,
   isPaidExact: Boolean,
+  isCut: Boolean,
   notes: String,
   ref: String
 })
