@@ -1,15 +1,18 @@
 import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/payment/index'
 import mongoose from "mongoose";
+import Invoice from '../../models/invoice';
 
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  const newObj:any = new DBModel(req.body);
-  newObj.createdAt = new Date();
-  newObj.modifiedAt = new Date();
-  newObj.createdIP = ip;
-  newObj.save().then((document: any) => {
-    res.send(document)
+  Invoice.findOne({sequence:req.body.invoiceNumber}).then((data:any)=>{
+    const newObj:any = new DBModel({...data,...req.body});
+    newObj.createdAt = new Date();
+    newObj.modifiedAt = new Date();
+    newObj.createdIP = ip;
+    newObj.save().then((document: any) => {
+      res.send(document)
+    })
   })
 }
 
