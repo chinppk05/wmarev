@@ -32,6 +32,7 @@ const schema = new Schema({
   area: { type: ObjectId, ref: "Contract" },
   condition: { type: ObjectId, ref: "Condition" },
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  invoiceAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   isNextStage: Boolean,
   isPrint: { type: Boolean, default: false },
