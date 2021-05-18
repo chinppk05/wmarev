@@ -33,7 +33,7 @@ export const createInvoice = (req: Request, res: Response) => {
           let result = {
             ...usage, ref: "processed", usage: usage._id, _id: undefined, status: "สร้างใหม่", totalAmount: amount, debtText: display0(debt[i]).debtText, debtAmount: display0(debt[i]).debtAmount
           }
-          result.invoiceAmount = result.debtAmount + result.totalAmount
+          result.invoiceAmount = 99//result.debtAmount + result.totalAmount
           delete result.sequence
           return result
         });
