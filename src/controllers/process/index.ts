@@ -35,6 +35,7 @@ export const createInvoice = (req: Request, res: Response) => {
           }
           result.invoiceAmount = 99//result.debtAmount + result.totalAmount
           delete result.sequence
+          console.log(result)
           return result
         });
         Promise.all(findExisted).then(invoices => {
