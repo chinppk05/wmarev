@@ -31,7 +31,7 @@ export const createInvoice = (req: Request, res: Response) => {
           let amount = usage.qty * usage.rate
           
           let result = {
-            ...usage, ref: "processed", usage: usage._id, _id: undefined, status: "สร้างใหม่", totalAmount: amount, debtText: display0(debt[i]).debtText, debtAmount: display0(debt[i]).debtAmount
+            ...usage, ref: "processed", usage: usage._id, _id: undefined, status: "สร้างใหม่", totalAmount: amount,vatRate:0.07, debtText: display0(debt[i]).debtText, debtAmount: display0(debt[i]).debtAmount
           }
           result.invoiceAmount = result.debtAmount + (result.totalAmount * ( 1 + (result.vatRate ?? 0) ))
           delete result.sequence
