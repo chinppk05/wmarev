@@ -148,8 +148,8 @@ export const postCalculationList = (req: Request, res: Response) => {
       console.log("3",prep.length)
       let filtered = prep.filter((el,i)=>{
         // console.log(i,skip,limit)
-        if(i>skip){
-          if(i<=skip+limit){
+        if(i>=skip){
+          if(i<skip+limit){
             return true
           }
         }
