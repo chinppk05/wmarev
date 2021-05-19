@@ -91,8 +91,9 @@ export const postCalculationList = (req: Request, res: Response) => {
           return el.area.toString() === element._id.toString()
         })
         if (foundCondition != undefined) {
-          console.log("foundCondition.conditions.length",foundCondition.conditions.length)
+          
           foundCondition.conditions.forEach((item: any, j: number) => {
+            console.log("j",j)
             if (item.period == "รายไตรมาส") {
               areaConditions[x].conditions[j].period = "รายไตรมาส"
               areaConditions[x].save().then((data: any) => console.log("updated"))
@@ -110,6 +111,7 @@ export const postCalculationList = (req: Request, res: Response) => {
               test: foundCondition.operationYear < j,
             }
             if (foundCondition.operationYear <= j) {
+              console.log("j combined",j)
               if (item.period == "รายไตรมาส" || item.period == "รายไตรมาส") {
                 prep.push({
                   ...common,
@@ -129,6 +131,7 @@ export const postCalculationList = (req: Request, res: Response) => {
                 })
               }
               else {
+                console.log("j year",j)
                 prep.push({
                   ...common,
                   quarter: 0
