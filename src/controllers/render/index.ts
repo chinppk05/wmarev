@@ -137,7 +137,7 @@ export const postCalculationList = (req: Request, res: Response) => {
           });
         }
       });
-      // if (year != undefined) prep = prep.filter(el => el.year == year)
+      if (year != undefined) prep = prep.filter(el => el.year == year)
       // if (month != undefined) prep = prep.filter(el => el.month == month)
       // if (quarter != undefined) prep = prep.filter(el => el.quarter == quarter)
       console.log(prep)
