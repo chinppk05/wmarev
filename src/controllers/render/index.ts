@@ -111,7 +111,6 @@ export const postCalculationList = (req: Request, res: Response) => {
               test: foundCondition.operationYear < j,
             }
             if (foundCondition.operationYear <= j) { //TODO: เปลี่ยนจาก foreach ไปเป็น for เพื่อแก้ไข offset ของ contratYear <> j
-              console.log("j combined",j)
               if (item.period == "รายไตรมาส" || item.period == "รายไตรมาส") {
                 prep.push({
                   ...common,
@@ -140,15 +139,10 @@ export const postCalculationList = (req: Request, res: Response) => {
           }
         }
       });
-      console.log("0",prep.length)
       if (year != undefined) prep = prep.filter(el => el.year == year)
-      console.log("1",prep.length)
       if (month != undefined) prep = prep.filter(el => el.month == month)
-      console.log("2",prep.length)
       if (quarter != undefined) prep = prep.filter(el => el.quarter == quarter)
-      console.log("3",prep.length)
       let filtered = prep.filter((el,i)=>{
-        // console.log(i,skip,limit)
         if(i>=skip){
           if(i<skip+limit){
             return true
@@ -156,7 +150,6 @@ export const postCalculationList = (req: Request, res: Response) => {
         }
         return false
       })
-      console.log("4",filtered.length)
       res.send({
         docs:filtered,
         total:prep.length
