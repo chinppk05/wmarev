@@ -91,8 +91,8 @@ export const postCalculationList = (req: Request, res: Response) => {
           return el.area.toString() === element._id.toString()
         })
         if (foundCondition != undefined) {
-          for (let j = 0; j < foundCondition.conditions.length; j++) {
-            const item = foundCondition.conditions[j];
+          for (let j = 1; j < foundCondition.conditions.length+1; j++) {
+            const item = foundCondition.conditions[j-1];
             console.log("j",j)
             if (item.period == "รายไตรมาส") {
               areaConditions[x].conditions[j].period = "รายไตรมาส"
