@@ -131,11 +131,11 @@ export const postCalculationList = (req: Request, res: Response) => {
                 })
               }
               else {
-                console.log("j year",j)
                 prep.push({
                   ...common,
                   quarter: 0
                 })
+                console.log("j year + prep",j,prep.length)
               }
             }
           });
