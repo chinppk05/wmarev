@@ -91,8 +91,8 @@ export const postCalculationList = (req: Request, res: Response) => {
           return el.area.toString() === element._id.toString()
         })
         if (foundCondition != undefined) {
-          
-          foundCondition.conditions.forEach((item: any, j: number) => {
+          for (let index = 0; index < foundCondition.conditions.length; index++) {
+            const element = foundCondition.conditions[index];
             console.log("j",j)
             if (item.period == "รายไตรมาส") {
               areaConditions[x].conditions[j].period = "รายไตรมาส"
@@ -110,7 +110,7 @@ export const postCalculationList = (req: Request, res: Response) => {
               newConditionDate: DateTime.fromISO(item.operationDate),
               test: foundCondition.operationYear < j,
             }
-            if (foundCondition.operationYear + 1 <= j) { //TODO: เปลี่ยนจาก foreach ไปเป็น for เพื่อแก้ไข offset ของ contratYear <> j
+            if (foundCondition.operationYear - 1 <= j) { //TODO: เปลี่ยนจาก foreach ไปเป็น for เพื่อแก้ไข offset ของ contratYear <> j
               console.log("j combined",j)
               if (item.period == "รายไตรมาส" || item.period == "รายไตรมาส") {
                 prep.push({
@@ -138,7 +138,7 @@ export const postCalculationList = (req: Request, res: Response) => {
                 console.log("j year + prep",j,prep.length)
               }
             }
-          });
+          }
         }
       });
       console.log("0",prep.length)
