@@ -138,12 +138,14 @@ export const postCalculationList = (req: Request, res: Response) => {
         }
       });
       if (year != undefined) prep = prep.filter(el => {
-        console.log("year",el.year,year)
+        console.log("year",el.year,year,el.year==year)
         return el.year == year
       })
+      console.log("1",prep.length)
       if (month != undefined) prep = prep.filter(el => el.month == month)
+      console.log("2",prep.length)
       if (quarter != undefined) prep = prep.filter(el => el.quarter == quarter)
-      console.log(prep)
+      console.log("3",prep.length)
       let filtered = prep.filter((el,i)=>{
         // console.log(i,skip,limit)
         if(i>skip){
@@ -153,6 +155,7 @@ export const postCalculationList = (req: Request, res: Response) => {
         }
         return false
       })
+      console.log("4",filtered.length)
       res.send({
         docs:filtered,
         total:prep.length
