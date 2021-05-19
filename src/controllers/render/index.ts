@@ -110,7 +110,7 @@ export const postCalculationList = (req: Request, res: Response) => {
               newConditionDate: DateTime.fromISO(item.operationDate),
               test: foundCondition.operationYear < j,
             }
-            if (foundCondition.operationYear <= j) {
+            if (foundCondition.operationYear + 1 <= j) { //TODO: เปลี่ยนจาก foreach ไปเป็น for เพื่อแก้ไข offset ของ contratYear <> j
               console.log("j combined",j)
               if (item.period == "รายไตรมาส" || item.period == "รายไตรมาส") {
                 prep.push({
