@@ -141,10 +141,8 @@ export const postCalculationList = (req: Request, res: Response) => {
           });
         }
       });
-      if (year != undefined) prep = prep.filter(el => {
-        console.log("year",el.year,year,el.year==year)
-        return el.year == year
-      })
+      console.log("0",prep.length)
+      if (year != undefined) prep = prep.filter(el => el.year == year)
       console.log("1",prep.length)
       if (month != undefined) prep = prep.filter(el => el.month == month)
       console.log("2",prep.length)
