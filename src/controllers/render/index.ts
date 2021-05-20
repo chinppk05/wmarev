@@ -96,7 +96,7 @@ export const postCalculationList = (req: Request, res: Response) => {
         if (foundCondition != undefined) {
           for (let j = 1; j < foundCondition.conditions.length+1; j++) {
             const item = foundCondition.conditions[j-1];
-            console.log("j",j)
+            // console.log("j",j)
             // if (item.period == "รายไตรมาส") {
             //   areaConditions[x].conditions[j-1].period = "รายไตรมาส"
             //   areaConditions[x].save().then((data: any) => console.log("updated"))
@@ -167,8 +167,8 @@ export const postCalculationList = (req: Request, res: Response) => {
       filtered = filtered.map(el=>{
         return {
           calculations:calculations.filter((c:any)=>{
-            console.log(c.area == el.area,c.calendarYear == el.year,c.quarter == el.quarter)
-            console.log(c.area,el.area,c.calendarYear,el.year,c.quarter,el.quarter)
+            // console.log(c.area == el.area,c.calendarYear == el.year,c.quarter == el.quarter)
+            // console.log(c.area,el.area,c.calendarYear,el.year,c.quarter,el.quarter)
             return c.area.toString() === el.area.toString() && c.calendarYear == el.year && c.quarter == el.quarter
           }),
           ...el
