@@ -97,10 +97,10 @@ export const postCalculationList = (req: Request, res: Response) => {
           for (let j = 1; j < foundCondition.conditions.length+1; j++) {
             const item = foundCondition.conditions[j-1];
             console.log("j",j)
-            if (item.period == "รายไตรมาส") {
-              areaConditions[x].conditions[j-1].period = "รายไตรมาส"
-              areaConditions[x].save().then((data: any) => console.log("updated"))
-            }
+            // if (item.period == "รายไตรมาส") {
+            //   areaConditions[x].conditions[j-1].period = "รายไตรมาส"
+            //   areaConditions[x].save().then((data: any) => console.log("updated"))
+            // }
             let common = {
               j,
               area: element._id,
