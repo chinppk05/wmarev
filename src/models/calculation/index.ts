@@ -65,7 +65,7 @@ const schema = new Schema({
       eAmount: { type: Number, default: 0 },
     },
   ],
-
+  qtyYear:String,
 
   areaTotalExpenses: Number,
 
