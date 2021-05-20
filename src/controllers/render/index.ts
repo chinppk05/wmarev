@@ -5,6 +5,9 @@ import Invoice from '../../models/invoice/index'
 import mongoose from "mongoose";
 import luxon, { DateTime } from "luxon";
 import Usage from '../../models/usage';
+import Calculation from '../../models/calculation';
+import e from 'express';
+import { filter } from 'gulp-typescript';
 
 export const getCalculationList = (req: Request, res: Response) => {
   let list = req.body.list
@@ -81,7 +84,7 @@ export const postCalculationList = (req: Request, res: Response) => {
   let skip = req.body.skip
   let searchArea = area != undefined ? { _id: area } : undefined
   Area.find(searchArea).select("name _id").lean().then((data: any) => {
-    AreaCondition.find().then((areaConditions: any) => {
+    AreaCondition.find().then(async (areaConditions: any) => {
       let prep: Array<any> = []
       data.forEach((element: any, i: number) => {
         let foundCondition = areaConditions.find((el: any) => {
@@ -149,6 +152,24 @@ export const postCalculationList = (req: Request, res: Response) => {
           }
         }
         return false
+      })
+
+      let calculations = await Calculation.find({
+        $or:filtered.map(el=>{
+          return {
+            area:el.area,
+            year:el.year,
+            quarter:el.quarter
+          }
+        })
+      }).exec()
+      filtered = filtered.map(el=>{
+        return {
+          calculations:calculations.filter((c:any)=>{
+            return c.area == el.area &&c.year == el.year &&c.quarter == el.quarter
+          }),
+          ...el
+        }
       })
       res.send({
         docs:filtered,
