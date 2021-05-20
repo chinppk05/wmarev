@@ -65,7 +65,7 @@ const schema = new Schema({
       eAmount: { type: Number, default: 0 },
     },
   ],
-  qtyYear:String,
+  qtyYear:Number, //ปีของปริมาณน้ำบำบัด
 
   areaTotalExpenses: Number,
 
