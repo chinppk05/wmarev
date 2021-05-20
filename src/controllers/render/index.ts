@@ -167,7 +167,7 @@ export const postCalculationList = (req: Request, res: Response) => {
       filtered = filtered.map(el=>{
         return {
           calculations:calculations.filter((c:any)=>{
-            return c.area == el.area &&c.year == el.year &&c.quarter == el.quarter
+            return c.area == el.area &&c.calendarYear == el.year &&c.quarter == el.quarter
           }),
           ...el
         }
