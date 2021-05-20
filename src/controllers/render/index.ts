@@ -166,7 +166,11 @@ export const postCalculationList = (req: Request, res: Response) => {
       let calculations = await Calculation.find(calculationQuery).exec()
       filtered = filtered.map(el=>{
         return {
-          calculations:calculations,
+          calculations:calculations.filter((c:any)=>{
+            console.log(c.area == el.area,c.calendarYear == el.year,c.quarter == el.quarter)
+            console.log(c.area,el.area,c.calendarYear,el.year,c.quarter,el.quarter)
+            return c.area == el.area && c.calendarYear == el.year && c.quarter == el.quarter
+          }),
           ...el
         }
       })
