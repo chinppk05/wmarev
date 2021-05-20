@@ -158,7 +158,7 @@ export const postCalculationList = (req: Request, res: Response) => {
         $or:filtered.map(el=>{
           return {
             area:el.area,
-            year:el.year,
+            calendarYear:el.year,
             quarter:el.quarter
           }
         })
