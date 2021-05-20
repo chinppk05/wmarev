@@ -153,8 +153,7 @@ export const postCalculationList = (req: Request, res: Response) => {
         }
         return false
       })
-
-      let calculations = await Calculation.find({
+      let calculationQuery = {
         $or:filtered.map(el=>{
           return {
             area:el.area,
@@ -162,7 +161,9 @@ export const postCalculationList = (req: Request, res: Response) => {
             quarter:el.quarter
           }
         })
-      }).exec()
+      }
+      console.log(calculationQuery)
+      let calculations = await Calculation.find(calculationQuery).exec()
       filtered = filtered.map(el=>{
         return {
           calculations:calculations.filter((c:any)=>{
