@@ -169,7 +169,7 @@ export const postCalculationList = (req: Request, res: Response) => {
           calculations:calculations.filter((c:any)=>{
             console.log(c.area == el.area,c.calendarYear == el.year,c.quarter == el.quarter)
             console.log(c.area,el.area,c.calendarYear,el.year,c.quarter,el.quarter)
-            return c.area == el.area && c.calendarYear == el.year && c.quarter == el.quarter
+            return c.area.toString() === el.area.toString() && c.calendarYear == el.year && c.quarter == el.quarter
           }),
           ...el
         }
