@@ -68,6 +68,7 @@ const area = require('./routers/area')(app)
 const areaCondition = require('./routers/areaCondition')(app)
 const areaCollection = require('./routers/areaCollection')(app)
 const areaRate = require('./routers/areaRate')(app)
+const areaRation = require('./routers/areaRation')(app)
 
 const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
