@@ -66,7 +66,8 @@ const schema = new Schema({
     },
   ],
   qtyYear:Number, //ปีของปริมาณน้ำบำบัด
-
+  newText:String, 
+  oldText:String,
   areaTotalExpenses: Number,
 
   allocationPerUnit: Number,
