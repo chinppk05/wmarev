@@ -56,7 +56,8 @@ export const getByField = (req: Request, res: Response) => {
 
 export const postOne = (req: Request, res: Response) => {
   let search = req.body.search
-  DBModel.findOne(search).lean().then(function (data: any) {
+  let sort = req.body.sort
+  DBModel.findOne(search).sort(sort).lean().then(function (data: any) {
     res.send(data)
   })
 }
