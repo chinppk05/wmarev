@@ -128,6 +128,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
 export const getBillingDashboard = (req: Request, res: Response) => {
   let limit = req.body.limit??12
   let skip = req.body.skip??0
+  console.log("l,s",limit,skip)
   let promises: Array<Promise<any>> = [];
   promises.push(
     Usage.aggregate([
@@ -146,7 +147,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      // { $skip: skip },
+      { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -171,7 +172,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      // { $skip: skip },
+      { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -206,7 +207,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      // { $skip: skip },
+      { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -253,7 +254,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      // { $skip: skip },
+      { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -300,7 +301,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      // { $skip: skip },
+      { $skip: skip },
     ]).exec()
   );
 
