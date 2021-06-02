@@ -760,8 +760,8 @@ let display0 = (debt: Array<any>) => {
     if (i == 0) {
       debtText += current.reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
       let next = DateTime.fromObject({
-        year: arr[i + 1].year - 543,
-        month: arr[i + 1].month,
+        year: (arr[i + 1].year??2600) - 543,
+        month: (arr[i + 1].month??13),
         day: 5
       })
       const diffNext = current.diff(next, "months").toObject().months
@@ -778,8 +778,8 @@ let display0 = (debt: Array<any>) => {
         day: 5
       })
       let next = DateTime.fromObject({
-        year: arr[i + 1].year - 543,
-        month: arr[i + 1].month,
+        year: (arr[i + 1].year??2600) - 543,
+        month: (arr[i + 1].month??13),
         day: 5
       })
       const diffLast = current.diff(last, "months").toObject().months
