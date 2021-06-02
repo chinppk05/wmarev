@@ -139,6 +139,7 @@ const schema = new Schema({
 
   createdIP: String,
   createdAt: Date,
+  modifiedAt: Date,
 });
 
 // schema.set('toJSON', {

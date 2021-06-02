@@ -22,8 +22,7 @@ export const upsert = (req: Request, res: Response) => {
   newObj.modifiedAt = new Date();
   newObj.createdIP = ip;
   let search = req.body.search
-  let doc = req.body.doc
-  console.log(req.body)
+  let doc = {...req.body.doc, modifiedAt:new Date()}
   DBModel.findOneAndUpdate(search, doc, { upsert: true }).then((document: any) => {
     res.send(document)
   })
