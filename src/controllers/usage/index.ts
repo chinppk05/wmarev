@@ -97,22 +97,22 @@ export const postPaginate = (req: Request, res: Response) => {
       .then(function (invoices: Array<any>) {
         console.timeEnd("paginateInit")
         console.time("paginateCalcualtion")
-        docs.forEach((us:any,i:number)=>{
-          let found = invoices.find(inv=>{
-            return (inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter)
-          })
-          if(found!=undefined){
-            if(found.isPrint==undefined){
-              docs[i].isPrint = false
-            }
-            else{
-              docs[i].isPrint = found.isPrint
-            }
-          }
-          else{
-            docs[i].isPrint = false
-          }
-        })
+        // docs.forEach((us:any,i:number)=>{
+        //   let found = invoices.find(inv=>{
+        //     return (inv.year===us.year&&inv.month===us.month&&inv.meter===us.meter)
+        //   })
+        //   if(found!=undefined){
+        //     if(found.isPrint==undefined){
+        //       docs[i].isPrint = false
+        //     }
+        //     else{
+        //       docs[i].isPrint = found.isPrint
+        //     }
+        //   }
+        //   else{
+        //     docs[i].isPrint = false
+        //   }
+        // })
         console.timeEnd("paginateCalcualtion")
         console.time("paginateFinal")
         DBModel.find(searchObj).then((data2:any)=>{
