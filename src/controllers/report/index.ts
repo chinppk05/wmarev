@@ -311,8 +311,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         return {
           // name:`${el._id.year}/${el._id.month}`,
           name: DateTime.fromObject({
-            year: el._id.year - 543,
-            month: el._id.month,
+            year: (el._id.year??2600) - 543,
+            month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
             .setLocale("th")
@@ -324,8 +324,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         return {
           // name:`${el._id.year}/${el._id.month}`,
           name: DateTime.fromObject({
-            year: el._id.year - 543,
-            month: el._id.month,
+            year: (el._id.year??2600) - 543,
+            month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
             .setLocale("th")
@@ -336,8 +336,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       types12mo: responses[2].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
-            year: el._id.year - 543,
-            month: el._id.month,
+            year: (el._id.year??2600) - 543,
+            month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
             .setLocale("th")
@@ -351,8 +351,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       amounts12mo: responses[3].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
-            year: el._id.year - 543,
-            month: el._id.month,
+            year: (el._id.year??2600) - 543,
+            month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
             .setLocale("th")
@@ -366,8 +366,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       paid12mo: responses[4].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
-            year: el._id.year - 543,
-            month: el._id.month,
+            year: (el._id.year??2600) - 543,
+            month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
             .setLocale("th")
