@@ -56,7 +56,8 @@ let prepArray: Array<any> = [];
         categoryType: row.getCell(15),
         vatRate: 0.07,
         code: "01-kb",
-        isNextStage: true, isPrint: true
+        isNextStage: true, isPrint: true,
+        createdAt:new Date()
       })
       console.log(`reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
