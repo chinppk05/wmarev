@@ -86,6 +86,7 @@ export const printInvoice = async (req: Request, res: Response) => {
     Invoice.find(searchObj).then((data2: any) => {
       let data3 = JSON.parse(JSON.stringify(data2))
       let usages = docs.map((el: any) => el.usage)
+      console.log(usages)
       Usage.updateMany({ _id: { $in: usages } }, { $set: { isPrint: true, isNextStage: true, printDate:new Date() } }).then(() => {
         res.send({
           docs: docs,
