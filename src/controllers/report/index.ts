@@ -126,6 +126,8 @@ export const getAreaMonthly = (req: Request, res: Response) => {
 };
 
 export const getBillingDashboard = (req: Request, res: Response) => {
+  let limit = req.body.limit??12
+  let skip = req.body.skip??0
   let promises: Array<Promise<any>> = [];
   promises.push(
     Usage.aggregate([
@@ -143,7 +145,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": 1,
         },
       },
-      { $limit: 24 },
+      { $limit: limit },
+      { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -167,7 +170,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": 1,
         },
       },
-      { $limit: 24 },
+      { $limit: limit },
+      { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -201,7 +205,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": -1,
         },
       },
-      { $limit: 24 },
+      { $limit: limit },
+      { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -247,7 +252,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": -1,
         },
       },
-      { $limit: 24 },
+      { $limit: limit },
+      { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -293,7 +299,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
           "_id.month": -1,
         },
       },
-      { $limit: 24 },
+      { $limit: limit },
+      { $skip: skip },
     ]).exec()
   );
 
