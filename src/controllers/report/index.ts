@@ -146,7 +146,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      { $skip: skip },
+      // { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -171,7 +171,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      { $skip: skip },
+      // { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -206,7 +206,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      { $skip: skip },
+      // { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -253,7 +253,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      { $skip: skip },
+      // { $skip: skip },
     ]).exec()
   );
   promises.push(
@@ -300,7 +300,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         },
       },
       { $limit: limit },
-      { $skip: skip },
+      // { $skip: skip },
     ]).exec()
   );
 
