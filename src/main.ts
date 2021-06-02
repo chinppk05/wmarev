@@ -85,6 +85,8 @@ const process = require('./routers/process')(app)
 const risk = require('./routers/risk')(app)
 const report = require('./routers/report')(app)
 
+const usageRequest = require('./routers/usageRequest')(app)
+
 app.get("/api/v1/", (req:any, res:any) => {
   res.send("Welcome to WMA201AM1 API Server!");
 });
