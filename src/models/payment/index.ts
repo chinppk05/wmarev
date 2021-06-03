@@ -36,7 +36,7 @@ const schema = new Schema({
 
   billAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
 
-  paidDate: Date,
+  
   printDate: Date,
   calculationType: String,
   paymentDate: Date,
