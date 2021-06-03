@@ -16,6 +16,7 @@ const schema = new Schema({
   prefix: String, //คำนำหน้า
   firstName: String, //ชื่อต้น
   lastName: String, //นามสกุล
+  sector:String,
   manager: {type:ObjectId,ref:"User"},
   lastLogin: Date,
   createdIP: String,
