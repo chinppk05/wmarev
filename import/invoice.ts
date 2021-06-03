@@ -52,6 +52,8 @@ let prepArray: Array<any> = [];
         debtText: row.getCell(11),
         debtAmount: row.getCell(12),
         totalAmount: row.getCell(13),
+        invoiceAmount: (row.getCell(13)*1.07) + row.getCell(12),
+        billAmount: (row.getCell(13)*1.07),
         category: row.getCell(14),
         categoryType: row.getCell(15),
         vatRate: 0.07,
