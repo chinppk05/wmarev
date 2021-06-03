@@ -103,6 +103,7 @@ export const printInvoice = async (req: Request, res: Response) => {
   });
 }
 
+/*
 export const createReceipt = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
@@ -141,7 +142,7 @@ export const createReceipt = (req: Request, res: Response) => {
     })
   })
 }
-
+*/
 
 export const approvalRequestReceipt = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -186,7 +187,6 @@ export const signReceipt = (req: Request, res: Response) => {
 }
 
 export const printReceipt = async (req: Request, res: Response) => {
-
   let list = req.body.list
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   await Receipt.updateMany({ _id: { $in: req.body.list.map((el: string) => mongoose.Types.ObjectId(el)) } }, { $set: { isPrint: true, isNextStage: true, printDate: new Date() } }).exec()
@@ -223,6 +223,7 @@ export const printReceipt = async (req: Request, res: Response) => {
   });
 }
 
+/*
 export const createTestUsage = async (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let usagesData = usages.map(el => {
@@ -277,6 +278,7 @@ export const createTestPayment = async (req: Request, res: Response) => {
     })
   })
 }
+*/
 
 let getCounter = (name: string, year: number, month: number) => {
   var options = { upsert: true, new: true, useFindAndModify: false };
