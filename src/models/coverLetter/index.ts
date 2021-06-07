@@ -10,6 +10,7 @@ const schema = new Schema({
   issueDate: Date,
   subject: String,
   to: String,
+  isPrint: Boolean,
   
   operationYear: Number,
   contractYear: Number,
