@@ -103,7 +103,7 @@ export const printInvoice = async (req: Request, res: Response) => {
   });
 }
 
-/*
+
 export const createReceipt = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
@@ -142,7 +142,6 @@ export const createReceipt = (req: Request, res: Response) => {
     })
   })
 }
-*/
 
 export const approvalRequestReceipt = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
