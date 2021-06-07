@@ -129,7 +129,7 @@ export const createReceipt = (req: Request, res: Response) => {
         else {
           let invoice = new Receipt(payments[i])
           actualCommand.push(invoice.save())
-          actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
+          actualCommand.push(Payment.findOneAndUpdate({ _id: payments[i]._id }, { $set: { isNextStage: true } }).exec())
         }
       });
       Promise.all(actualCommand).then(cmd => {
