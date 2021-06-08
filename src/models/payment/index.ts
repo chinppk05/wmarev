@@ -24,6 +24,7 @@ const schema = new Schema({
   period: String,
   isNextStage: Boolean,
   invoice: { type: ObjectId, ref: 'Invoice' },
+  invoices: [{ type: ObjectId, ref: 'Invoice' }],
   usage: { type: ObjectId, ref: 'Usage' },
   customer: { type: ObjectId, ref: 'Customer' },
   qty: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
