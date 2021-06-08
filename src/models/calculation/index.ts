@@ -78,6 +78,7 @@ const schema = new Schema({
   areaExpenses: Number,
   totalExpenses: Number,
   totalIncome: Number,
+  advanceAmount: Number,
 
   contributionText: String,
   contributionAmount: Number,
