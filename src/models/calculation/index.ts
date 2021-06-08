@@ -57,7 +57,6 @@ const schema = new Schema({
     },
   ],
 
-
   modifications: [
     {
       name: String,
@@ -66,9 +65,9 @@ const schema = new Schema({
       eAmount: { type: Number, default: 0 },
     },
   ],
-  qtyYear:Number, //ปีของปริมาณน้ำบำบัด
-  newText:String, 
-  oldText:String,
+  qtyYear: Number, //ปีของปริมาณน้ำบำบัด
+  newText: String,
+  oldText: String,
   areaTotalExpenses: Number,
 
   allocationPerUnit: Number,
@@ -76,8 +75,8 @@ const schema = new Schema({
   treatmentQty: Number,
   wmaExpenses: Number,
   areaExpenses: Number,
-  totalExpenses: { type:Number, default:-1 },
-  totalIncome: { type:Number, default:-1 },
+  totalExpenses: { type: Number, default: -1 },
+  totalIncome: { type: Number, default: -1 },
   advanceAmount: Number,
   eAdvanceAmount: Number,
 
@@ -99,7 +98,6 @@ const schema = new Schema({
   eAreaCost03: Number,
   eIncome01: Number,
   eIncome02: Number,
-
 
   areaCost01: Number,
   areaCost02: Number,
