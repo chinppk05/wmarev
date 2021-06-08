@@ -23,6 +23,7 @@ const schema = new Schema({
   method: String,
   period: String,
   isNextStage: Boolean,
+  process:Boolean,
   invoice: { type: ObjectId, ref: 'Invoice' },
   invoices: [{ type: ObjectId, ref: 'Invoice' }],
   usage: { type: ObjectId, ref: 'Usage' },

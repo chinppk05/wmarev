@@ -266,3 +266,7 @@ export const getCustomerList = (req: Request, res: Response) => {
     });
   });
 }
+
+export const getAreaWithYearCondition = (req:Request, res:Response) => {
+  
+}
