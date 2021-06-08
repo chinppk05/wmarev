@@ -76,8 +76,8 @@ const schema = new Schema({
   treatmentQty: Number,
   wmaExpenses: Number,
   areaExpenses: Number,
-  totalExpenses: Number,
-  totalIncome: Number,
+  totalExpenses: { type:Number, default:-1 },
+  totalIncome: { type:Number, default:-1 },
   advanceAmount: Number,
   eAdvanceAmount: Number,
 
