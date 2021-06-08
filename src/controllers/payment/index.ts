@@ -64,6 +64,26 @@ export const remove = (req: Request, res: Response) => {
   })
 }
 
+export const information = (req:Request, res:Response) => {
+  DBModel.aggregate([{$group: {
+    _id: {
+      year:"$year",
+      month:"$month"
+    },
+    sum: {
+      "$sum":1
+    }
+  }}, {$project: {
+    year:"$_id.year",
+    month:"$_id.month",
+    sum:"$sum",
+  }}, {$sort: {
+    year: -1,
+    month: -1,
+  }}]).then((data:Array<any>)=>{
+    res.send(data)
+  })
+}
 
 export const postPaginate = (req: Request, res: Response) => {
   let searchObj = req.body.search
