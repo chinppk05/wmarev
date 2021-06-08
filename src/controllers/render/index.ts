@@ -269,28 +269,42 @@ export const getCustomerList = (req: Request, res: Response) => {
 
 export const getAreaWithYearCondition = (req:Request, res:Response) => {
   let year = req.body.year
-  AreaCondition.aggregate([{$unwind: {
-    path: "$conditions",
-    includeArrayIndex: 'condIndex',
-    preserveNullAndEmptyArrays: true
-  }}, {$lookup: {
-    from: 'areas',
-    localField: 'area',
-    foreignField: '_id',
-    as: 'area'
-  }}, {$addFields: { area2: { $arrayElemAt:["$area",0]} }}, {$project: {
-    code:"$area2.code",
-    areaCondition:"$_id",
-    area:"$area2._id",
-    operationYear:"$operationYear",
-    areaConditionId:"$area2._id",
-    ad:{$year:"$area2.contractStart"},
-    bc:{$add:[{$year:"$area2.contractStart"},543,"$condIndex"]},
-    period:"$conditions.period",
-    name:"$area2.name"
-  }}, {$match: {
-    bc:year
-  }}]).then((data:Array<any>)=>{
-  res.send(data)
-})
+  AreaCondition.aggregate([
+    {
+      $unwind: {
+        path: "$conditions",
+        includeArrayIndex: "condIndex",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "areas",
+        localField: "area",
+        foreignField: "_id",
+        as: "area",
+      },
+    },
+    { $addFields: { area2: { $arrayElemAt: ["$area", 0] } } },
+    {
+      $project: {
+        code: "$area2.code",
+        areaCondition: "$_id",
+        area: "$area2._id",
+        operationYear: "$operationYear",
+        areaConditionId: "$area2._id",
+        ad: { $year: "$area2.contractStart" },
+        bc: { $add: [{ $year: "$area2.contractStart" }, 543, "$condIndex"] },
+        period: "$conditions.period",
+        name: "$area2.name",
+      },
+    },
+    {
+      $match: {
+        bc: year,
+      },
+    },
+  ]).then((data:Array<any>)=>{
+    res.send(data)
+  })
 }
