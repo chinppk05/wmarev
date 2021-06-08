@@ -287,5 +287,7 @@ export const getAreaWithYearCondition = (req:Request, res:Response) => {
   {$match: {
     bc:year
   }}
-])
+]).then((data:Array<any>)=>{
+  res.send(data)
+})
 }
