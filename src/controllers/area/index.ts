@@ -20,6 +20,12 @@ export const list = (req: Request, res: Response) => {
     })
 }
 
+export const listSelect = (req: Request, res: Response) => {
+  DBModel.find({}).select(req.body.select).then(function (data: Array<any>) {
+    res.send(data)
+  })
+}
+
 export const get = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)

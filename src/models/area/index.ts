@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
     name: String,
+    code:String,
     address: String,
     contractNumber: String,
     contractStart: Date,
