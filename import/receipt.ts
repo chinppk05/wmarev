@@ -45,6 +45,7 @@ let prepArray: Array<any> = [];
         invoiceAmount: row.getCell("T").value, // invoiceAmount: (row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),
         code: "01-kb",
         isNextStage: true, isPrint: true,
+        process:true,
         createdAt:new Date()
       })
       console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value), `reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
