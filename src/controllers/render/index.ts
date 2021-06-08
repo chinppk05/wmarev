@@ -268,5 +268,24 @@ export const getCustomerList = (req: Request, res: Response) => {
 }
 
 export const getAreaWithYearCondition = (req:Request, res:Response) => {
-  
+  let year = req.body.year
+  AreaCondition.aggregate([
+    {$unwind: {
+    path: "$conditions",
+    includeArrayIndex: 'condIndex',
+  }}, 
+  {$project: {
+    area:"$area",
+    name:"$name",
+    period:"$conditions.period",
+    operationYear:"$operationYear",
+    operationDate:"$operationDate",
+    ad:{$year:"$operationDate"},
+    bc:{$add:[{$year:"$operationDate"},543]},
+    i:"$condIndex",
+  }}, 
+  {$match: {
+    bc:year
+  }}
+])
 }
