@@ -162,7 +162,7 @@ export const postCalculationList = (req: Request, res: Response) => {
           }
         })
       }
-      console.log(calculationQuery)
+      // console.log(calculationQuery)
       let calculations = await Calculation.find(calculationQuery).sort("-createdAt").exec()
       filtered = filtered.map(el=>{
         return {
