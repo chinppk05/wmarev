@@ -282,7 +282,8 @@ export const getAreaWithYearCondition = (req:Request, res:Response) => {
     code:"$area2.code",
     ad:{$year:"$area2.contractStart"},
     bc:{$add:[{$year:"$area2.contractStart"},543,"$condIndex"]},
-    period:"$conditions.period"
+    period:"$conditions.period",
+    name:"$area2.name"
   }}, {$match: {
     bc:year
   }}]).then((data:Array<any>)=>{
