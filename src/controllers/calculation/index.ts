@@ -134,7 +134,8 @@ export const excelDownload = (req: Request, res: Response) => {
       let body:Array<string> = []
       for (const [key, value] of Object.entries(el)) {
         console.log(`${key}: ${value}`);
-        body.push((value??"").toString())
+        if(typeof value === 'object') body.push(JSON.stringify(value??""))
+        else body.push((value??"").toString())
       }
       sheet.addRow(body);
     });
