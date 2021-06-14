@@ -265,7 +265,7 @@ export const excelDownload = (req: Request, res: Response) => {
     let header:Array<string> = []
     data.forEach((el:any,idx:number)=>{
       for (const [key, value] of Object.entries(el)) {
-        console.log(`${key}: ${value}`);
+        
         if(header.find(hel=>hel===key)==undefined) header.push(key)
       }
     })
