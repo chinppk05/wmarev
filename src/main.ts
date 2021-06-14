@@ -104,6 +104,16 @@ app.post('/api/v1/upload', upload.single('file'), function (req:any, res:any, ne
 let connectCounter = 0
 var users:Array<{user:string,createdAt:Date}> = []
 
+let clearUsers = () =>{
+  setTimeout(() => {
+    users.forEach((el,i)=>{
+      let diff = DateTime.fromJSDate(el.createdAt).diffNow('minutes').minutes
+      if(diff>3) users.splice(i,1)
+    })
+    clearUsers()
+  }, 2*1000*60);
+}
+clearUsers()
 io.on('connection', (socket: Socket) => {
   console.log('a user connected: ' + connectCounter);
   socket.on('connected', function () {
