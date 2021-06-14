@@ -105,6 +105,7 @@ let connectCounter = 0
 var users:Array<{user:string,createdAt:Date}> = []
 
 let clearUsers = () =>{
+  console.log("clearing users...")
   setTimeout(() => {
     users.forEach((el,i)=>{
       let diff = DateTime.fromJSDate(el.createdAt).diffNow('minutes').minutes
