@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/areaCondition/index'
 import mongoose from "mongoose";
+import Excel from 'exceljs'
 
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -102,3 +103,29 @@ export const postGroup = (req: Request, res: Response) => {
     res.send(data);
   });
 };
+
+export const excelDownload = (req: Request, res: Response) => {
+  let searchObj = req.body.search
+  var workbook = new Excel.Workbook();
+  let sheet = workbook.addWorksheet("Sheet1");
+  DBModel.find(searchObj).then(async function (data: Array<any>) {
+    let header:Array<string> = []
+    for (const [key, value] of Object.entries(data[0])) {
+      console.log(`${key}: ${value}`);
+      header.push(key)
+    }
+    sheet.addRow(header);
+    data.forEach((el:any,idx:number)=>{
+      let body:Array<string> = []
+      for (const [key, value] of Object.entries(el)) {
+        console.log(`${key}: ${value}`);
+        body.push(value as string)
+      }
+      sheet.addRow(body);
+    });
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
+  await workbook.xlsx.write(res);
+  res.end();
+  })
+}

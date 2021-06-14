@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/cost/index'
 import mongoose from "mongoose";
+import Excel from 'exceljs'
 // const Excel = require('exceljs');
 // const ExcelJS = require('exceljs');
 // const ExcelJS = require('exceljs/dist/es5');
@@ -107,3 +108,30 @@ export const postGroup = (req: Request, res: Response) => {
 export const importExcel = async (req: Request, res: Response) => {
 }
 
+
+
+export const excelDownload = (req: Request, res: Response) => {
+  let searchObj = req.body.search
+  var workbook = new Excel.Workbook();
+  let sheet = workbook.addWorksheet("Sheet1");
+  DBModel.find(searchObj).then(async function (data: Array<any>) {
+    let header:Array<string> = []
+    for (const [key, value] of Object.entries(data[0])) {
+      console.log(`${key}: ${value}`);
+      header.push(key)
+    }
+    sheet.addRow(header);
+    data.forEach((el:any,idx:number)=>{
+      let body:Array<string> = []
+      for (const [key, value] of Object.entries(el)) {
+        console.log(`${key}: ${value}`);
+        body.push(value as string)
+      }
+      sheet.addRow(body);
+    });
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
+  await workbook.xlsx.write(res);
+  res.end();
+  })
+}

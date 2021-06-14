@@ -14,4 +14,5 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoints}-select/`, ctrl.listSelect)
   app.post(`/api/v1/${endpoints}-paginate`, ctrl.postPaginate)
   app.post(`/api/v1/${endpoints}-group`, ctrl.postGroup)
+  app.get(`/api/v1/${endpoints}-excel`, ctrl.excelDownload)
 }
