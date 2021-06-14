@@ -31,6 +31,7 @@ export const getCalculationList = (req: Request, res: Response) => {
               j,
               area: element._id,
               name: element.name,
+              prefix: element.prefix,
               contractYear: foundCondition.contractYear,
               operationYear: foundCondition.operationYear,
               operationDate: foundCondition.operationDate,
