@@ -9,8 +9,6 @@ const localStrategy = require('passport-local').Strategy;
 import UserModel from '../../models/user/index'
 import ResetModel from '../../models/reset/index'
 
-var users:Array<{user:string,createdAt:Date}> = []
-
 passport.use('signup', new localStrategy({
   usernameField: 'username',
   passwordField: 'password'
@@ -46,19 +44,8 @@ passport.use('login', new localStrategy({
         return done(null, false, { message: 'Wrong Password' });
       }
       //Send the user information to the next middleware
-      let found = users.find(el=>el.user===username)
-        if(found==undefined){
-          console.log('Logged in Successfully')
-          users.push({
-            user:username,
-            createdAt:new Date()
-          })
-          console.log('logged in users')
-          console.log(users)
-          return done(null, user, { message: 'Logged in Successfully' });
-        }else{
-          return done(null, false, { message: 'User Already Logged In' });
-        }
+      console.log('Logged in Successfully')
+      return done(null, user, { message: 'Logged in Successfully' });
     } catch (error) {
       return done(error);
     }
@@ -71,7 +58,7 @@ const jwt = require('jsonwebtoken');
 //This verifies that the token sent by the user is valid
 passport.use(new JWTstrategy({
   //secret we used to sign our JWT
-  secretOrKey: 'JMANDJM-WMA201AM1',
+  secretOrKey: 'JMANDJM-CHN201AM1',
   //we expect the user to send the token as a query parameter with the name 'secret_token'
   jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token')
 }, async (token: { user: string }, done: Function) => {
@@ -92,9 +79,9 @@ export const signup = (req: Request, res: Response) => {
   });
 }
 export const login = (req: Request, res: Response) => {
-  const token = jwt.sign({ user: req.user }, 'JMANDJM-WMA201AM1');
+  const token = jwt.sign({ user: req.user }, 'JMANDJM-CHN201AM1');
   res.send({
-    message: 'Login successful',
+    message: 'Signup successful',
     user: req.user,
     token: token
   });
