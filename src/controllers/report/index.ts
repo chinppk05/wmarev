@@ -9,6 +9,7 @@ import luxon, { DateTime } from "luxon";
 import Calculation from "../../models/calculation";
 import AreaCollection from "../../models/areaCollection";
 import Area from "../../models/area";
+import AreaIncome from "../../models/areaIncome";
 
 export const getCollectionStatus = (req: Request, res: Response) => {
   Calculation.find({}).then((calculations: Array<any>) => {
@@ -108,17 +109,20 @@ export const getAreaMonthly = (req: Request, res: Response) => {
   promises.push(Area.find({}).select("name contractNumber").exec())
   promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
   promises.push(AreaCollection.find({}).select("area quarter year recordDate amount createdAt").exec())
+  promises.push(AreaIncome.find({}).select("area quarter year recordDate amount createdAt").exec())
 
   Promise.all(promises).then((responses) => {
     let prep = JSON.parse(JSON.stringify(responses[0])) as Array<any>
     let calculations = JSON.parse(JSON.stringify(responses[1])) as Array<any>
     let collections = JSON.parse(JSON.stringify(responses[2])) as Array<any>
+    let incomes = JSON.parse(JSON.stringify(responses[3])) as Array<any>
     prep = prep.map(el=>{
       return {
         area:el.name,
         contract:el.contractNumber,
         calculations:calculations.filter(calc=>calc.area==el._id),
         collections:collections.filter(colc=>colc.area==el._id),
+        incomes:incomes.filter(colc=>colc.area==el._id),
       }
     })
     res.send(prep)
