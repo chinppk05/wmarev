@@ -102,6 +102,7 @@ app.post('/api/v1/upload', upload.single('file'), function (req:any, res:any, ne
 })
 
 let connectCounter = 0
+var users:Array<{user:string,createdAt:Date}> = []
 
 io.on('connection', (socket: Socket) => {
   console.log('a user connected: ' + connectCounter);
@@ -109,6 +110,34 @@ io.on('connection', (socket: Socket) => {
     connectCounter++;
     io.emit('userCount', connectCounter);
   });
+
+  socket.on('getuser', function () {
+    io.emit('users', users);
+  });
+
+  socket.on('loggedin', function (payload) {
+    let found = users.find(el=>el.user===payload)
+    if(found==undefined){
+      users.push({
+        user:payload,
+        createdAt:new Date()
+      })
+    }
+    else{
+      let diff = DateTime.fromJSDate(found.createdAt).diffNow('minutes').minutes
+      if(diff>3){
+        let i = users.findIndex(el=>el.user===payload)
+        users.splice(i,1)
+        users.push({
+          user:payload,
+          createdAt:new Date()
+        })
+      }else{
+        io.emit('users', users);
+      }
+    }
+  });
+
   socket.on('disconnect', function () {
     connectCounter--;
     if (connectCounter < 0) connectCounter = 0
