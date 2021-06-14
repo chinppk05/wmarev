@@ -36,7 +36,7 @@ export const getCollectionStatus = (req: Request, res: Response) => {
       res.send({
         outstanding: outstanding - outstandingCollect,
         income: income,
-        totalIncome: totalIncome,
+        totalIncome: (totalIncome) + (outstanding - outstandingCollect),
         collected: totalCollect,
       });
     });
