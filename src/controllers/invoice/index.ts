@@ -31,6 +31,7 @@ export const create = (req: Request, res: Response) => {
   );
 };
 
+
 export const createMany = (req: Request, res: Response) => {
   var ip = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
   let newList = req.body.list;

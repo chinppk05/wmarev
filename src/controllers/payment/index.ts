@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/payment/index'
 import mongoose from "mongoose";
 import Invoice from '../../models/invoice';
+import Counter from '../../models/counter';
 
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -15,6 +16,29 @@ export const create = (req: Request, res: Response) => {
     })
   })
 }
+
+
+export const upsert = (req: Request, res: Response) => {
+  let prep = req.body
+  DBModel.findOne({ invoiceNumber: prep.invoiceNumber }).then((data:any)=>{
+    if(data) {
+      DBModel.updateOne({ invoiceNumber: prep.invoiceNumber }, { ...req.body, modifiedAt:new Date(), $inc: { _v: 1 } }).then((data:any) => {
+        res.send(data)
+      })
+    } else {
+      var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      Invoice.findOne({sequence:req.body.invoiceNumber}).then((data:any)=>{
+        const newObj:any = new DBModel({...data,...req.body});
+        newObj.createdAt = new Date();
+        newObj.modifiedAt = new Date();
+        newObj.createdIP = ip;
+        newObj.save().then((document: any) => {
+          res.send(document)
+        })
+      })
+    }
+  })
+};
 
 export const list = (req: Request, res: Response) => {
   DBModel.find({})
