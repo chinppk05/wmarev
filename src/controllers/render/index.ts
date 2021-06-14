@@ -297,6 +297,7 @@ export const getAreaWithYearCondition = (req:Request, res:Response) => {
         bc: { $add: [{ $year: "$area2.contractStart" }, 543, "$condIndex"] },
         period: "$conditions.period",
         name: "$area2.name",
+        prefix: "$area2.prefix",
       },
     },
     {
