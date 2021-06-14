@@ -103,29 +103,25 @@ export const postGroup = (req: Request, res: Response) => {
     res.send(data);
   });
 };
+
 export const excelDownload = (req: Request, res: Response) => {
   let searchObj = req.body.search
   var workbook = new Excel.Workbook();
   let sheet = workbook.addWorksheet("Sheet1");
   DBModel.find(searchObj).lean().then(async function (data: Array<any>) {
     let header:Array<string> = []
-    for (const [key, value] of Object.entries(data[0])) {
-      console.log(`${key}: ${value}`);
-      header.push(key)
-    }
+    data.forEach((el:any,idx:number)=>{
+      for (const [key, value] of Object.entries(data[0])) {
+        console.log(`${key}: ${value}`);
+        if(header.find(hel=>hel===key)==undefined) header.push(key)
+      }
+    })
     sheet.addRow(header);
     data.forEach((el:any,idx:number)=>{
       let body:Array<string> = []
-      for (const [key, value] of Object.entries(el)) {
-        // console.log(`${key}: ${value}`);
-        let str = JSON.stringify(value??"")
-        if(typeof value === 'object'){ 
-          body.push(JSON.stringify(value??""))
-        }
-        else {
-          body.push((value??"").toString())
-        }
-      }
+      header.forEach(hel=>{
+        body.push(el[hel]??"-")
+      })
       sheet.addRow(body);
     });
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
