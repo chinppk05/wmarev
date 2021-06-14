@@ -11,7 +11,7 @@ import { filter } from 'gulp-typescript';
 
 export const getCalculationList = (req: Request, res: Response) => {
   let list = req.body.list
-  Area.find().select("name _id").lean().then((data: any) => {
+  Area.find().select("name _id prefix").lean().then((data: any) => {
     AreaCondition.find().then((areaConditions: any) => {
       let prep: Array<any> = []
       data.forEach((element: any, i: number) => {
@@ -85,7 +85,7 @@ export const postCalculationList = (req: Request, res: Response) => {
   let limit = req.body.limit
   let skip = req.body.skip
   let searchArea = area != undefined ? { _id: area } : undefined
-  Area.find(searchArea).select("name _id").lean().then((data: any) => {
+  Area.find(searchArea).select("name _id prefix").lean().then((data: any) => {
     AreaCondition.find().then(async (areaConditions: any) => {
       let prep: Array<any> = []
       data.forEach((element: any, i: number) => {
