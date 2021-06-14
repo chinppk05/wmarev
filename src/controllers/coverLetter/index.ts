@@ -138,7 +138,7 @@ export const excelDownload = (req: Request, res: Response) => {
   let searchObj = req.body.search
   var workbook = new Excel.Workbook();
   let sheet = workbook.addWorksheet("Sheet1");
-  DBModel.find(searchObj).then(async function (data: Array<any>) {
+  DBModel.find(searchObj).lean().then(async function (data: Array<any>) {
     let header:Array<string> = []
     for (const [key, value] of Object.entries(data[0])) {
       console.log(`${key}: ${value}`);
@@ -149,7 +149,8 @@ export const excelDownload = (req: Request, res: Response) => {
       let body:Array<string> = []
       for (const [key, value] of Object.entries(el)) {
         console.log(`${key}: ${value}`);
-        body.push(value as string)
+        if(typeof value === 'object') body.push(JSON.stringify(value??""))
+        else body.push((value??"").toString())
       }
       sheet.addRow(body);
     });
