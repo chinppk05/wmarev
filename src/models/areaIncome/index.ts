@@ -11,6 +11,7 @@ const schema = new Schema({
   fileUrl: [String],
   amount: Number,
   year: Number,
+  month: Number,
   quarter: Number,
   value: String,
   value2: String,
