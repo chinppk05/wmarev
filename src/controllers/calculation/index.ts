@@ -134,9 +134,9 @@ export const excelDownload = (req: Request, res: Response) => {
       let body:Array<string> = []
       for (const [key, value] of Object.entries(el)) {
         console.log(`${key}: ${value}`);
-        body.push(value as string)
+        body.push("value.toString() as string")
       }
-      sheet.addRow("body");
+      sheet.addRow(body);
     });
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
