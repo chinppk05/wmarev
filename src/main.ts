@@ -67,6 +67,7 @@ const receipt = require('./routers/receipt')(app)
 const area = require('./routers/area')(app)
 const areaCondition = require('./routers/areaCondition')(app)
 const areaCollection = require('./routers/areaCollection')(app)
+const areaIncome = require('./routers/areaIncome')(app)
 const areaRate = require('./routers/areaRate')(app)
 const areaRation = require('./routers/areaRation')(app)
 
