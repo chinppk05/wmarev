@@ -125,6 +125,14 @@ io.on('connection', (socket: Socket) => {
   socket.on('getuser', function () {
     io.emit('users', users);
   });
+  socket.on('removeuser', function (payload) {
+    let found = users.findIndex(el=>el.user===payload)
+    try {
+      users.splice(found,1)
+    } catch (error) {
+      
+    }
+  });
 
   socket.on('loggedin', function (payload) {
     let found = users.find(el=>el.user===payload)
