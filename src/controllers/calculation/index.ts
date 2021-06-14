@@ -127,7 +127,7 @@ export const excelDownload = (req: Request, res: Response) => {
     let header:Array<string> = []
     for (const [key, value] of Object.entries(data[0])) {
       console.log(`${key}: ${value}`);
-      header.push("key")
+      header.push(key)
     }
     sheet.addRow(header);
     data.forEach((el:any,idx:number)=>{
