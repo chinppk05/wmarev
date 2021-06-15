@@ -111,6 +111,14 @@ export const remove = (req: Request, res: Response) => {
   })
 }
 
+export const removeMany = (req: Request, res: Response) => {
+  let list:Array<string> = req.body.list
+  let ids = list.map(el=>mongoose.Types.ObjectId(el))
+  DBModel.deleteMany({ _id: { $in:ids } }).then((data: any) => {
+    res.send(data);
+  });
+};
+
 export const information = (req:Request, res:Response) => {
   DBModel.aggregate([{$group: {
     _id: {
