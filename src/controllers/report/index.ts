@@ -432,10 +432,10 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
     res.send({
       p1:data[0],
       p2:data[1],
-      totalAmount:data[0].totalAmount,
-      debtAmount:data[0].debtAmount,
-      billAmount:data[0].billAmount,
-      paymentAmount:data[1].paymentAmount,
+      totalAmount:data[0][0].totalAmount,
+      debtAmount:data[0][0].debtAmount,
+      billAmount:data[0][0].billAmount,
+      paymentAmount:data[1][0].paymentAmount,
     })
   })
   // Receipt.aggregate([{$match: {
