@@ -403,6 +403,7 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
       },
       {
         $group: {
+          _id: "$code",
           invoiceAmount: { $sum: { $divide:["$invoiceAmount",100] } },
           debtAmount: { $sum: { $divide:["$debtAmount",100] } },
           billAmount: { $sum: { $divide:["$billAmount",100] } }
@@ -420,6 +421,7 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
       },
       {
         $group: {
+          _id: "$code",
           paymentAmount: { $sum: { $divide:["$paymentAmount",100] } }
         }
       }
