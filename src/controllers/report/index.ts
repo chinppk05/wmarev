@@ -430,6 +430,8 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
 
   Promise.all(promises).then((data) => {
     res.send({
+      p1:data[0],
+      p2:data[1],
       totalAmount:data[0].totalAmount,
       debtAmount:data[0].debtAmount,
       billAmount:data[0].billAmount,
