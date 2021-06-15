@@ -16,6 +16,7 @@ module.exports = (app: Express) => {
 
   app.get(`/api/v1/${endpoint}-billing-dashboard/`, ctrl.getBillingDashboard)
   app.post(`/api/v1/${endpoint}-billing-dashboard/`, ctrl.getBillingDashboard)
+  
   app.post(`/api/v1/${endpoint}-billing-receipt/`, ctrl.getBillingReceiptReport)
   
 
