@@ -11,7 +11,7 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}-find`, ctrl.postOne)
   app.patch(`/api/v1/${endpoint}/:id`, ctrl.update)
   app.delete(`/api/v1/${endpoint}/:id`, ctrl.remove)
-  app.delete(`/api/v1/${endpoint}`, ctrl.removeMany)
+  app.post(`/api/v1/${endpoints}-delete`, ctrl.removeMany)
   app.get(`/api/v1/${endpoints}/`, ctrl.list)
   app.get(`/api/v1/${endpoints}-information/`, ctrl.information)
   app.post(`/api/v1/${endpoints}-paginate`, ctrl.postPaginate)
