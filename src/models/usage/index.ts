@@ -9,6 +9,7 @@ const Decimal = mongoose.Schema.Types.Decimal
 const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   customer: { type: ObjectId, ref: "Customer" },
+  no: Number,
   sequence: String,
   meter: String,
   taxId: String,

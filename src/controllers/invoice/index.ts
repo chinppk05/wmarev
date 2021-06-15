@@ -194,7 +194,7 @@ export const information = (req:Request, res:Response) => {
 
 export const postPaginate = (req: Request, res: Response) => {
   let searchObj = req.body.search;
-  let sort: any = req.body.sort;
+  let sort: any = { ...req.body.sort, no:1 };
   let populate: any = req.body.populate;
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
