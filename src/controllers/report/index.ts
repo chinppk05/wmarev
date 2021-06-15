@@ -387,6 +387,23 @@ export const getBillingDashboard = (req: Request, res: Response) => {
   });
 };
 
+
+export const getBillingReceiptReport = (req: Request, res: Response) => {
+  let code = req.body.code
+  let year = req.body.year
+  Receipt.aggregate([{$match: {
+    code:{ $in:code },
+    year:{ $in:year }
+  }}, {$group: {
+    _id: "$code",
+    invoiceAmount: { $sum: { $divide:["$invoiceAmount",100] } },
+    debtAmount: { $sum: { $divide:["$debtAmount",100] } },
+    paymentAmount: { $sum: { $divide:["$paymentAmount",100] } },
+  }}]).exec(function (error: Error, data: Array<any>) {
+    res.send(data);
+  });
+};
+
 export const getCustomerHistory = (req: Request, res: Response) => {
   let meter = req.body.meter;
   Invoice.find({ meter })
