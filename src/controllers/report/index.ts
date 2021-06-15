@@ -404,7 +404,7 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
       {
         $group: {
           _id: "$code",
-          invoiceAmount: { $sum: { $divide:["$invoiceAmount",100] } },
+          totalAmount: { $sum: { $divide:["$totalAmount",100] } },
           debtAmount: { $sum: { $divide:["$debtAmount",100] } },
           billAmount: { $sum: { $divide:["$billAmount",100] } }
         }
@@ -430,8 +430,10 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
 
   Promise.all(promises).then((data) => {
     res.send({
-      invoices:data[0],
-      receipts:data[1],
+      totalAmount:data[0].totalAmount,
+      debtAmount:data[0].debtAmount,
+      billAmount:data[0].billAmount,
+      paymentAmount:data[1].paymentAmount,
     })
   })
   // Receipt.aggregate([{$match: {
