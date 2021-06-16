@@ -304,8 +304,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       },
       {
         $sort: {
-          "_id.year": -1,
-          "_id.month": -1,
+          "_id.year": 1,
+          "_id.month": 1,
         },
       },
       { $limit: limit },
