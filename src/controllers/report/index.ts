@@ -128,6 +128,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
 export const getBillingDashboard = (req: Request, res: Response) => {
   let code = req.body.code
   let year = req.body.year
+  let month = req.body.month
   let limit = req.body.limit??12
   let skip = req.body.skip??0
   console.log("l,s",limit,skip)
@@ -137,7 +138,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       {
         $match: {
           code:{ $in:code },
-          year:{ $in:year }
+          year:{ $in:year },
+          month:{ $in:month },
         }
       },
       {
