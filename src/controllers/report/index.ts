@@ -163,6 +163,13 @@ export const getBillingDashboard = (req: Request, res: Response) => {
   promises.push(
     Invoice.aggregate([
       {
+        $match: {
+          code:{ $in:code },
+          year:{ $in:year },
+          month:{ $in:month },
+        }
+      },
+      {
         $group: {
           _id: { year: "$year", month: "$month" },
           sum: {
@@ -188,6 +195,13 @@ export const getBillingDashboard = (req: Request, res: Response) => {
   promises.push(
     Invoice.aggregate([
       {
+        $match: {
+          code:{ $in:code },
+          year:{ $in:year },
+          month:{ $in:month },
+        }
+      },
+      {
         $group: {
           _id: { year: "$year", month: "$month" },
           category1: {
@@ -212,8 +226,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       },
       {
         $sort: {
-          "_id.year": -1,
-          "_id.month": -1,
+          "_id.year": 1,
+          "_id.month": 1,
         },
       },
       { $limit: limit },
@@ -222,6 +236,13 @@ export const getBillingDashboard = (req: Request, res: Response) => {
   );
   promises.push(
     Invoice.aggregate([
+      {
+        $match: {
+          code:{ $in:code },
+          year:{ $in:year },
+          month:{ $in:month },
+        }
+      },
       {
         $group: {
           _id: { year: "$year", month: "$month" },
@@ -259,8 +280,8 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       },
       {
         $sort: {
-          "_id.year": -1,
-          "_id.month": -1,
+          "_id.year": 1,
+          "_id.month": 1,
         },
       },
       { $limit: limit },
@@ -269,6 +290,13 @@ export const getBillingDashboard = (req: Request, res: Response) => {
   );
   promises.push(
     Payment.aggregate([
+      {
+        $match: {
+          code:{ $in:code },
+          year:{ $in:year },
+          month:{ $in:month },
+        }
+      },
       {
         $group: {
           _id: { year: "$year", month: "$month" },
