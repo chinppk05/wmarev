@@ -8,9 +8,16 @@ mongoose.set('useCreateIndex', true);
 
 let i = 0
 Invoice.find({calculationType:"บาท/เดือน"}).then((data:Array<any>)=>{
+  // data.forEach(el => {
+  //   if(el.rate===0){
+  //     el.rate = el.totalAmount
+  //     el.save()
+  //     console.log(`${el.year} ${el.month} ${el.sequence} updated ` + (i++))
+  //   }
+  // });
   data.forEach(el => {
-    if(el.rate===0){
-      el.rate = el.totalAmount
+    if(el.invoiceAmount==NaN){
+      el.invoiceAmount = (el.totalAmount??0)*1.07 + (el.debtAmount??0)
       el.save()
       console.log(`${el.year} ${el.month} ${el.sequence} updated ` + (i++))
     }
