@@ -56,6 +56,7 @@ let prepArray: Array<any> = [];
         billAmount: (row.getCell(13)*1.07),
         category: row.getCell(14),
         categoryType: row.getCell(15),
+        calculationType:row.getCell(16),
         vatRate: 0.07,
         code: "01-kb",
         isNextStage: true, isPrint: true,
