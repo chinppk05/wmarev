@@ -12,7 +12,7 @@ Invoice.find({calculationType:"บาท/เดือน"}).then((data:Array<any
     if(el.rate===0){
       el.rate = el.totalAmount
       el.save()
-      console.log("updated " + (i++))
+      console.log(`${el.year} ${el.month} ${el.sequence} updated ` + (i++))
     }
   });
 })
