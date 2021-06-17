@@ -16,7 +16,8 @@ Invoice.find({calculationType:"บาท/เดือน"}).then((data:Array<any
   //   }
   // });
   data.forEach(el => {
-    if(el.invoiceAmount==NaN){
+    let prep = JSON.parse(JSON.stringify(el))
+    if(prep.invoiceAmount==null||Number.isNaN(prep.invoiceAmount)){
       el.invoiceAmount = (el.totalAmount??0)*1.07 + (el.debtAmount??0)
       el.save()
       console.log(`${el.year} ${el.month} ${el.sequence} updated ` + (i++))
