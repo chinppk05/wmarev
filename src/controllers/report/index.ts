@@ -12,10 +12,10 @@ import Area from "../../models/area";
 import AreaIncome from "../../models/areaIncome";
 
 export const getCollectionStatus = (req: Request, res: Response) => {
-  Calculation.find({}).then((calculations: Array<any>) => {
+  AreaIncome.find({}).then((incomes: Array<any>) => {
     AreaCollection.find({}).then((collections: Array<any>) => {
-      let totalIncome = calculations
-        .map((el: any) => el.contributionAmount ?? 0)
+      let totalIncome = incomes
+        .map((el: any) => el.amount ?? 0)
         .reduce((a: number, b: number) => a + b, 0)
       let outstandingCollect = collections
         .filter((el) => el.year < new Date().getFullYear() + 543)
@@ -25,13 +25,13 @@ export const getCollectionStatus = (req: Request, res: Response) => {
         .filter((el) => el.year == new Date().getFullYear() + 543)
         .map((el: any) => el.amount ?? 0)
         .reduce((a: number, b: number) => a + b, 0)
-      let income = calculations
+      let income = incomes
         .filter((el) => el.calendarYear == new Date().getFullYear() + 543)
-        .map((el: any) => el.contributionAmount ?? 0)
+        .map((el: any) => el.amount ?? 0)
         .reduce((a: number, b: number) => a + b, 0)
-      let outstanding = calculations
+      let outstanding = incomes
         .filter((el) => el.calendarYear < new Date().getFullYear() + 543)
-        .map((el: any) => el.contributionAmount ?? 0)
+        .map((el: any) => el.amount ?? 0)
         .reduce((a: number, b: number) => a + b, 0)
       res.send({
         outstanding: outstanding - outstandingCollect,
