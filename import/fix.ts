@@ -7,7 +7,7 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 let i = 0
-Invoice.find({calculationType:"บาท/เดือน"}).then(data=>{
+Invoice.find({calculationType:"บาท/เดือน"}).then((data:Array<any>)=>{
   data.forEach(el => {
     if(el.rate===0){
       el.rate = el.totalAmount
