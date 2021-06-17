@@ -57,11 +57,11 @@ export const getCollectionStatistic = (req: Request, res: Response) => {
   });
 };
 export const getComparePlanResult = (req: Request, res: Response) => {
-  Calculation.aggregate([
+  AreaIncome.aggregate([
     {
       $group: {
         _id: {
-          year: "$calendarYear",
+          year: "$year",
           quarter: "$quarter",
           month: { $month: "$createdAt" },
         },
