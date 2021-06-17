@@ -47,7 +47,7 @@ let prepArray: Array<any> = [];
         name: row.getCell(6),
         address: row.getCell(7),
         qty: row.getCell(8),
-        rate: row.getCell(9),
+        rate: row.getCell(16)=='บาท/เดือน'?row.getCell(13):row.getCell(9),
         flatRate: row.getCell(10),
         debtText: row.getCell(11),
         debtAmount: row.getCell(12),
