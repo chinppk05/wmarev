@@ -66,7 +66,7 @@ export const getComparePlanResult = (req: Request, res: Response) => {
           month: { $month: "$createdAt" },
         },
         sum: {
-          $sum: "$contributionAmount",
+          $sum: "$amount",
         },
       },
     },
