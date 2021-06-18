@@ -31,6 +31,7 @@ const schema = new Schema({
   createdIP: String,
   createdAt: Date,
   modifiedAt: Date,
+  notifyTo: String,
 })
 schema.plugin(mongoosePaginate)
 const CoverLetter = mongoose.model("CoverLetter", schema)
