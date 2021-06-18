@@ -39,6 +39,7 @@ app.use(bodyParser.json({limit: '50mb'}))
 app.use(express.urlencoded({ extended: true,limit: '50mb' }))
 app.use(morgan('combined'))
 app.use('/api/v1/uploads', express.static('uploads'))
+app.use('/api/v1/manuals', express.static('manuals'))
 
 
 var storage = multer.diskStorage({
