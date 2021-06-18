@@ -173,3 +173,31 @@ export const postGroup = (req: Request, res: Response) => {
     res.send(data);
   });
 };
+
+export const excelDownload = (req: Request, res: Response) => {
+  const Excel = require('exceljs')
+  let searchObj = req.body.search
+  var workbook = new Excel.Workbook();
+  let sheet = workbook.addWorksheet("Sheet1");
+  DBModel.find(searchObj).lean().then(async function (data: Array<any>) {
+    let header:Array<string> = []
+    data.forEach((el:any,idx:number)=>{
+      for (const [key, value] of Object.entries(el)) {
+        
+        if(header.find(hel=>hel===key)==undefined) header.push(key)
+      }
+    })
+    sheet.addRow(header);
+    data.forEach((el:any,idx:number)=>{
+      let body:Array<string> = []
+      header.forEach(hel=>{
+        body.push(el[hel]??"-")
+      })
+      sheet.addRow(body);
+    });
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
+  await workbook.xlsx.write(res);
+  res.end();
+  })
+}
