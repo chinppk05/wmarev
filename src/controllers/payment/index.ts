@@ -174,30 +174,40 @@ export const postGroup = (req: Request, res: Response) => {
   });
 };
 
+
+
 export const excelDownload = (req: Request, res: Response) => {
   const Excel = require('exceljs')
   let searchObj = req.body.search
   var workbook = new Excel.Workbook();
   let sheet = workbook.addWorksheet("Sheet1");
   DBModel.find(searchObj).lean().then(async function (data: Array<any>) {
-    let header:Array<string> = []
-    data.forEach((el:any,idx:number)=>{
+    let header: Array<string> = []
+    data.forEach((el: any, idx: number) => {
       for (const [key, value] of Object.entries(el)) {
-        
-        if(header.find(hel=>hel===key)==undefined) header.push(key)
+        if (header.find(hel => hel === key) == undefined) header.push(key)
       }
     })
     sheet.addRow(header);
-    data.forEach((el:any,idx:number)=>{
-      let body:Array<string> = []
-      header.forEach(hel=>{
-        body.push(el[hel]??"-")
+    data.forEach((el: any, idx: number) => {
+      let body: Array<string> = []
+      header.forEach(hel => {
+        let prep = el[hel] ?? "-"
+        try {
+          if (JSON.stringify(prep).search('numberDecimal')!=-1) {
+            prep = JSON.parse(JSON.stringify(prep))
+            prep = parseFloat((parseInt(prep.$numberDecimal) / 100).toFixed(2))
+          }
+        } catch (error) {
+          console.log(error)
+        }
+        body.push(prep)
       })
       sheet.addRow(body);
     });
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
-  await workbook.xlsx.write(res);
-  res.end();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
+    await workbook.xlsx.write(res);
+    res.end();
   })
 }

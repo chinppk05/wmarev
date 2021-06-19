@@ -58,7 +58,7 @@ export const update = (req: Request, res: Response) => {
     }).sort("-version").then((latest: any) => {
       let version = 1
       // console.log(typeof latest,latest)
-      if(latest!=null) version = latest.version + 1
+      if (latest != null) version = latest.version + 1
       History.create({
         name: "usages",
         documentId: id,
@@ -81,30 +81,36 @@ export const remove = (req: Request, res: Response) => {
 }
 
 export const removeMany = (req: Request, res: Response) => {
-  let list:Array<string> = req.body.list
-  let ids = list.map(el=>mongoose.Types.ObjectId(el))
-  DBModel.deleteMany({ _id: { $in:ids } }).then((data: any) => {
+  let list: Array<string> = req.body.list
+  let ids = list.map(el => mongoose.Types.ObjectId(el))
+  DBModel.deleteMany({ _id: { $in: ids } }).then((data: any) => {
     res.send(data);
   });
 };
 
-export const information = (req:Request, res:Response) => {
-  DBModel.aggregate([{$group: {
-    _id: {
-      year:"$year",
-      month:"$month"
-    },
-    sum: {
-      "$sum":1
+export const information = (req: Request, res: Response) => {
+  DBModel.aggregate([{
+    $group: {
+      _id: {
+        year: "$year",
+        month: "$month"
+      },
+      sum: {
+        "$sum": 1
+      }
     }
-  }}, {$project: {
-    year:"$_id.year",
-    month:"$_id.month",
-    sum:"$sum",
-  }}, {$sort: {
-    year: -1,
-    month: -1,
-  }}]).then((data:Array<any>)=>{
+  }, {
+    $project: {
+      year: "$_id.year",
+      month: "$_id.month",
+      sum: "$sum",
+    }
+  }, {
+    $sort: {
+      year: -1,
+      month: -1,
+    }
+  }]).then((data: Array<any>) => {
     res.send(data)
   })
 }
@@ -112,7 +118,7 @@ export const information = (req:Request, res:Response) => {
 
 export const postPaginate = (req: Request, res: Response) => {
   let searchObj = req.body.search
-  let sort: any = { ...req.body.sort, no:1 };
+  let sort: any = { ...req.body.sort, no: 1 };
   let populate: any = req.body.populate;
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
@@ -122,7 +128,7 @@ export const postPaginate = (req: Request, res: Response) => {
     { sort: { ...sort }, offset: skip, limit: limit, populate: '', lean: false }
   ).then(function (data: any) {
     let docs = JSON.parse(JSON.stringify(data.docs))
-    Invoice.find({year:searchObj.year, month:searchObj.month, meter:{$in:docs.map((d:any)=>d.meter)}})
+    Invoice.find({ year: searchObj.year, month: searchObj.month, meter: { $in: docs.map((d: any) => d.meter) } })
       .then(function (invoices: Array<any>) {
         console.timeEnd("paginateInit")
         console.time("paginateCalcualtion")
@@ -144,14 +150,14 @@ export const postPaginate = (req: Request, res: Response) => {
         // })
         console.timeEnd("paginateCalcualtion")
         console.time("paginateFinal")
-        DBModel.find(searchObj).then((data2:any)=>{
+        DBModel.find(searchObj).then((data2: any) => {
           console.timeEnd("paginateFinal")
           res.send({
-            docs:docs,
-            total:data.total,
-            totalCount:data2.length,
-            ids:data2.map((el:any)=>el._id??""),
-            totalQty:data2.map((el:any)=>el.qty??0).reduce((a:number,b:number)=>a+b,0)
+            docs: docs,
+            total: data.total,
+            totalCount: data2.length,
+            ids: data2.map((el: any) => el._id ?? ""),
+            totalQty: data2.map((el: any) => el.qty ?? 0).reduce((a: number, b: number) => a + b, 0)
           })
         })
       })
@@ -190,32 +196,32 @@ export const excelDownload = (req: Request, res: Response) => {
   var workbook = new Excel.Workbook();
   let sheet = workbook.addWorksheet("Sheet1");
   DBModel.find(searchObj).lean().then(async function (data: Array<any>) {
-    let header:Array<string> = []
-    data.forEach((el:any,idx:number)=>{
+    let header: Array<string> = []
+    data.forEach((el: any, idx: number) => {
       for (const [key, value] of Object.entries(el)) {
-        
-        if(header.find(hel=>hel===key)==undefined) header.push(key)
+        if (header.find(hel => hel === key) == undefined) header.push(key)
       }
     })
     sheet.addRow(header);
-    data.forEach((el:any,idx:number)=>{
-      let body:Array<string> = []
-      header.forEach(hel=>{
-        let prep = el[hel]??"-"
-        if(prep.toString().search('numberDecimal')){
-          try {
-            prep = parseFloat((parseInt(prep.$numberDecimal)/100).toFixed(2))
-          } catch (error) {
-            
+    data.forEach((el: any, idx: number) => {
+      let body: Array<string> = []
+      header.forEach(hel => {
+        let prep = el[hel] ?? "-"
+        try {
+          if (JSON.stringify(prep).search('numberDecimal')!=-1) {
+            prep = JSON.parse(JSON.stringify(prep))
+            prep = parseFloat((parseInt(prep.$numberDecimal) / 100).toFixed(2))
           }
+        } catch (error) {
+          console.log(error)
         }
         body.push(prep)
       })
       sheet.addRow(body);
     });
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
-  await workbook.xlsx.write(res);
-  res.end();
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
+    await workbook.xlsx.write(res);
+    res.end();
   })
 }
