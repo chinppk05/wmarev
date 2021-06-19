@@ -201,7 +201,15 @@ export const excelDownload = (req: Request, res: Response) => {
     data.forEach((el:any,idx:number)=>{
       let body:Array<string> = []
       header.forEach(hel=>{
-        body.push(el[hel]??"-")
+        let prep = el[hel]??"-"
+        if(prep.toString().search('numberDecimal')){
+          try {
+            prep = parseFloat((parseInt(prep.$numberDecimal)/100).toFixed(2))
+          } catch (error) {
+            
+          }
+        }
+        body.push(prep)
       })
       sheet.addRow(body);
     });
