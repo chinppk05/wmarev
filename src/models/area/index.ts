@@ -19,6 +19,7 @@ const schema = new Schema({
     postal: String,
     signedBy: String,
     signedPosition: String,
+    reportIncome:Boolean,
     fileUrl1:[String],
     fileUrl2:[String],
     createdAt: Date,
