@@ -113,6 +113,10 @@ export const getAreaMonthly = (req: Request, res: Response) => {
     let calculations = JSON.parse(JSON.stringify(responses[1])) as Array<any>
     let collections = JSON.parse(JSON.stringify(responses[2])) as Array<any>
     let incomes = JSON.parse(JSON.stringify(responses[3])) as Array<any>
+
+    collections = collections.map(c=>{
+      return {...c,month:DateTime.fromJSDate(c.recordDate??new Date()).toObject().month}
+    })
     prep = prep.map(el=>{
       return {
         area:el.name,
