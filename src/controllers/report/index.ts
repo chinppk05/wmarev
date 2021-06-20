@@ -120,6 +120,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
     })
     prep = prep.map(el=>{
       return {
+        prefix:el.prefix,
         area:el.name,
         contract:el.contractNumber,
         calculations:calculations.filter(calc=>calc.area==el._id),
