@@ -12,6 +12,7 @@ const schema = new Schema({
   }, //ชื่อผู้ใช้
   password: String,//รหัสผ่าน
   accessLevel: String, //สิทธิการใช้งาน
+  access: [String],
   position: String, // ตำแหน่ง
   prefix: String, //คำนำหน้า
   firstName: String, //ชื่อต้น
