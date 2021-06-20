@@ -11,7 +11,7 @@ const schema = new Schema({
     unique: true,
   }, //ชื่อผู้ใช้
   password: String,//รหัสผ่าน
-  accessLevel: String, //สิทธิการใช้งาน
+  accessLevel: Number, //สิทธิการใช้งาน
   access: [String],
   position: String, // ตำแหน่ง
   prefix: String, //คำนำหน้า
