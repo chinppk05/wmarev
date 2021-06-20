@@ -106,7 +106,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
   promises.push(Area.find({reportIncome:true}).select("name contractNumber").exec())
   promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
   promises.push(AreaCollection.find({}).select("area quarter year recordDate amount createdAt").exec())
-  promises.push(AreaIncome.find({}).select("area quarter year recordDate amount createdAt").exec())
+  promises.push(AreaIncome.find({}).select("area quarter month year recordDate amount createdAt").exec())
 
   Promise.all(promises).then((responses) => {
     let prep = JSON.parse(JSON.stringify(responses[0])) as Array<any>
