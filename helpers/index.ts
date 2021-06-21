@@ -77,7 +77,7 @@ let main = async () => {
 let getDescription = (field: string, type: string) => {
   if (field != "_id" && type == "ObjectId")
     return "ฟิลด์แบบเก็บข้อมูล Unique Identification ที่อ้างอิงกลับไปยัง Model ของ " + field
-  if (field != "__v")
+  else if (field != "__v")
     return "ฟิลด์แบบเก็บข้อมูล เก็บเวอร์ชันการอัพเดทของข้อมูล"
   else if (type == "String")
     return "ฟิลด์แบบเก็บข้อมูล สายอักขระ"
@@ -89,6 +89,8 @@ let getDescription = (field: string, type: string) => {
     return "ฟิลด์แบบเก็บข้อมูล ตรรกะจริง/เท็จ"
   else if (type == "Array")
     return "ฟิลด์แบบเก็บข้อมูล แถวข้อมูล(อะเรย์)เพื่อเก็บข้อมูลหลายชุด"
+  else
+    return "-"
 }
 
 main()
