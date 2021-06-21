@@ -50,20 +50,20 @@ let models = [
   User,
 ]
 
-
 let main = async () => {
   const Excel = require("exceljs");
   var workbook = new Excel.Workbook();
-  let sheets:Array<any> = []
-  models.forEach((model,i) => {
+  let sheets: Array<any> = []
+  models.forEach((model, i) => {
     const props = Object.keys(model.schema.paths);
     const collectionName = model.collection.collectionName;
     sheets[i] = workbook.addWorksheet(collectionName);
-    let header1 = ["Field","Data Type","Description"];
+    let header1 = ["Field", "Data Type", "Description"];
     sheets[i].addRow(header1);
-    props.forEach(prop=>{
-      console.log(prop,model.schema.paths[prop].instance)
-      sheets[i].addRow([prop,model.schema.paths[prop].instance]);
+    props.forEach(prop => {
+      console.log(prop, model.schema.paths[prop].instance)
+      let desc = getDescription(prop, model.schema.paths[prop].instance)
+      sheets[i].addRow([prop, model.schema.paths[prop].instance, desc])
     })
     sheets[i].getColumn(1).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
     sheets[i].getColumn(2).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
@@ -74,5 +74,21 @@ let main = async () => {
   await workbook.xlsx.writeFile('data_dictionary.xlsx');
 }
 
+let getDescription = (field: string, type: string) => {
+  if (field != "_id" && type == "ObjectId")
+    return "ฟิลด์แบบเก็บข้อมูล Unique Identification ที่อ้างอิงกลับไปยัง Model ของ " + field
+  if (field != "__v")
+    return "ฟิลด์แบบเก็บข้อมูล เก็บเวอร์ชันการอัพเดทของข้อมูล"
+  else if (type == "String")
+    return "ฟิลด์แบบเก็บข้อมูล สายอักขระ"
+  else if (type == "Number")
+    return "ฟิลด์แบบเก็บข้อมูล ตัวเลข"
+  else if (type == "Date")
+    return "ฟิลด์แบบเก็บข้อมูล วันที่พร้อมกับเวลา"
+  else if (type == "Boolean")
+    return "ฟิลด์แบบเก็บข้อมูล ตรรกะจริง/เท็จ"
+  else if (type == "Array")
+    return "ฟิลด์แบบเก็บข้อมูล แถวข้อมูล(อะเรย์)เพื่อเก็บข้อมูลหลายชุด"
+}
 
 main()
