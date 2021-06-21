@@ -69,20 +69,29 @@ let main = async () => {
     sheets[i].getColumn(2).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     sheets[i].getColumn(1).width = 30
     sheets[i].getColumn(2).width = 25
-    sheets[i].getColumn(3).width = 60
+    sheets[i].getColumn(3).width = 80
   });
   await workbook.xlsx.writeFile('data_dictionary.xlsx');
 }
 
 let getDescription = (field: string, type: string) => {
-  if (field != "_id" && type == "ObjectId")
+  if (field != "_id" && type == "ObjectID")
     return "ฟิลด์แบบเก็บข้อมูล Unique Identification ที่อ้างอิงกลับไปยัง Model ของ " + field
-  else if (field != "__v")
+  else if (field == "_id")
+    return `ฟิลด์แบบเก็บข้อมูล Unique Identification ของ ${field} ที่จะไม่ซ้ำกันในทุก Collection ของฐานข้อมูล`
+  else if (field == "__v")
     return "ฟิลด์แบบเก็บข้อมูล เก็บเวอร์ชันการอัพเดทของข้อมูล"
+  else if (type == "Mixed")
+    return "ฟิลด์แบบเก็บข้อมูล แบบผสม"
+  else if (field == "createdAt")
+    return "ฟิลด์แบบเก็บข้อมูล แบบวันที่เก็บวันที่และเวลาที่เอกสารถูกสร้างขึ้น"
+    
   else if (type == "String")
     return "ฟิลด์แบบเก็บข้อมูล สายอักขระ"
   else if (type == "Number")
     return "ฟิลด์แบบเก็บข้อมูล ตัวเลข"
+  else if (type == "Decimal128")
+    return "ฟิลด์แบบเก็บข้อมูล ตัวเลข ในลักษณะ 16 bytes (128 bits) สำหรับข้อมูลที่ต้องการการปัดเศษตัวเลขทางการเงิน"
   else if (type == "Date")
     return "ฟิลด์แบบเก็บข้อมูล วันที่พร้อมกับเวลา"
   else if (type == "Boolean")
