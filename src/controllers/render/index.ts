@@ -182,7 +182,7 @@ export const postCalculationList = (req: Request, res: Response) => {
       }
       console.timeEnd("timer6")
       // console.log(calculationQuery)
-      let calculations = await Calculation.select("area calendarYear quarter").find(calculationQuery).sort("-createdAt").exec()
+      let calculations = await Calculation.find(calculationQuery).select("area calendarYear quarter").sort("-createdAt").exec()
       console.timeEnd("timer7")
       filtered = filtered.map(el=>{
         return {
