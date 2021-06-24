@@ -37,7 +37,21 @@ mongoose.set('useCreateIndex', true);
 app.use(cors())
 app.use(bodyParser.json({limit: '50mb'}))
 app.use(express.urlencoded({ extended: true,limit: '50mb' }))
-app.use(morgan('combined'))
+// app.use(morgan('combined'))
+app.use(morgan(function (tokens:any, req:any, res:any) {
+  let time = tokens['response-time'](req, res)
+  let prefix = "🤕"
+  if(time > 5000) prefix = "🤕"
+  else prefix = "😺"
+  return [
+    prefix,
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms'
+  ].join(' ')
+}))
 app.use('/api/v1/uploads', express.static('uploads'))
 app.use('/api/v1/manuals', express.static('manuals'))
 
