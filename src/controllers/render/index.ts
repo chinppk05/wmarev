@@ -76,7 +76,7 @@ export const getCalculationList = (req: Request, res: Response) => {
   })
 }
 
-export const postCalculationList = (req: Request, res: Response) => {
+export const postCalculationList = (req: Request, res: Response, next:any) => {
   console.time("timer1")
   console.time("timer2")
   console.time("timer3")
@@ -182,7 +182,7 @@ export const postCalculationList = (req: Request, res: Response) => {
       }
       console.timeEnd("timer6")
       // console.log(calculationQuery)
-      let calculations = await Calculation.find(calculationQuery).select("area calendarYear quarter createdAt modifiedAt").sort("-createdAt").exec()
+      let calculations = await Calculation.find(calculationQuery).select("area calendarYear quarter createdAt modifiedAt isKrob2 isKrob3 isKrob4").sort("-createdAt").exec()
       console.timeEnd("timer7")
       filtered = filtered.map(el=>{
         return {
@@ -197,6 +197,7 @@ export const postCalculationList = (req: Request, res: Response) => {
         docs:filtered,
         total:prep.length
       })
+      next()
     })
   })
 }
