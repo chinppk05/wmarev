@@ -131,54 +131,54 @@ let clearUsers = () =>{
   }, 2*1000*60);
 }
 clearUsers()
-io.on('connection', (socket: Socket) => {
-  console.log('a user connected: ' + connectCounter);
-  socket.on('connected', function () {
-    connectCounter++;
-    io.emit('userCount', connectCounter);
-  });
+// io.on('connection', (socket: Socket) => {
+//   console.log('a user connected: ' + connectCounter);
+//   socket.on('connected', function () {
+//     connectCounter++;
+//     io.emit('userCount', connectCounter);
+//   });
 
-  socket.on('getuser', function () {
-    io.emit('users', users);
-  });
-  socket.on('removeuser', function (payload) {
-    let found = users.findIndex(el=>el.user===payload)
-    try {
-      users.splice(found,1)
-    } catch (error) {
+//   socket.on('getuser', function () {
+//     io.emit('users', users);
+//   });
+//   socket.on('removeuser', function (payload) {
+//     let found = users.findIndex(el=>el.user===payload)
+//     try {
+//       users.splice(found,1)
+//     } catch (error) {
       
-    }
-  });
+//     }
+//   });
 
-  socket.on('loggedin', function (payload) {
-    let found = users.find(el=>el.user===payload)
-    if(found==undefined){
-      users.push({
-        user:payload,
-        createdAt:new Date()
-      })
-    }
-    else{
-      let diff = DateTime.fromJSDate(found.createdAt).diffNow('minutes').minutes
-      if(diff>3){
-        let i = users.findIndex(el=>el.user===payload)
-        users.splice(i,1)
-        users.push({
-          user:payload,
-          createdAt:new Date()
-        })
-      }else{
-        io.emit('users', users);
-      }
-    }
-  });
+//   socket.on('loggedin', function (payload) {
+//     let found = users.find(el=>el.user===payload)
+//     if(found==undefined){
+//       users.push({
+//         user:payload,
+//         createdAt:new Date()
+//       })
+//     }
+//     else{
+//       let diff = DateTime.fromJSDate(found.createdAt).diffNow('minutes').minutes
+//       if(diff>3){
+//         let i = users.findIndex(el=>el.user===payload)
+//         users.splice(i,1)
+//         users.push({
+//           user:payload,
+//           createdAt:new Date()
+//         })
+//       }else{
+//         io.emit('users', users);
+//       }
+//     }
+//   });
 
-  socket.on('disconnect', function () {
-    connectCounter--;
-    if (connectCounter < 0) connectCounter = 0
-    io.emit('userCount', connectCounter);
-  });
-});
+//   socket.on('disconnect', function () {
+//     connectCounter--;
+//     if (connectCounter < 0) connectCounter = 0
+//     io.emit('userCount', connectCounter);
+//   });
+// });
 
 http.listen(port, () => {
   console.log("Server started! at port " + port)
