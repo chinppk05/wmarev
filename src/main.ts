@@ -79,6 +79,7 @@ var upload = multer({
   storage: storage
 })
 
+app.use(haltOnTimedout)
 const invoice = require('./routers/invoice')(app)
 const payment = require('./routers/payment')(app)
 const receipt = require('./routers/receipt')(app)
@@ -86,6 +87,7 @@ const receipt = require('./routers/receipt')(app)
 const area = require('./routers/area')(app)
 const areaCondition = require('./routers/areaCondition')(app)
 const areaCollection = require('./routers/areaCollection')(app)
+app.use(haltOnTimedout)
 const areaIncome = require('./routers/areaIncome')(app)
 const areaRate = require('./routers/areaRate')(app)
 const areaRation = require('./routers/areaRation')(app)
@@ -100,12 +102,15 @@ const auth = require('./routers/auth')(app)
 const calculation = require('./routers/calculation')(app)
 const coverLetter = require('./routers/coverLetter')(app)
 const render = require('./routers/render')(app)
+app.use(haltOnTimedout)
 const process = require('./routers/process')(app)
+app.use(haltOnTimedout)
 
 const risk = require('./routers/risk')(app)
 const report = require('./routers/report')(app)
 
 const usageRequest = require('./routers/usageRequest')(app)
+app.use(haltOnTimedout)
 
 app.get("/api/v1/", (req:any, res:any) => {
   res.send("Welcome to WMA201AM1 API Server!");
@@ -183,6 +188,11 @@ io.on('connection', (socket: Socket) => {
     io.emit('userCount', connectCounter);
   });
 });
+
+
+function haltOnTimedout (req:any, res:any, next:any) {
+  if (!req.timedout) next()
+}
 
 http.listen(port, () => {
   console.log("Server started! at port " + port)
