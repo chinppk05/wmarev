@@ -184,17 +184,17 @@ export const postCalculationList = (req: Request, res: Response) => {
       // console.log(calculationQuery)
       let calculations = await Calculation.find(calculationQuery).sort("-createdAt").exec()
       console.timeEnd("timer7")
-      filtered = filtered.map(el=>{
-        return {
-          calculations:calculations.filter((c:any)=>{
-            return c.area.toString() === el.area.toString() && c.calendarYear == el.year && c.quarter == el.quarter
-          }),
-          ...el
-        }
-      })
+      // filtered = filtered.map(el=>{
+      //   return {
+      //     calculations:calculations.filter((c:any)=>{
+      //       return c.area.toString() === el.area.toString() && c.calendarYear == el.year && c.quarter == el.quarter
+      //     }),
+      //     ...el
+      //   }
+      // })
       console.timeEnd("timer8")
       res.send({
-        docs:filtered,
+        docs:calculations,
         total:prep.length
       })
     })
