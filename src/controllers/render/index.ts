@@ -183,17 +183,16 @@ export const postCalculationList = (req: Request, res: Response) => {
       console.timeEnd("timer6")
       // console.log(calculationQuery)
       let calculations = await Calculation.find(calculationQuery).sort("-createdAt").exec()
+      console.timeEnd("timer7")
       filtered = filtered.map(el=>{
         return {
           calculations:calculations.filter((c:any)=>{
-            // console.log(c.area == el.area,c.calendarYear == el.year,c.quarter == el.quarter)
-            // console.log(c.area,el.area,c.calendarYear,el.year,c.quarter,el.quarter)
             return c.area.toString() === el.area.toString() && c.calendarYear == el.year && c.quarter == el.quarter
           }),
           ...el
         }
       })
-      console.timeEnd("timer7")
+      console.timeEnd("timer8")
       res.send({
         docs:filtered,
         total:prep.length
