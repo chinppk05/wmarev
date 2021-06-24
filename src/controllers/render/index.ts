@@ -191,7 +191,7 @@ export const postCalculationList = (req: Request, res: Response) => {
           }),
           ...el
         }
-      })
+      }).slice(0, limit)
       console.timeEnd("timer8")
       res.send({
         docs:filtered,
