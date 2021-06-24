@@ -86,7 +86,8 @@ export const postCalculationList = (req: Request, res: Response) => {
   let skip = req.body.skip
   let searchArea = area != undefined ? { _id: area } : undefined
   Area.find(searchArea).select("name _id prefix").lean().then((data: any) => {
-    AreaCondition.find().then(async (areaConditions: any) => {
+    let areasId = JSON.parse(JSON.stringify(data))
+    AreaCondition.find({area:{$in:areasId.map((a:any)=>a._id)}}).then(async (areaConditions: any) => {
       let prep: Array<any> = []
       data.forEach((element: any, i: number) => {
         let foundCondition = areaConditions.find((el: any) => {
