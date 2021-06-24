@@ -23,6 +23,8 @@ const io = require("socket.io")(http, {
   path: '/api/v1/socket.io'
 });
 
+const connect = require('connect')
+const timeout = require('connect-timeout')
 const fs = require('fs')
 const path = require('path')
 const uuid = require('uuid')
@@ -34,6 +36,8 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
+
+app.use(timeout('5s'))
 app.use(cors())
 app.use(bodyParser.json({limit: '50mb'}))
 app.use(express.urlencoded({ extended: true,limit: '50mb' }))
