@@ -45,8 +45,8 @@ app.use(express.urlencoded({ extended: true,limit: '50mb' }))
 app.use(morgan(function (tokens:any, req:any, res:any) {
   let time = tokens['response-time'](req, res)
   let prefix = "🤕"
-  if(time > 5000) prefix = "🤕"
-  else prefix = "😺"
+  if(time > 5000) prefix = "😡"
+  else prefix = "😇"
   return [
     prefix,
     tokens.method(req, res),
