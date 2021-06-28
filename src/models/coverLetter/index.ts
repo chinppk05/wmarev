@@ -14,6 +14,8 @@ const schema = new Schema({
 
   showRef:Boolean, // แสดงสิ่งที่ส่งมาด้วย
   showAttachment: Boolean, //แสดงสิ่งแนบ
+  showBefore:{type: Boolean, default:true}, //แสดงตัวเลขก่อน สตง.รับรอง 
+  showAfter:{type: Boolean, default:true}, //แสดงตัวเลขหลัง สตง. รับรอง
   
   operationYear: Number,
   contractYear: Number,
