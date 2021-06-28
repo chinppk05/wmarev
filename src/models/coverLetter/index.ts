@@ -11,6 +11,9 @@ const schema = new Schema({
   subject: String,
   to: String,
   isPrint: Boolean,
+
+  showRef:Boolean, // แสดงสิ่งที่ส่งมาด้วย
+  showAttachment: Boolean, //แสดงสิ่งแนบ
   
   operationYear: Number,
   contractYear: Number,
