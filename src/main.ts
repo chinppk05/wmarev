@@ -56,9 +56,9 @@ app.use(morgan(function (tokens:any, req:any, res:any) {
     tokens['response-time'](req, res), 'ms'
   ].join(' ')
 }))
+
 app.use('/api/v1/uploads', express.static('uploads'))
 app.use('/api/v1/manuals', express.static('manuals'))
-
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
