@@ -117,14 +117,13 @@ export const getUser = (req: Request, res: Response) => {
   res.send(loginusers);
 }
 let clearUsers = () =>{
-  console.log("auth: clearing users...",loginusers)
+  loginusers.forEach((el,i)=>{
+    let diff = DateTime.fromJSDate(el.createdAt).diffNow('minutes').minutes
+    console.log(el.username,"diff",diff)
+    if(diff>3) loginusers.splice(i,1)
+  })
+  console.log("auth: cleared users...",loginusers)
   setTimeout(() => {
-    loginusers.forEach((el,i)=>{
-      let diff = DateTime.fromJSDate(el.createdAt).diffNow('minutes').minutes
-      console.log(el.username,"diff",diff)
-      if(diff>3) loginusers.splice(i,1)
-    })
-    console.log("auth: cleared users...",loginusers)
     clearUsers()
   }, 1*1000*60);
 }
