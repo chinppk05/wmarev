@@ -55,7 +55,9 @@ app.use(morgan(function (tokens:any, req:any, res:any) {
     tokens.res(req, res, 'content-length'), '-',
     tokens['response-time'](req, res), 'ms'
   ].join(' ')
-}))
+},{skip:(tokens:any, req:any,res:any)=>{
+  return tokens.url(req, res).search("user-keep-alive") !=  undefined
+}}))
 
 app.use('/api/v1/uploads', express.static('uploads'))
 app.use('/api/v1/manuals', express.static('manuals'))
