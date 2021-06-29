@@ -9,6 +9,7 @@ module.exports = (app: Express) => {
   app.post('/api/v1/user/login/', passport.authenticate('login', { session: false }), ctrl.login)
   app.post('/api/v1/user/logout/', ctrl.logout)
   app.get('/api/v1/user-list/', ctrl.getUser)
+  app.post('/api/v1/user-keep-alive/', ctrl.keepAlive)
 
   app.post('/api/v1/reset/request/',ctrl.resetRequest)
   app.post('/api/v1/reset/submit/',ctrl.resetSubmission)
