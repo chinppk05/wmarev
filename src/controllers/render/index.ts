@@ -77,14 +77,7 @@ export const getCalculationList = (req: Request, res: Response) => {
 }
 
 export const postCalculationList = (req: Request, res: Response, next:any) => {
-  console.time("timer1")
-  console.time("timer2")
-  console.time("timer3")
-  console.time("timer4")
-  console.time("timer5")
-  console.time("timer6")
-  console.time("timer7")
-  console.time("timer8")
+  console.time("postCalculationList")
   let list = req.body.list
   let year = req.body.search.year
   let quarter = req.body.search.quarter
@@ -94,10 +87,10 @@ export const postCalculationList = (req: Request, res: Response, next:any) => {
   let skip = req.body.skip
   let searchArea = area != undefined ? { _id: area } : undefined
   Area.find(searchArea).select("name _id prefix").lean().then((data: any) => {
-    console.timeEnd("timer1")
+    
     let areasId = JSON.parse(JSON.stringify(data))
     AreaCondition.find({area:{$in:areasId.map((a:any)=>a._id)}}).then(async (areaConditions: any) => {
-      console.timeEnd("timer2")
+      
       let prep: Array<any> = []
       data.forEach((element: any, i: number) => {
         let foundCondition = areaConditions.find((el: any) => {
@@ -157,11 +150,11 @@ export const postCalculationList = (req: Request, res: Response, next:any) => {
           }
         }
       });
-      console.timeEnd("timer3")
+      
       if (year != undefined) prep = prep.filter(el => el.year == year)
       if (month != undefined) prep = prep.filter(el => el.month == month)
       if (quarter != undefined) prep = prep.filter(el => el.quarter == quarter)
-      console.timeEnd("timer4")
+      
       let filtered = prep.filter((el,i)=>{
         if(i>=skip){
           if(i<skip+limit){
@@ -170,7 +163,7 @@ export const postCalculationList = (req: Request, res: Response, next:any) => {
         }
         return false
       })
-      console.timeEnd("timer5")
+      
       let calculationQuery = {
         $or:filtered.map(el=>{
           return {
@@ -180,10 +173,10 @@ export const postCalculationList = (req: Request, res: Response, next:any) => {
           }
         })
       }
-      console.timeEnd("timer6")
-      // console.log(calculationQuery)
+      
+      console.log(calculationQuery)
       let calculations = await Calculation.find(calculationQuery).select("area calendarYear quarter createdAt modifiedAt isKrob2 isKrob3 isKrob4").sort("-createdAt").exec()
-      console.timeEnd("timer7")
+      
       filtered = filtered.map(el=>{
         return {
           calculations:calculations.filter((c:any)=>{
@@ -192,7 +185,7 @@ export const postCalculationList = (req: Request, res: Response, next:any) => {
           ...el
         }
       }).slice(0, limit)
-      console.timeEnd("timer8")
+      console.timeEnd("postCalculationList")
       res.send({
         docs:filtered,
         total:prep.length
