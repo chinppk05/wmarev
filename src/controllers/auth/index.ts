@@ -98,6 +98,9 @@ export const logout = (req: Request, res: Response) => {
     message: 'Signout successful'
   });
 }
+export const getUser = (req: Request, res: Response) => {
+  res.send(loginusers);
+}
 let clearUsers = () =>{
   console.log("auth: clearing users...",loginusers)
   setTimeout(() => {
