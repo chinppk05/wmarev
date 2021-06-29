@@ -83,7 +83,9 @@ export const signup = (req: Request, res: Response) => {
 var loginusers:Array<{username:string,createdAt:Date}> = []
 export const login = (req: Request, res: Response) => {
   const token = jwt.sign({ user: req.user }, 'JMANDJM-CHN201AM1');
-  loginusers.push({username:req.body.username, createdAt:new Date()})
+
+  let i = loginusers.findIndex(el=>el.username===req.body.username)
+  if(i==-1) loginusers.push({username:req.body.username, createdAt:new Date()})
   console.log("auth: added users...",loginusers)
   res.send({
     message: 'Signin successful',
@@ -97,6 +99,11 @@ export const logout = (req: Request, res: Response) => {
   res.send({
     message: 'Signout successful'
   });
+}
+export const keepAlive = (req: Request, res: Response) => {
+  let i = loginusers.findIndex(el=>el.username===req.body.username)
+  if(i==-1) loginusers.push({username:req.body.username, createdAt:new Date()})
+  res.send(loginusers);
 }
 export const getUser = (req: Request, res: Response) => {
   console.log("loginusers",loginusers)
