@@ -7,6 +7,7 @@ module.exports = (app: Express) => {
 
   app.post('/api/v1/user/signup/', passport.authenticate('signup', { session: false }), ctrl.signup)
   app.post('/api/v1/user/login/', passport.authenticate('login', { session: false }), ctrl.login)
+  app.post('/api/v1/user/logout/', ctrl.logout)
 
   app.post('/api/v1/reset/request/',ctrl.resetRequest)
   app.post('/api/v1/reset/submit/',ctrl.resetSubmission)

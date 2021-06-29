@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 const localStrategy = require('passport-local').Strategy;
 import UserModel from '../../models/user/index'
 import ResetModel from '../../models/reset/index'
+import { DateTime } from 'luxon';
 
 passport.use('signup', new localStrategy({
   usernameField: 'username',
@@ -78,14 +79,37 @@ export const signup = (req: Request, res: Response) => {
     user: req.user
   });
 }
+
+var loginusers:Array<{username:string,createdAt:Date}> = []
 export const login = (req: Request, res: Response) => {
   const token = jwt.sign({ user: req.user }, 'JMANDJM-CHN201AM1');
+  loginusers.push({username:req.body.username, createdAt:new Date()})
+  console.log("auth: added users...",loginusers)
   res.send({
-    message: 'Signup successful',
+    message: 'Signin successful',
     user: req.user,
     token: token
   });
 }
+export const logout = (req: Request, res: Response) => {
+  let i = loginusers.findIndex(el=>el.username===req.body.username)
+  loginusers.splice(i,1)
+  res.send({
+    message: 'Signout successful'
+  });
+}
+let clearUsers = () =>{
+  console.log("auth: clearing users...",loginusers)
+  setTimeout(() => {
+    loginusers.forEach((el,i)=>{
+      let diff = DateTime.fromJSDate(el.createdAt).diffNow('minutes').minutes
+      if(diff>3) loginusers.splice(i,1)
+    })
+    console.log("auth: cleared users...",loginusers)
+    clearUsers()
+  }, 1*1000*60);
+}
+clearUsers()
 
 
 export const resetRequest = (req: Request, res: Response) => {
