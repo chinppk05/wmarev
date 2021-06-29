@@ -99,6 +99,7 @@ export const logout = (req: Request, res: Response) => {
   });
 }
 export const getUser = (req: Request, res: Response) => {
+  console.log("loginusers",loginusers)
   res.send(loginusers);
 }
 let clearUsers = () =>{
