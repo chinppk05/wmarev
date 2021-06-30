@@ -165,13 +165,13 @@ export const postCalculationList = (req: Request, res: Response, next:any) => {
       })
       
       let calculationQuery = {
-        $or:filtered.map(el=>{
-          return {
-            area:el.area,
-            calendarYear:el.year,
-            quarter:el.quarter
-          }
-        })
+        // $or:filtered.map(el=>{
+        //   return {
+        //     area:el.area,
+        //     calendarYear:el.year,
+        //     quarter:el.quarter
+        //   }
+        // })
       }
       
       console.log(calculationQuery)
