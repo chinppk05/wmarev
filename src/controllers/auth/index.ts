@@ -108,7 +108,7 @@ export const keepAlive = (req: Request, res: Response) => {
 }
 export const updatePath = (req: Request, res: Response) => {
   let i = loginusers.findIndex(el=>el.username===req.body.username)
-  if(i==-1) loginusers.push({username:req.body.username, path:req.body.path, createdAt:new Date()})
+  if(i==-1&&req.body.username!='') loginusers.push({username:req.body.username, path:req.body.path, createdAt:new Date()})
   else loginusers[i].path = req.body.path
   res.send(loginusers);
 }
