@@ -164,7 +164,8 @@ export const postCalculationList = (req: Request, res: Response, next:any) => {
         return false
       })
       
-      let calculationQuery = {
+      let calculationQuery = {area:{$in:areasId.map((a:any)=>a._id)}}
+      // {
         // $or:filtered.map(el=>{
         //   return {
         //     area:el.area,
@@ -172,7 +173,7 @@ export const postCalculationList = (req: Request, res: Response, next:any) => {
         //     quarter:el.quarter
         //   }
         // })
-      }
+      // }
       
       console.log(calculationQuery)
       let calculations = await Calculation.find(calculationQuery).select("area calendarYear quarter createdAt modifiedAt isKrob2 isKrob3 isKrob4").sort("-createdAt").exec()
