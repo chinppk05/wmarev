@@ -103,13 +103,25 @@ export const logout = (req: Request, res: Response) => {
 export const keepAlive = (req: Request, res: Response) => {
   let i = loginusers.findIndex(el=>el.username===req.body.username)
   if(i==-1&&req.body.username!='') loginusers.push({username:req.body.username, path:req.body.path, createdAt:new Date()})
-  else loginusers[i].path = req.body.path
+  else{
+    try {
+      loginusers[i].path = req.body.path
+    } catch (error) {
+      console.log("can't set path in auth")
+    }
+  }
   res.send(loginusers);
 }
 export const updatePath = (req: Request, res: Response) => {
   let i = loginusers.findIndex(el=>el.username===req.body.username)
   if(i==-1&&req.body.username!='') loginusers.push({username:req.body.username, path:req.body.path, createdAt:new Date()})
-  else loginusers[i].path = req.body.path
+  else{
+    try {
+      loginusers[i].path = req.body.path
+    } catch (error) {
+      console.log("can't set path in auth")
+    }
+  }
   res.send(loginusers);
 }
 export const getUser = (req: Request, res: Response) => {
