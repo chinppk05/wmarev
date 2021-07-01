@@ -10,6 +10,7 @@ const schema = new Schema({
   operationYear: Number,
   contractYear: Number,
   calendarYear: Number,
+  collectYear: Number,
   quarter: Number,
   isKrob2: Boolean,
   isKrob3: Boolean,
