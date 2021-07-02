@@ -21,9 +21,14 @@ let prepArray: Array<any> = [];
   sheet.eachRow(function (row: any, rowNumber: number) {
     if (rowNumber > 1) {
       const used = process.memoryUsage().heapUsed / 1024 / 1024;
-
+      let seq = row.getCell(2).value??""
+      try {
+        seq = seq.replace("wma-","").replace("WMA-","")
+      } catch (error) {
+        
+      }
       prepArray.push({
-        sequence: row.getCell(2).value,
+        sequence: seq,
         year: row.getCell(3).value,
         month: row.getCell(4).value,
         meter: row.getCell(5).value,
