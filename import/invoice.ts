@@ -78,6 +78,11 @@ var j = 0
 let saveInvoice = async () => {
   const used = process.memoryUsage().heapUsed / 1024 / 1024;
   if (prepArray[i] != undefined) {
+    try {
+      prepArray[i-1] = null
+    } catch (error) {
+      
+    }
     let invoice = new Invoice(prepArray[i])
     await invoice.save().then(() => {
       console.log(`invoices ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
@@ -97,6 +102,11 @@ let saveInvoice = async () => {
 let saveUsage = async () => {
   const used = process.memoryUsage().heapUsed / 1024 / 1024;
   if (prepArray[j] != undefined) {
+    try {
+      prepArray[i-1] = null
+    } catch (error) {
+      
+    }
     let usage = new Usage(prepArray[j])
     await usage.save().then(() => {
       console.log(`usages ${j}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
