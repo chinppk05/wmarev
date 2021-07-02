@@ -4,6 +4,7 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
   requestType: String,
+  username: String,
   list: [String],
   reason: String,
   status: String,
