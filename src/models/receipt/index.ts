@@ -72,7 +72,7 @@ schema.pre("save", async function (next: NextFunction) {
     (err: Error, doc: any) => {
       let sequence
       if (this.sequence!=undefined) sequence = this.sequence
-      else sequence = "wma-" + doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
+      else sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
       let recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this.year - 543 }).toJSDate()
       console.log("sequence for receipt ",sequence)
       Receipt.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()

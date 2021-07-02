@@ -159,10 +159,10 @@ export const postPaginate = (req: Request, res: Response) => {
     let docs = JSON.parse(JSON.stringify(data.docs))
     DBModel.find(searchObj).then((data2: any) => {
       data2.forEach((el:any) => {
-        if(el.sequence.search("wma-") == -1){
-          el.sequence = "wma-"+el.sequence
-          el.save()
-        }
+        // if(el.sequence.search("wma-") == -1){
+        //   el.sequence = "wma-"+el.sequence
+        //   el.save()
+        // }
       });
       let data3 = JSON.parse(JSON.stringify(data2))
       res.send({
