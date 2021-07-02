@@ -44,7 +44,11 @@ let prepArray: Array<any> = [];
         calculationType: row.getCell("S").value,
         invoiceAmount: row.getCell("T").value, // invoiceAmount: (row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),
         code: "01-kb",
-        isNextStage: true, isPrint: true,
+        isNextStage: true, 
+        isPrint: true,
+        isRequested:true,
+        isApproved:true,
+        isSigned:true,
         process:true,
         createdAt:new Date()
       })
