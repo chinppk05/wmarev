@@ -14,7 +14,7 @@ let prepArray: Array<any> = [];
   await Invoice.deleteMany({}).exec()
   await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname + "/prep/invoice.xlsx");
+  await workbook.xlsx.readFile(__dirname + "/prep/wma_invoice_adjust_meter.xlsx");
   let sheet = workbook.getWorksheet("Data")
 
   sheet.columns = [
