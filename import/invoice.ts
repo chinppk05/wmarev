@@ -35,11 +35,15 @@ let prepArray: Array<any> = [];
     { header: 'CategoryType', key: 'categoryType', width: 10 },
   ];
 
+  let no = 1
+  let lastYearMonth = ""
+  let currentYearMonth = ""
   sheet.eachRow(function (row: any, rowNumber: number) {
     if (rowNumber > 1) {
       const used = process.memoryUsage().heapUsed / 1024 / 1024;
-
+      currentYearMonth = row.getCell(3)+row.getCell(4)
       prepArray.push({
+        no:no,
         sequence: row.getCell(2),
         year: row.getCell(3),
         month: row.getCell(4),
@@ -62,6 +66,8 @@ let prepArray: Array<any> = [];
         isNextStage: true, isPrint: true,
         createdAt:new Date()
       })
+      if(lastYearMonth!=currentYearMonth) no = 1
+      lastYearMonth = row.getCell(3)+row.getCell(4)
       console.log(`reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
   })
