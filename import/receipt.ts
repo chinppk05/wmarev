@@ -74,7 +74,7 @@ let savePayment = async () => {
       if (data != null)
         payment = new Payment({ ...prepArray[i], invoiceNumber: data.sequence })
       else
-        payment = new Payment({ ...prepArray[i], invoiceNumber: "notfound" })
+        payment = new Payment({ ...prepArray[i], invoiceNumber: "ไม่พบรายการชำระ" })
       await payment.save().then(() => {
         delete mongoose.models['Payment'];
         delete mongoose.connection.collections['payments'];

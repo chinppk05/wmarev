@@ -120,7 +120,7 @@ const moveFrom = "./excel";
                     prep.category = category
                     prep.categoryType = "น้ำเสีย"
                     prep.calculationType = "บาท/ลบ.ม."
-
+                    prep.invoiceAmount = parseFloat(((prep.debtAmount + (prep.totalAmount*1.07))).toFixed(2))
                     if (prep.qty == 0 && prep.totalAmount > 0) {
                       prep.categoryType = "น้ำทิ้ง"
                       prep.flatRate = parseFloat(row.getCell(mapper[8]).text) || 0
