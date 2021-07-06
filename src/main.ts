@@ -23,7 +23,6 @@ const io = require("socket.io")(http, {
   path: '/api/v1/socket.io'
 });
 
-const connect = require('connect')
 const timeout = require('connect-timeout')
 const fs = require('fs')
 const path = require('path')
