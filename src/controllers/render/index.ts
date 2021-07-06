@@ -249,13 +249,13 @@ export const getCustomerList = (req: Request, res: Response) => {
             }
           },
           name: {
-            $first: "$name"
+            $last: "$name"
           },
           meter: {
-            $first: "$meter"
+            $last: "$meter"
           },
           address: {
-            $first: "$address"
+            $last: "$address"
           },
         }
       }, {
