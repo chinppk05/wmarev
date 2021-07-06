@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 // const Excel = require('exceljs');
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('db');
+// var sqlite3 = require('sqlite3').verbose();
+// var db = new sqlite3.Database('db');
 import axios from "axios"
 import { DateTime } from "luxon"
 import { parse } from "node:path";
@@ -107,10 +107,10 @@ const moveFrom = "./excel";
                 let prep: any = {}
                 if (rowNumber >= startRow) {
                   if (row.getCell(1).value != null) {
-                    var myRegexp = /1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
+                    var myRegexp = /บเสร็จ (.*?)(\d{2}) \(/g ///1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
                     var match = myRegexp.exec(fromPath);
                     prep.rate = rate
-                    prep.year = parseInt("25" + (fromPath as string).slice(-8, -6))
+                    prep.year = parseInt("25" + match[2])
                     prep.month = getMonth(match[1])
                     prep.sequence = row.getCell(mapper[0]).text
                     prep.meter = row.getCell(mapper[1]).text
