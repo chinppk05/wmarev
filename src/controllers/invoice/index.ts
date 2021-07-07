@@ -150,6 +150,14 @@ export const postOne = (req: Request, res: Response) => {
   });
 };
 
+export const updateInvoiceDate = (req: Request, res: Response) => {
+  let list = req.body.list
+  let dt = req.body.dt
+  DBModel.updateMany({ _id: { $in: list.map((el: string) => mongoose.Types.ObjectId(el)) } }, { $set: { invoiceDate: dt } }).then((data: any) => {
+    res.send(data);
+  });
+}
+
 export const update = (req: Request, res: Response) => {
   let sid =
     req.params.id.length != 24 ? "000000000000000000000000" : req.params.id;
@@ -172,37 +180,43 @@ export const remove = (req: Request, res: Response) => {
 };
 
 export const removeMany = (req: Request, res: Response) => {
-  let list:Array<string> = req.body.list
-  let ids = list.map(el=>mongoose.Types.ObjectId(el))
-  DBModel.deleteMany({ _id: { $in:ids } }).then((data: any) => {
+  let list: Array<string> = req.body.list
+  let ids = list.map(el => mongoose.Types.ObjectId(el))
+  DBModel.deleteMany({ _id: { $in: ids } }).then((data: any) => {
     res.send(data);
   });
 };
 
-export const information = (req:Request, res:Response) => {
-  DBModel.aggregate([{$group: {
-    _id: {
-      year:"$year",
-      month:"$month"
-    },
-    sum: {
-      "$sum":1
+export const information = (req: Request, res: Response) => {
+  DBModel.aggregate([{
+    $group: {
+      _id: {
+        year: "$year",
+        month: "$month"
+      },
+      sum: {
+        "$sum": 1
+      }
     }
-  }}, {$project: {
-    year:"$_id.year",
-    month:"$_id.month",
-    sum:"$sum",
-  }}, {$sort: {
-    year: -1,
-    month: -1,
-  }}]).then((data:Array<any>)=>{
+  }, {
+    $project: {
+      year: "$_id.year",
+      month: "$_id.month",
+      sum: "$sum",
+    }
+  }, {
+    $sort: {
+      year: -1,
+      month: -1,
+    }
+  }]).then((data: Array<any>) => {
     res.send(data)
   })
 }
 
 export const postPaginate = (req: Request, res: Response) => {
   let searchObj = req.body.search;
-  let sort: any = { ...req.body.sort, no:1 };
+  let sort: any = { ...req.body.sort, no: 1 };
   let populate: any = req.body.populate;
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
@@ -230,12 +244,12 @@ export const postPaginate = (req: Request, res: Response) => {
           let calc2 = parseFloat(calc.toFixed(2))
           return calc2
         }).reduce((a: number, b: number) => a + b, 0),
-        
+
         totalAmount: data3.map((el: any) => {
-          if(el.calculationType=="บาท/ลบ.ม.")
-            return ((el.qty ?? 0) * (el.rate ?? 0)) * ( 1 + (el.vatRate ?? 0) )
+          if (el.calculationType == "บาท/ลบ.ม.")
+            return ((el.qty ?? 0) * (el.rate ?? 0)) * (1 + (el.vatRate ?? 0))
           else
-            return (el.rate ?? 0) * ( 1 + (el.vatRate ?? 0) )
+            return (el.rate ?? 0) * (1 + (el.vatRate ?? 0))
         }).reduce((a: number, b: number) => a + b, 0),
         totalDebt: data3.map((el: any) => (el.billAmount ?? 0) + (el.debtAmount ?? 0)).reduce((a: number, b: number) => a + b, 0)
       })
@@ -286,7 +300,7 @@ export const excelDownload = (req: Request, res: Response) => {
       header.forEach(hel => {
         let prep = el[hel] ?? "-"
         try {
-          if (JSON.stringify(prep).search('numberDecimal')!=-1) {
+          if (JSON.stringify(prep).search('numberDecimal') != -1) {
             prep = JSON.parse(JSON.stringify(prep))
             prep = parseFloat((parseInt(prep.$numberDecimal) / 100).toFixed(2))
           }
