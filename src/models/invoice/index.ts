@@ -40,7 +40,7 @@ const schema = new Schema({
   isPaid: { type: Boolean, default: false },
   paidReceipt: String,
   calculationType: String,
-  printDate: String,
+  printDate: Date,
   createdAt: Date,
   ref: String,
   notes: String,
