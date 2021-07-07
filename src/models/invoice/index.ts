@@ -44,7 +44,7 @@ const schema = new Schema({
   createdAt: Date,
   ref: String,
   notes: String,
-
+  invoiceDate: Date,
 })
 
 schema.pre("save", async function (next: NextFunction) {
