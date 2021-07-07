@@ -14,7 +14,7 @@ let prepArray: Array<any> = [];
   await Invoice.deleteMany({}).exec()
   await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname + "/prep/wma_invoice_adjust_meter.xlsx");
+  await workbook.xlsx.readFile(__dirname + "/prep/invoice.xlsx");
   let sheet = workbook.getWorksheet("Data")
 
   sheet.columns = [
@@ -56,7 +56,7 @@ let prepArray: Array<any> = [];
         debtText: row.getCell(11),
         debtAmount: row.getCell(12),
         totalAmount: row.getCell(13),
-        invoiceAmount: (row.getCell(13)*1.07) + row.getCell(12),
+        invoiceAmount: (parseFloat(row.getCell(13))*1.07) + parseFloat(row.getCell(12)),
         billAmount: (row.getCell(13)*1.07),
         category: row.getCell(14),
         categoryType: row.getCell(15),
@@ -68,7 +68,13 @@ let prepArray: Array<any> = [];
       })
       if(lastYearMonth!=currentYearMonth) no = 1
       lastYearMonth = row.getCell(3)+row.getCell(4)
-      console.log(`reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+      // if(row.getCell(5)==='12170456052'){
+      if(row.getCell(5)=='12170456052'){
+        console.log('row',row.getCell(3),row.getCell(4))
+      }else{
+        // console.log('row',row)
+      }
+      console.log(`reading ${rowNumber}: ${(parseFloat(row.getCell(13))*1.07) + parseFloat(row.getCell(12))} Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
   })
   saveInvoice()
