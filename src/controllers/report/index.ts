@@ -12,98 +12,117 @@ import Area from "../../models/area";
 import AreaIncome from "../../models/areaIncome";
 
 export const getCollectionStatus = (req: Request, res: Response) => {
-  AreaIncome.find().then((incomes: Array<any>) => {
-    AreaCollection.find({}).then((collections: Array<any>) => {
-      let totalIncome = incomes
-        .map((el: any) => el.amount ?? 0)
-        .reduce((a: number, b: number) => a + b, 0)
-      let outstandingCollect = collections
-        .filter((el) => el.year < new Date().getFullYear() + 543)
-        .map((el: any) => el.amount ?? 0)
-        .reduce((a: number, b: number) => a + b, 0)
-      let totalCollect = collections
-        .filter((el) => el.year == new Date().getFullYear() + 543)
-        .map((el: any) => el.amount ?? 0)
-        .reduce((a: number, b: number) => a + b, 0)
-      let income = incomes
-        .filter((el) => el.year == new Date().getFullYear() + 543)
-        .map((el: any) => el.amount ?? 0)
-        .reduce((a: number, b: number) => a + b, 0)
-      let outstanding = incomes
-        .filter((el) => el.year < new Date().getFullYear() + 543)
-        .map((el: any) => el.amount ?? 0)
-        .reduce((a: number, b: number) => a + b, 0)
-      res.send({
-        outstanding: outstanding - outstandingCollect,
-        income: income,
-        totalIncome: (totalIncome) + (outstanding - outstandingCollect),
-        collected: totalCollect,
+  Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
+    let areasId = areas.map(el => el._id)
+    AreaIncome.find({ area: { $in: areasId } }).then((incomes: Array<any>) => {
+      AreaCollection.find({}).then((collections: Array<any>) => {
+        let totalIncome = incomes
+          .map((el: any) => el.amount ?? 0)
+          .reduce((a: number, b: number) => a + b, 0)
+        let outstandingCollect = collections
+          .filter((el) => el.year < new Date().getFullYear() + 543)
+          .map((el: any) => el.amount ?? 0)
+          .reduce((a: number, b: number) => a + b, 0)
+        let totalCollect = collections
+          .filter((el) => el.year == new Date().getFullYear() + 543)
+          .map((el: any) => el.amount ?? 0)
+          .reduce((a: number, b: number) => a + b, 0)
+        let income = incomes
+          .filter((el) => el.year == new Date().getFullYear() + 543)
+          .map((el: any) => el.amount ?? 0)
+          .reduce((a: number, b: number) => a + b, 0)
+        let outstanding = incomes
+          .filter((el) => el.year < new Date().getFullYear() + 543)
+          .map((el: any) => el.amount ?? 0)
+          .reduce((a: number, b: number) => a + b, 0)
+        res.send({
+          outstanding: outstanding - outstandingCollect,
+          income: income,
+          totalIncome: (totalIncome) + (outstanding - outstandingCollect),
+          collected: totalCollect,
+        });
       });
     });
-  });
+  })
 };
 export const getCollectionStatistic = (req: Request, res: Response) => {
-  AreaCollection.aggregate([
-    {
-      $group: {
-        _id: "$year",
-        sum: {
-          $sum: "$amount",
-        },
-      },
-    },
-  ]).exec((error: Error, collections: Array<any>) => {
-    res.send(collections);
-  });
-};
-export const getComparePlanResult = (req: Request, res: Response) => {
-  AreaIncome.aggregate([
-    {
-      $group: {
-        _id: {
-          year: "$year",
-          quarter: "$quarter",
-          month: { $month: "$createdAt" },
-        },
-        sum: {
-          $sum: "$amount",
-        },
-      },
-    },
-  ]).exec((error: Error, calculations: Array<any>) => {
+  Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
+    let areasId = areas.map(el => el._id)
     AreaCollection.aggregate([
       {
+        $match: {
+          area: { $in: areasId }
+        }
+      },
+      {
         $group: {
-          _id: {
-            year: "$year",
-            month: { $month: "$recordDate" },
-            recordYear: { $add: [{ $year: "$recordDate" }, 543] },
-          },
+          _id: "$year",
           sum: {
             $sum: "$amount",
           },
         },
       },
     ]).exec((error: Error, collections: Array<any>) => {
-      res.send({ calculation: calculations, collection: collections });
+      res.send(collections);
     });
   });
-  // AreaCollection.aggregate([
-  //   {
-  //     $group: {
-  //       _id: "$year",
-  //       sum: {
-  //         $sum: "$amount"
-  //       }
-  //     }
-  //   }
-  // ]).exec((error: Error, collections: Array<any>) => {
-  //   res.send(collections)
-  // })
+};
+export const getComparePlanResult = (req: Request, res: Response) => {
+  Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
+    let areasId = areas.map(el => el._id)
+    AreaIncome.aggregate([
+      {
+        $match: {
+          area: { $in: areasId }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            year: "$year",
+            quarter: "$quarter",
+            month: { $month: "$createdAt" },
+          },
+          sum: {
+            $sum: "$amount",
+          },
+        },
+      },
+    ]).exec((error: Error, calculations: Array<any>) => {
+      AreaCollection.aggregate([
+        {
+          $group: {
+            _id: {
+              year: "$year",
+              month: { $month: "$recordDate" },
+              recordYear: { $add: [{ $year: "$recordDate" }, 543] },
+            },
+            sum: {
+              $sum: "$amount",
+            },
+          },
+        },
+      ]).exec((error: Error, collections: Array<any>) => {
+        res.send({ calculation: calculations, collection: collections });
+      });
+    });
+    // AreaCollection.aggregate([
+    //   {
+    //     $group: {
+    //       _id: "$year",
+    //       sum: {
+    //         $sum: "$amount"
+    //       }
+    //     }
+    //   }
+    // ]).exec((error: Error, collections: Array<any>) => {
+    //   res.send(collections)
+    // })
+  })
 };
 export const getAreaMonthly = (req: Request, res: Response) => {
   let promises: Array<Promise<any>> = [];
-  promises.push(Area.find({reportIncome:true}).select("prefix name contractNumber").exec())
+  promises.push(Area.find({ reportIncome: true }).select("prefix name contractNumber").exec())
   promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
   promises.push(AreaCollection.find({}).select("area quarter year recordDate amount createdAt").exec())
   promises.push(AreaIncome.find({}).select("area quarter month year recordDate amount createdAt").exec())
@@ -114,18 +133,18 @@ export const getAreaMonthly = (req: Request, res: Response) => {
     let collections = JSON.parse(JSON.stringify(responses[2])) as Array<any>
     let incomes = JSON.parse(JSON.stringify(responses[3])) as Array<any>
 
-    collections = collections.map(c=>{
-      let month = c.recordDate==undefined?-1:DateTime.fromISO(c.recordDate).toObject().month
-      return {...c,month}
+    collections = collections.map(c => {
+      let month = c.recordDate == undefined ? -1 : DateTime.fromISO(c.recordDate).toObject().month
+      return { ...c, month }
     })
-    prep = prep.map(el=>{
+    prep = prep.map(el => {
       return {
-        prefix:el.prefix,
-        area:el.name,
-        contract:el.contractNumber,
-        calculations:calculations.filter(calc=>calc.area==el._id),
-        collections:collections.filter(colc=>colc.area==el._id),
-        incomes:incomes.filter(colc=>colc.area==el._id),
+        prefix: el.prefix,
+        area: el.name,
+        contract: el.contractNumber,
+        calculations: calculations.filter(calc => calc.area == el._id),
+        collections: collections.filter(colc => colc.area == el._id),
+        incomes: incomes.filter(colc => colc.area == el._id),
       }
     })
     res.send(prep)
@@ -135,17 +154,17 @@ export const getBillingDashboard = (req: Request, res: Response) => {
   let code = req.body.code
   let year = req.body.year
   let month = req.body.month
-  let limit = req.body.limit??12
-  let skip = req.body.skip??0
-  console.log("l,s",limit,skip)
+  let limit = req.body.limit ?? 12
+  let skip = req.body.skip ?? 0
+  console.log("l,s", limit, skip)
   let promises: Array<Promise<any>> = [];
   promises.push(
     Usage.aggregate([
       {
         $match: {
-          code:{ $in:code },
-          year:{ $in:year },
-          month:{ $in:month },
+          code: { $in: code },
+          year: { $in: year },
+          month: { $in: month },
         }
       },
       {
@@ -170,9 +189,9 @@ export const getBillingDashboard = (req: Request, res: Response) => {
     Invoice.aggregate([
       {
         $match: {
-          code:{ $in:code },
-          year:{ $in:year },
-          month:{ $in:month },
+          code: { $in: code },
+          year: { $in: year },
+          month: { $in: month },
         }
       },
       {
@@ -202,9 +221,9 @@ export const getBillingDashboard = (req: Request, res: Response) => {
     Invoice.aggregate([
       {
         $match: {
-          code:{ $in:code },
-          year:{ $in:year },
-          month:{ $in:month },
+          code: { $in: code },
+          year: { $in: year },
+          month: { $in: month },
         }
       },
       {
@@ -244,9 +263,9 @@ export const getBillingDashboard = (req: Request, res: Response) => {
     Invoice.aggregate([
       {
         $match: {
-          code:{ $in:code },
-          year:{ $in:year },
-          month:{ $in:month },
+          code: { $in: code },
+          year: { $in: year },
+          month: { $in: month },
         }
       },
       {
@@ -298,9 +317,9 @@ export const getBillingDashboard = (req: Request, res: Response) => {
     Payment.aggregate([
       {
         $match: {
-          code:{ $in:code },
-          year:{ $in:year },
-          month:{ $in:month },
+          code: { $in: code },
+          year: { $in: year },
+          month: { $in: month },
         }
       },
       {
@@ -355,7 +374,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         return {
           // name:`${el._id.year}/${el._id.month}`,
           name: DateTime.fromObject({
-            year: (el._id.year??2600) - 543,
+            year: (el._id.year ?? 2600) - 543,
             month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
@@ -368,7 +387,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
         return {
           // name:`${el._id.year}/${el._id.month}`,
           name: DateTime.fromObject({
-            year: (el._id.year??2600) - 543,
+            year: (el._id.year ?? 2600) - 543,
             month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
@@ -380,7 +399,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       types12mo: responses[2].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
-            year: (el._id.year??2600) - 543,
+            year: (el._id.year ?? 2600) - 543,
             month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
@@ -395,7 +414,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       amounts12mo: responses[3].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
-            year: (el._id.year??2600) - 543,
+            year: (el._id.year ?? 2600) - 543,
             month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
@@ -410,7 +429,7 @@ export const getBillingDashboard = (req: Request, res: Response) => {
       paid12mo: responses[4].slice().reverse().map((el: any) => {
         return {
           name: DateTime.fromObject({
-            year: (el._id.year??2600) - 543,
+            year: (el._id.year ?? 2600) - 543,
             month: el._id.month ?? 0,
           })
             .reconfigure({ outputCalendar: "buddhist" })
@@ -437,16 +456,16 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
     Invoice.aggregate([
       {
         $match: {
-          code:{ $in:code },
-          year:{ $in:year }
+          code: { $in: code },
+          year: { $in: year }
         }
       },
       {
         $group: {
           _id: "$code",
-          totalAmount: { $sum: { $divide: ["$totalAmount",100] } },
-          debtAmount: { $sum: { $divide: ["$debtAmount",100] } },
-          billAmount: { $sum: { $divide: ["$billAmount",100] } }
+          totalAmount: { $sum: { $divide: ["$totalAmount", 100] } },
+          debtAmount: { $sum: { $divide: ["$debtAmount", 100] } },
+          billAmount: { $sum: { $divide: ["$billAmount", 100] } }
         }
       }
     ]).exec()
@@ -455,14 +474,14 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
     Receipt.aggregate([
       {
         $match: {
-          code:{ $in:code },
-          year:{ $in:year }
+          code: { $in: code },
+          year: { $in: year }
         }
       },
       {
         $group: {
           _id: "$code",
-          paymentAmount: { $sum: { $divide:["$paymentAmount",100] } }
+          paymentAmount: { $sum: { $divide: ["$paymentAmount", 100] } }
         }
       }
     ]).exec()
@@ -470,12 +489,12 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
 
   Promise.all(promises).then((data) => {
     res.send({
-      p1:data[0],
-      p2:data[1],
-      totalAmount:data[0][0].totalAmount,
-      debtAmount:data[0][0].debtAmount,
-      billAmount:data[0][0].billAmount,
-      paymentAmount:data[1][0].paymentAmount,
+      p1: data[0],
+      p2: data[1],
+      totalAmount: data[0][0].totalAmount,
+      debtAmount: data[0][0].debtAmount,
+      billAmount: data[0][0].billAmount,
+      paymentAmount: data[1][0].paymentAmount,
     })
   })
   // Receipt.aggregate([{$match: {
