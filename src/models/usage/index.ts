@@ -36,7 +36,8 @@ const schema = new Schema({
   calculationType: String,
   createdAt: Date,
   notes:String,
-  ref:String
+  ref:String,
+  status:String,
 });
 
 schema.pre("save", async function (next: NextFunction) {

@@ -14,8 +14,8 @@ let prepArray: Array<any> = [];
   await Invoice.deleteMany({}).exec()
   await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname + "/prep/invoice.xlsx");
-  let sheet = workbook.getWorksheet("Data")
+  await workbook.xlsx.readFile(__dirname + "/prep/WMA_INV_CONSOL_R3.xlsx");
+  let sheet = workbook.getWorksheet("รวม INV")
 
   sheet.columns = [
     { header: 'Id', key: 'id', width: 10 },
@@ -41,30 +41,52 @@ let prepArray: Array<any> = [];
   sheet.eachRow(function (row: any, rowNumber: number) {
     if (rowNumber > 1) {
       const used = process.memoryUsage().heapUsed / 1024 / 1024;
-      currentYearMonth = row.getCell(3)+row.getCell(4)
+      currentYearMonth = row.getCell(16)+row.getCell(17)
       prepArray.push({
         no:no,
-        sequence: row.getCell(2),
-        year: row.getCell(3),
-        month: row.getCell(4),
-        meter: row.getCell(5),
-        name: row.getCell(6),
-        address: row.getCell(7),
-        qty: row.getCell(8),
-        rate: row.getCell(16)=='บาท/เดือน'?row.getCell(13):row.getCell(9),
-        flatRate: row.getCell(10),
-        debtText: row.getCell(11),
-        debtAmount: row.getCell(12),
-        totalAmount: row.getCell(13),
-        invoiceAmount: (parseFloat(row.getCell(13))*1.07) + parseFloat(row.getCell(12)),
-        billAmount: (row.getCell(13)*1.07),
-        category: row.getCell(14),
-        categoryType: row.getCell(15),
-        calculationType:row.getCell(16),
+        sequence: row.getCell(3),
+        name: row.getCell(5),
+        address: row.getCell(6),
+        debtText: row.getCell(7),
+        debtAmount: row.getCell(8),
+        qty: row.getCell(9),
+        rate: row.getCell(24)=='บาท/เดือน'?row.getCell(11):row.getCell(10),
+        totalAmount: row.getCell(11),
+        tax: row.getCell(12),
+        invoiceAmount: row.getCell(14),
+        category: row.getCell(15),
+        year: row.getCell(16),
+        month: row.getCell(17),
+        meter: row.getCell(21),
+        flatRate: row.getCell(22),
+        categoryType: row.getCell(23),
+        calculationType:row.getCell(24),
         vatRate: 0.07,
         code: "01-kb",
         isNextStage: true, isPrint: true,
         createdAt:new Date()
+        // no:no,
+        // sequence: row.getCell(2),
+        // year: row.getCell(3),
+        // month: row.getCell(4),
+        // meter: row.getCell(5),
+        // name: row.getCell(6),
+        // address: row.getCell(7),
+        // qty: row.getCell(8),
+        // rate: row.getCell(16)=='บาท/เดือน'?row.getCell(13):row.getCell(9),
+        // flatRate: row.getCell(10),
+        // debtText: row.getCell(11),
+        // debtAmount: row.getCell(12),
+        // totalAmount: row.getCell(13),
+        // invoiceAmount: (parseFloat(row.getCell(13))*1.07) + parseFloat(row.getCell(12)),
+        // billAmount: (row.getCell(13)*1.07),
+        // category: row.getCell(14),
+        // categoryType: row.getCell(15),
+        // calculationType:row.getCell(16),
+        // vatRate: 0.07,
+        // code: "01-kb",
+        // isNextStage: true, isPrint: true,
+        // createdAt:new Date()
       })
       if(lastYearMonth!=currentYearMonth) no = 1
       lastYearMonth = row.getCell(3)+row.getCell(4)
