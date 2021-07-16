@@ -14,7 +14,7 @@ let prepArray: Array<any> = [];
   await Invoice.deleteMany({}).exec()
   await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname + "/prep/WMA_INV_CONSOL_R3.xlsx");
+  await workbook.xlsx.readFile(__dirname + "/prep/WMA_INV_CONSOL_R4_NEW.xlsx");
   let sheet = workbook.getWorksheet("รวม INV")
 
   sheet.columns = [
@@ -39,35 +39,34 @@ let prepArray: Array<any> = [];
   let lastYearMonth = ""
   let currentYearMonth = ""
   sheet.eachRow(function (row: any, rowNumber: number) {
-    if (rowNumber > 1) {
+    if (rowNumber >= 5) {
       const used = process.memoryUsage().heapUsed / 1024 / 1024;
-      currentYearMonth = row.getCell(16)+row.getCell(17)
-
-      let vatText = (row.getCell(12).text??"").replace(",","")
+      currentYearMonth = row.getCell("P")+row.getCell("Q")
+      let vatText = (row.getCell("L").text??"").replace(",","")
       let vat = parseFloat(vatText)
       prepArray.push({
         no:no,
-        sequence: row.getCell(3),
-        name: row.getCell(5),
-        address: row.getCell(6),
-        debtText: row.getCell(7),
-        debtAmount: row.getCell(8),
-        qty: row.getCell(9),
-        rate: row.getCell(24)=='บาท/เดือน'?row.getCell(11):row.getCell(10),
-        totalAmount: row.getCell(11),
+        sequence: row.getCell("C"),
+        name: row.getCell("E"),
+        address: row.getCell("F"),
+        debtText: row.getCell("G"),
+        debtAmount: row.getCell("H"),
+        qty: row.getCell("I"),
+        rate: row.getCell("Y")=='บาท/เดือน'?row.getCell("W"):row.getCell("J"),
+        totalAmount: row.getCell("K"),
         vat: vat,
-        invoiceAmount: row.getCell(14).value,
-        category: row.getCell(15).value,
-        year: row.getCell(16).value,
-        month: row.getCell(17).value,
-        meter: row.getCell(21).value,
-        flatRate: row.getCell(22).value,
-        categoryType: row.getCell(23).value,
-        calculationType:row.getCell(24).value,
+        invoiceAmount:parseFloat(row.getCell("N")),// invoiceAmount: row.getCell("N").value,
+        category: row.getCell("O").value,
+        year: row.getCell("P").value,
+        month: row.getCell("Q").value,
+        meter: row.getCell("V")=='เลิกใช้น้ำแล้ว'?row.getCell("S"):row.getCell("V"),
+        flatRate: row.getCell("W").value,
+        categoryType: row.getCell("X").text,
+        calculationType:row.getCell("Y").text,
         vatRate: 0.07,
         code: "01-kb",
         isNextStage: true, isPrint: true,
-        status: row.getCell("v").text=="เลิกใช้น้ำแล้ว"?"เลิกใช้น้ำแล้ว":"ปกติ",
+        status: row.getCell("V").text=="เลิกใช้น้ำแล้ว"?"เลิกใช้น้ำแล้ว":"ปกติ",
         createdAt:new Date()
         // no:no,
         // sequence: row.getCell(2),
