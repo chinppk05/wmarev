@@ -35,6 +35,8 @@ const schema = new Schema({
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   invoiceAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  tax: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  vat: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   isNextStage: Boolean,
   isPrint: { type: Boolean, default: false },
   isPaid: { type: Boolean, default: false },
