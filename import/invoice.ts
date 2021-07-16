@@ -42,6 +42,9 @@ let prepArray: Array<any> = [];
     if (rowNumber > 1) {
       const used = process.memoryUsage().heapUsed / 1024 / 1024;
       currentYearMonth = row.getCell(16)+row.getCell(17)
+
+      let vatText = (row.getCell(12).text??"").replace(",","")
+      let vat = parseFloat(vatText)
       prepArray.push({
         no:no,
         sequence: row.getCell(3),
@@ -52,18 +55,19 @@ let prepArray: Array<any> = [];
         qty: row.getCell(9),
         rate: row.getCell(24)=='บาท/เดือน'?row.getCell(11):row.getCell(10),
         totalAmount: row.getCell(11),
-        tax: row.getCell(12),
-        invoiceAmount: row.getCell(14),
-        category: row.getCell(15),
-        year: row.getCell(16),
-        month: row.getCell(17),
-        meter: row.getCell(21),
-        flatRate: row.getCell(22),
-        categoryType: row.getCell(23),
-        calculationType:row.getCell(24),
+        vat: vat,
+        invoiceAmount: row.getCell(14).value,
+        category: row.getCell(15).value,
+        year: row.getCell(16).value,
+        month: row.getCell(17).value,
+        meter: row.getCell(21).value,
+        flatRate: row.getCell(22).value,
+        categoryType: row.getCell(23).value,
+        calculationType:row.getCell(24).value,
         vatRate: 0.07,
         code: "01-kb",
         isNextStage: true, isPrint: true,
+        status: row.getCell("v").text=="เลิกใช้น้ำแล้ว"?"เลิกใช้น้ำแล้ว":"ปกติ",
         createdAt:new Date()
         // no:no,
         // sequence: row.getCell(2),

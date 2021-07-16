@@ -10,6 +10,7 @@ export const create = (req: Request, res: Response) => {
   newObj.createdAt = new Date();
   newObj.modifiedAt = new Date();
   newObj.createdIP = ip;
+  newObj.vat = (newObj.rate * newObj.qty) * 0.07
   newObj.save().then((document: any) => {
     res.send(document)
   })
@@ -50,7 +51,9 @@ export const postOne = (req: Request, res: Response) => {
 export const update = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)
-  DBModel.findByIdAndUpdate(id, { ...req.body, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
+  let prep = req.body
+  prep.vat = (prep.rate * prep.qty) * 0.07
+  DBModel.findByIdAndUpdate(id, { ...prep, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
     res.send(data)
     History.findOne({
       name: "usages",
