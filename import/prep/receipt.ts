@@ -32,8 +32,6 @@ const moveFrom = "./excel_new";
         if (path.extname(fromPath) == ".xlsx") {
 
           filesArray.push(fromPath)
-
-
           console.log("'%s' is a xlsx file.", fromPath);
           const workbook = new Excel.Workbook();
           await workbook.xlsx.readFile(fromPath);

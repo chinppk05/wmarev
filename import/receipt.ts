@@ -15,7 +15,7 @@ let prepArray: Array<any> = [];
   await Payment.deleteMany({}).exec()
   await Receipt.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname + "/prep/receipt.xlsx");
+  await workbook.xlsx.readFile(__dirname + "/prep/receipt_new.xlsx");
   let sheet = workbook.getWorksheet("Data")
 
   sheet.eachRow(function (row: any, rowNumber: number) {
