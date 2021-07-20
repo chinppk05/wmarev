@@ -9,7 +9,7 @@ import { parse } from "node:path";
 import Excel from "exceljs"
 
 
-const moveFrom = "./excel";
+const moveFrom = "./excel_new";
 (async () => {
 
   let countType1 = 0
@@ -45,10 +45,12 @@ const moveFrom = "./excel";
             let rate = -1
 
             let sheet = workbook.getWorksheet(sheetId)
+            console.log(sheet.name)
             let column = worksheet.getColumn('C');
             column.eachCell(function (cell, rowNumber) {
               if (cell.value != null) {
                 if (((cell ?? {}).text || "sss").search("wma") != -1) {
+                  console.log("found wma")
                   if (cell.text.slice(6, 7) == '3' && !okay) {
                     countType3++
                     category = "3"
@@ -63,10 +65,12 @@ const moveFrom = "./excel";
                     rate = 3.5
                     okay = true
                   }
+                }else{
+                  // console.log("not found wma",worksheet.name,(cell ?? {}).text)
                 }
               }
             });
-
+            console.log('startRow',startRow, okay)
             if (okay) {
               let headerRow = worksheet.getRow(startRow - 1)
               let tmp: Array<string> = []
@@ -109,6 +113,7 @@ const moveFrom = "./excel";
                   if (row.getCell(1).value != null) {
                     var myRegexp = /บเสร็จ (.*?)(\d{2}) \(/g ///1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
                     var match = myRegexp.exec(fromPath);
+                    prep.id = fromPath
                     prep.rate = rate
                     prep.year = parseInt("25" + match[2])
                     prep.month = getMonth(match[1])
@@ -289,7 +294,6 @@ let getMonth = (str: string) => {
     case "ธค":
       return 12
       break;
-
     default:
       return 0
       break;
