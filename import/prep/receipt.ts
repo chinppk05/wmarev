@@ -219,7 +219,7 @@ const moveFrom = "./excel";
       sheet1.addRow(element);
     });
     console.log(countType2, countType3)
-    await workbook.xlsx.writeFile("receipt.xlsx");
+    await workbook.xlsx.writeFile("receipt_new.xlsx");
   }
   catch (e) {
     console.error("We've thrown! Whoops!", e);
