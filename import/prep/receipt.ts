@@ -203,14 +203,13 @@ const moveFrom = "./excel";
       { header: 'Month', key: 'month', width: 10 },
       { header: 'Meter', key: 'meter', width: 10 },
       { header: 'Name', key: 'name', width: 20 },
-      { header: 'Address', key: 'address', width: 30 },
+      { header: 'Address', key: 'address', width: 50 },
       { header: 'Qty', key: 'qty', width: 10 },
       { header: 'Rate', key: 'rate', width: 10 },
       { header: 'FlatRate', key: 'flatRate', width: 10 },
       { header: 'DebtText', key: 'debtText', width: 10 },
       { header: 'DebtAmount', key: 'debtAmount', width: 10 },
       { header: 'VatRate', key: 'vatRate', width: 10 },
-      { header: 'Vat', key: 'vat', width: 10 },
       { header: 'TotalAmount', key: 'totalAmount', width: 10 },
       { header: 'PaymentAmount', key: 'paymentAmount', width: 10 },
       { header: 'PaymentDate', key: 'paymentDate', width: 10 },
@@ -218,6 +217,7 @@ const moveFrom = "./excel";
       { header: 'CategoryType', key: 'categoryType', width: 10 },
       { header: 'CalculationType', key: 'calculationType', width: 10 },
       { header: 'InvoiceAmount(ตามใบแจ้งหนี้)', key: 'invoiceAmount', width: 10 },
+      { header: 'Vat', key: 'vat', width: 10 },
     ];
     sheet1.autoFilter = {
       from: 'A1',
