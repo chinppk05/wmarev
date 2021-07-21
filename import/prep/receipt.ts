@@ -179,7 +179,7 @@ const moveFrom = "./excel";
                     if(mapper[9]!=undefined){
                       prep.invoiceAmount = row.getCell(mapper[9]).text
                     }else{
-                      prep.invoiceAmount = prep.rate * prep.qty
+                      prep.invoiceAmount = parseFloat((prep.rate * prep.qty).toFixed(2))
                     }
 
                     prep.vat = 0
