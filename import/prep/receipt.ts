@@ -101,6 +101,8 @@ const moveFrom = "./excel";
                   if (t === "รับจริง" && colNumber < 19) mapper[7] = colNumber
                   if (t === "วันที่ชำระเงิน") mapper[8] = colNumber
                   if (t === "ตามใบแจ้งหนี้") mapper[9] = colNumber
+                  if (t === "ภาษี") mapper[10] = colNumber
+                  
                 }
               });
               headerChecker.push(tmp)
@@ -111,6 +113,7 @@ const moveFrom = "./excel";
                   if (row.getCell(1).value != null) {
                     var myRegexp = /บเสร็จ (.*?)(\d{2}) \(/g ///1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
                     var match = myRegexp.exec(fromPath);
+                    console.log('match',match)
                     prep.id = fromPath
                     prep.rate = rate
                     prep.year = parseInt("25" + match[2])
@@ -118,6 +121,7 @@ const moveFrom = "./excel";
                     prep.sequence = row.getCell(mapper[0]).text
                     prep.meter = row.getCell(mapper[1]).text
                     prep.name = row.getCell(mapper[2]).text
+                    prep.vat = parseFloat(row.getCell(mapper[10]).text??"0")
                     prep.debtText = row.getCell(mapper[5]).text
                     prep.paymentDate = getPaymentDate(row.getCell(mapper[8]).text)
                     let tmpDebtAmount = row.getCell(mapper[6]).value
@@ -127,8 +131,13 @@ const moveFrom = "./excel";
                       prep.debtAmount = -1
                     }
 
-                    prep.paymentAmount = parseFloat(row.getCell(mapper[7]).text)
-                    if (Number.isNaN(parseFloat(row.getCell(mapper[7]).text))) prep.paymentAmount = prep.debtAmount
+                    prep.paymentAmount = 0
+                    try {
+                      prep.paymentAmount = parseFloat(row.getCell(mapper[7]).text??"0")
+                      if (Number.isNaN(parseFloat(row.getCell(mapper[7]).text))) prep.paymentAmount = prep.debtAmount
+                    } catch (error) {
+                      console.log('paymentAmount error', file)
+                    }
 
                     
                     try {
@@ -201,6 +210,7 @@ const moveFrom = "./excel";
       { header: 'DebtText', key: 'debtText', width: 10 },
       { header: 'DebtAmount', key: 'debtAmount', width: 10 },
       { header: 'VatRate', key: 'vatRate', width: 10 },
+      { header: 'Vat', key: 'vat', width: 10 },
       { header: 'TotalAmount', key: 'totalAmount', width: 10 },
       { header: 'PaymentAmount', key: 'paymentAmount', width: 10 },
       { header: 'PaymentDate', key: 'paymentDate', width: 10 },
