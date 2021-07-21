@@ -195,6 +195,8 @@ const moveFrom = "./excel";
 
                     }
                     
+                    prep.invoiceAmount = prep.invoiceAmount + prep.vat
+                    
 
                     prepArray.push(prep)
                   }
