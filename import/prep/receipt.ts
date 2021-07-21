@@ -9,7 +9,7 @@ import { parse } from "node:path";
 import Excel from "exceljs"
 
 
-const moveFrom = "./excel_new";
+const moveFrom = "./excel";
 (async () => {
 
   let countType1 = 0
