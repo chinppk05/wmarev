@@ -113,7 +113,7 @@ const moveFrom = "./excel";
                   if (row.getCell(1).value != null) {
                     var myRegexp = /บเสร็จ (.*?)(\d{2}) \(/g ///1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
                     var match = myRegexp.exec(fromPath);
-                    console.log('match',match)
+                    // console.log('match',match)
                     prep.id = fromPath
                     prep.rate = rate
                     prep.year = parseInt("25" + match[2])
@@ -121,7 +121,6 @@ const moveFrom = "./excel";
                     prep.sequence = row.getCell(mapper[0]).text
                     prep.meter = row.getCell(mapper[1]).text
                     prep.name = row.getCell(mapper[2]).text
-                    prep.vat = parseFloat(row.getCell(mapper[10]).text??"0")
                     prep.debtText = row.getCell(mapper[5]).text
                     prep.paymentDate = getPaymentDate(row.getCell(mapper[8]).text)
                     let tmpDebtAmount = row.getCell(mapper[6]).value
@@ -145,9 +144,12 @@ const moveFrom = "./excel";
                       if (tmpAmount.result != undefined) prep.totalAmount = tmpAmount.result
                       else prep.totalAmount = tmpAmount.value == null ? 0 : tmpAmount.text
                     } catch (error) {
-                      prep.totalAmount = -55
+                      prep.totalAmount = 9
                       console.log(error)
                     }
+
+
+
                     if (hasQty) {
                       prep.qty = row.getCell(mapper[3]).text
                     } else {
@@ -157,6 +159,7 @@ const moveFrom = "./excel";
                     prep.categoryType = "น้ำเสีย"
                     prep.calculationType = "บาท/ลบ.ม."
                     prep.vatRate = 0.07
+
                     if ((prep.qty == 0 && prep.totalAmount > 0) || prep.meter == "12170367739") {
                       prep.categoryType = "น้ำทิ้ง"
                       // prep.flatRate = parseFloat(row.getCell(mapper[8]).text) || 0
@@ -178,6 +181,15 @@ const moveFrom = "./excel";
                     }else{
                       prep.invoiceAmount = prep.rate * prep.qty
                     }
+
+                    prep.vat = 0
+                    try {
+                      prep.vat = parseFloat(row.getCell(mapper[10]).text??"0")
+                      if (Number.isNaN(parseFloat(row.getCell(mapper[10]).text))) prep.vat = parseFloat((prep.billAmout * 0.07).toFixed(2))
+                    } catch(error){
+
+                    }
+                    
 
                     prepArray.push(prep)
                   }
