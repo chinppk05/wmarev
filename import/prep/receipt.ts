@@ -178,7 +178,7 @@ const moveFrom = "./excel";
                     prep.billAmout = prep.rate * prep.qty
 
                     if(mapper[9]!=undefined){
-                      if(mapper[9].formula!=undefined){
+                      if(row.getCell(mapper[9]).formula != undefined){
                         prep.invoiceAmount = row.getCell(mapper[9]).result
                       }else{
                         prep.invoiceAmount = parseFloat((prep.rate * prep.qty).toFixed(2))
@@ -238,7 +238,7 @@ const moveFrom = "./excel";
     ];
     sheet1.autoFilter = {
       from: 'A1',
-      to: 'P1',
+      to: 'U1',
     }
     headerChecker.forEach((element, i) => {
       sheet2.addRow([filesArray[Math.floor(i / 2)], ...element]);
