@@ -9,7 +9,8 @@
     "watch": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/main.ts",
     "initinvoice": "ts-node import/invoice.ts",
     "initreceipt": "ts-node import/receipt.ts",
-    "initdb": "ts-node import/invoice.ts && ts-node import/receipt.ts"
+    "initdb": "ts-node import/invoice.ts && ts-node import/receipt.ts",
+    "pull": "git reset --hard && git pull && gulp build && pm2 restart WMA201AM1"
   },
   "author": "NCC",
   "license": "ISC",
