@@ -101,6 +101,7 @@ const moveFrom = "./excel";
                   if (t === "รับจริง" && colNumber < 19) mapper[7] = colNumber
                   if (t === "วันที่ชำระเงิน") mapper[8] = colNumber
                   if (t === "ตามใบแจ้งหนี้") mapper[9] = colNumber
+                  if (t === "รวมเงิน") mapper[9] = colNumber
                   if (t === "ภาษี") mapper[10] = colNumber
                   
                 }
