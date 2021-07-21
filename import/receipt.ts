@@ -48,6 +48,7 @@ let prepArray: Array<any> = [];
         categoryType: row.getCell("R").value,
         calculationType: row.getCell("S").value,
         invoiceAmount: row.getCell("T").value, // invoiceAmount: (row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),
+        vat: row.getCell("U").value,
         code: "01-kb",
         isNextStage: true, 
         isPrint: true,
