@@ -20,7 +20,7 @@ const moveFrom = "./excel";
   let headerChecker: Array<any> = []
   let filesArray: Array<any> = []
   let prepArray: Array<any> = []
-  let mapper: Array<any> = []
+  let mapper: Array<any> = new Array(20).fill(1)
   try {
     const files = await fs.promises.readdir(moveFrom);
     for (const file of files) {
@@ -43,12 +43,12 @@ const moveFrom = "./excel";
             let rate = -1
 
             let sheet = workbook.getWorksheet(sheetId)
-            console.log(sheet.name)
+            // console.log(sheet.name)
             let column = worksheet.getColumn('C');
             column.eachCell(function (cell, rowNumber) {
               if (cell.value != null) {
                 if (((cell ?? {}).text || "sss").search("wma") != -1) {
-                  console.log("found wma")
+                  // console.log("found wma")
                   if (cell.text.slice(6, 7) == '3' && !okay) {
                     countType3++
                     category = "3"
@@ -68,7 +68,7 @@ const moveFrom = "./excel";
                 }
               }
             });
-            console.log('startRow',startRow, okay)
+            // console.log('startRow',startRow, okay)
             if (okay) {
               let headerRow = worksheet.getRow(startRow - 1)
               let tmp: Array<string> = []
