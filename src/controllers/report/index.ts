@@ -122,9 +122,9 @@ export const getComparePlanResult = (req: Request, res: Response) => {
 };
 export const getAreaMonthly = (req: Request, res: Response) => {
   let promises: Array<Promise<any>> = [];
-  promises.push(Area.find({ reportIncome: true }).select("prefix name contractNumber").exec())
+  // promises.push(Area.find({ reportIncome: true }).select("prefix name contractNumber").exec())
 
-  Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas:Array<any>)=>{
+  Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas:Array<any>)=>{
     promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
     promises.push(AreaCollection.find({ year: { $gt: 2500 } }).select("area quarter year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({ year: { $gt: 2500 } }).select("area quarter month year recordDate amount createdAt").exec())
