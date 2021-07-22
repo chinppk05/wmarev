@@ -143,6 +143,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
         return {
           prefix: el.prefix,
           area: el.name,
+          _id: el._id,
           contract: el.contractNumber,
           calculations: calculations.filter(calc => calc.area == el._id),
           collections: collections.filter(colc => colc.area == el._id),
