@@ -136,7 +136,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
       let incomes = JSON.parse(JSON.stringify(responses[3])) as Array<any>
 
       collections = collections.map(c => {
-        let month = c.recordDate == undefined ? -1 : DateTime.fromISO(c.recordDate).toObject().month
+        let month = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().month
         return { ...c, month }
       })
       prep = prep.map(el => {
