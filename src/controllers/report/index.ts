@@ -123,31 +123,34 @@ export const getComparePlanResult = (req: Request, res: Response) => {
 export const getAreaMonthly = (req: Request, res: Response) => {
   let promises: Array<Promise<any>> = [];
   promises.push(Area.find({ reportIncome: true }).select("prefix name contractNumber").exec())
-  promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
-  promises.push(AreaCollection.find({ year: { $gt: 2500 } }).select("area quarter year recordDate amount createdAt").exec())
-  promises.push(AreaIncome.find({ year: { $gt: 2500 } }).select("area quarter month year recordDate amount createdAt").exec())
 
-  Promise.all(promises).then((responses) => {
-    let prep = JSON.parse(JSON.stringify(responses[0])) as Array<any>
-    let calculations = JSON.parse(JSON.stringify(responses[1])) as Array<any>
-    let collections = JSON.parse(JSON.stringify(responses[2])) as Array<any>
-    let incomes = JSON.parse(JSON.stringify(responses[3])) as Array<any>
+  Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas:Array<any>)=>{
+    promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
+    promises.push(AreaCollection.find({ year: { $gt: 2500 } }).select("area quarter year recordDate amount createdAt").exec())
+    promises.push(AreaIncome.find({ year: { $gt: 2500 } }).select("area quarter month year recordDate amount createdAt").exec())
 
-    collections = collections.map(c => {
-      let month = c.recordDate == undefined ? -1 : DateTime.fromISO(c.recordDate).toObject().month
-      return { ...c, month }
+    Promise.all(promises).then((responses) => {
+      let prep = JSON.parse(JSON.stringify(responses[0])) as Array<any>
+      let calculations = JSON.parse(JSON.stringify(responses[1])) as Array<any>
+      let collections = JSON.parse(JSON.stringify(responses[2])) as Array<any>
+      let incomes = JSON.parse(JSON.stringify(responses[3])) as Array<any>
+
+      collections = collections.map(c => {
+        let month = c.recordDate == undefined ? -1 : DateTime.fromISO(c.recordDate).toObject().month
+        return { ...c, month }
+      })
+      prep = prep.map(el => {
+        return {
+          prefix: el.prefix,
+          area: el.name,
+          contract: el.contractNumber,
+          calculations: calculations.filter(calc => calc.area == el._id),
+          collections: collections.filter(colc => colc.area == el._id),
+          incomes: incomes.filter(colc => colc.area == el._id),
+        }
+      })
+      res.send(prep)
     })
-    prep = prep.map(el => {
-      return {
-        prefix: el.prefix,
-        area: el.name,
-        contract: el.contractNumber,
-        calculations: calculations.filter(calc => calc.area == el._id),
-        collections: collections.filter(colc => colc.area == el._id),
-        incomes: incomes.filter(colc => colc.area == el._id),
-      }
-    })
-    res.send(prep)
   })
 };
 export const getBillingDashboard = (req: Request, res: Response) => {
