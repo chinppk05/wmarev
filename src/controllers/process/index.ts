@@ -13,7 +13,7 @@ var options = { upsert: true, new: true, useFindAndModify: false };
 export const createInvoice = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
-  let invoiceDate = req.body.invoiceDate
+  let invoiceDate = req.body.invoiceDate??new Date()
   Usage.find({ _id: { $in: list } }).then((usagesList: Array<any>) => {
     let usages = JSON.parse(JSON.stringify(usagesList))
     let promises: Array<Promise<any>> = []
