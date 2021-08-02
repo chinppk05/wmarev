@@ -13,7 +13,7 @@ var options = { upsert: true, new: true, useFindAndModify: false };
 export const createInvoice = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
-  let invoiceDate = req.body.invoiceDate??new Date()
+  let invoiceDate = req.body.invoiceDate ?? new Date()
   Usage.find({ _id: { $in: list } }).then((usagesList: Array<any>) => {
     let usages = JSON.parse(JSON.stringify(usagesList))
     let promises: Array<Promise<any>> = []
@@ -46,7 +46,7 @@ export const createInvoice = (req: Request, res: Response) => {
           result.invoiceAmount = result.debtAmount + (result.totalAmount * (1 + (result.vatRate ?? 0)))
           result.billAmount = (result.totalAmount * (1 + (result.vatRate ?? 0)))
           delete result.sequence
-          console.log(result)
+          // console.log(result)
           return result
         });
         Promise.all(findExisted).then(invoices => {
@@ -65,10 +65,15 @@ export const createInvoice = (req: Request, res: Response) => {
               actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
             }
           });
-          Promise.all(actualCommand).then(cmd => {
-            console.log("command done! " + cmd.length)
-            res.send("command done! " + cmd.length)
-          })
+          Promise.all(actualCommand)
+            .then(cmd => {
+              console.log("command done! " + cmd.length)
+              res.send("command done! " + cmd.length)
+            })
+            .catch(function (err) {
+              console.log("command ERROR! " + err.message); // some coding error in handling happened
+              res.send("command ERROR! " + err.length)
+            });
         })
       })
     });
