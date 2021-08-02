@@ -90,6 +90,7 @@ export const createInvoice = (req: Request, res: Response) => {
         res.send("Processing Invoice...3 command ERROR! " + err.length)
       });
   })
+  res.send("done")
 }
 
 export const printInvoice = async (req: Request, res: Response) => {
