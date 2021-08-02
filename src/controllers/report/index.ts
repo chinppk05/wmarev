@@ -137,7 +137,8 @@ export const getAreaMonthly = (req: Request, res: Response) => {
 
       collections = collections.map(c => {
         let month = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().month
-        return { ...c, month }
+        let year = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().year + 543
+        return { ...c, month, year, contractYear:c.year }
       })
       prep = prep.map(el => {
         return {
