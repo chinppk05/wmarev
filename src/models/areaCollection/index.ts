@@ -10,6 +10,7 @@ const schema = new Schema({
   category: String,
   fileUrl: [String],
   amount: Number,
+  month: Number,
   year: Number,
   quarter: Number,
   value: String,
