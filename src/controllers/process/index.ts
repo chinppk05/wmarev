@@ -13,6 +13,7 @@ var options = { upsert: true, new: true, useFindAndModify: false };
 export const createInvoice = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
+  let invoiceDate = req.body.invoiceDate
   Usage.find({ _id: { $in: list } }).then((usagesList: Array<any>) => {
     let usages = JSON.parse(JSON.stringify(usagesList))
     let promises: Array<Promise<any>> = []
@@ -29,12 +30,21 @@ export const createInvoice = (req: Request, res: Response) => {
           let usage = usages[i]
           findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
           let amount = usage.qty * usage.rate
-          
+
           let result = {
-            ...usage, ref: "processed", usage: usage._id, _id: undefined, status: "สร้างใหม่", totalAmount: amount,vatRate:0.07, debtText: display0(debt[i]).debtText, debtAmount: display0(debt[i]).debtAmount
+            ...usage,
+            ref: "processed",
+            usage: usage._id,
+            _id: undefined,
+            status: "สร้างใหม่",
+            totalAmount: amount,
+            vatRate: 0.07,
+            debtText: display0(debt[i]).debtText,
+            debtAmount: display0(debt[i]).debtAmount,
+            invoiceDate: invoiceDate
           }
-          result.invoiceAmount = result.debtAmount + (result.totalAmount * ( 1 + (result.vatRate ?? 0) ))
-          result.billAmount = (result.totalAmount * ( 1 + (result.vatRate ?? 0) ))
+          result.invoiceAmount = result.debtAmount + (result.totalAmount * (1 + (result.vatRate ?? 0)))
+          result.billAmount = (result.totalAmount * (1 + (result.vatRate ?? 0)))
           delete result.sequence
           console.log(result)
           return result
@@ -68,7 +78,7 @@ export const createInvoice = (req: Request, res: Response) => {
 export const printInvoice = async (req: Request, res: Response) => {
   let list = req.body.list
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  await Invoice.updateMany({ _id: { $in: list } }, { $set: { isPrint: true, isNextStage: true, printDate:new Date() } }).exec()
+  await Invoice.updateMany({ _id: { $in: list } }, { $set: { isPrint: true, isNextStage: true, printDate: new Date() } }).exec()
 
   let searchObj = { _id: { $in: list } };
   let sort: any = req.body.sort;
@@ -88,7 +98,7 @@ export const printInvoice = async (req: Request, res: Response) => {
       let data3 = JSON.parse(JSON.stringify(data2))
       let usages = docs.map((el: any) => el.usage)
       console.log(usages)
-      Usage.updateMany({ _id: { $in: usages } }, { $set: { isPrint: true, isNextStage: true, printDate:new Date() } }).then(() => {
+      Usage.updateMany({ _id: { $in: usages } }, { $set: { isPrint: true, isNextStage: true, printDate: new Date() } }).then(() => {
         res.send({
           docs: docs,
           total: data.total,
@@ -311,8 +321,8 @@ let display0 = (debt: Array<any>) => {
     if (i == 0) {
       debtText += current.reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
       let next = DateTime.fromObject({
-        year: ((arr[i + 1]??{}).year??2600) - 543,
-        month: ((arr[i + 1]??{}).month??13),
+        year: ((arr[i + 1] ?? {}).year ?? 2600) - 543,
+        month: ((arr[i + 1] ?? {}).month ?? 13),
         day: 5
       })
       const diffNext = current.diff(next, "months").toObject().months
@@ -329,8 +339,8 @@ let display0 = (debt: Array<any>) => {
         day: 5
       })
       let next = DateTime.fromObject({
-        year: ((arr[i + 1]??{}).year??2600) - 543,
-        month: ((arr[i + 1]??{}).month??13),
+        year: ((arr[i + 1] ?? {}).year ?? 2600) - 543,
+        month: ((arr[i + 1] ?? {}).month ?? 13),
         day: 5
       })
       const diffLast = current.diff(last, "months").toObject().months
