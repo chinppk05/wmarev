@@ -14,7 +14,7 @@ export const createInvoice = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
   let invoiceDate = req.body.invoiceDate ?? new Date()
-  console.log("Processing Invoice..." + (list??[]).length + " item(s)")
+  console.log("Processing Invoice... " + (list ?? []).length + " item(s)")
   Usage.find({ _id: { $in: list } }).then((usagesList: Array<any>) => {
     let usages = JSON.parse(JSON.stringify(usagesList))
     let promises: Array<Promise<any>> = []
@@ -25,59 +25,70 @@ export const createInvoice = (req: Request, res: Response) => {
       promises.push(getCounter("Usage", usage.year, usage.month))
       debtPromises.push(getDebt(usage.meter))
     });
-    Promise.all(promises).then((values) => {
-      Promise.all(debtPromises).then((debt) => {
-        let resolved = values.map((element, i) => {
-          let usage = usages[i]
-          findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
-          let amount = usage.qty * usage.rate
+    Promise.all(promises)
+      .then((values) => {
+        Promise.all(debtPromises)
+          .then((debt) => {
+            let resolved = values.map((element, i) => {
+              let usage = usages[i]
+              findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
+              let amount = usage.qty * usage.rate
 
-          let result = {
-            ...usage,
-            ref: "processed",
-            usage: usage._id,
-            _id: undefined,
-            status: "สร้างใหม่",
-            totalAmount: amount,
-            vatRate: 0.07,
-            debtText: display0(debt[i]).debtText,
-            debtAmount: display0(debt[i]).debtAmount,
-            invoiceDate: invoiceDate
-          }
-          result.invoiceAmount = result.debtAmount + (result.totalAmount * (1 + (result.vatRate ?? 0)))
-          result.billAmount = (result.totalAmount * (1 + (result.vatRate ?? 0)))
-          delete result.sequence
-          // console.log(result)
-          return result
-        });
-        Promise.all(findExisted).then(invoices => {
-          invoices.forEach((element, i) => {
-            if (element != undefined) {
-              let prep = resolved.map(el => {
-                delete el._id
-                el.createdAt = new Date()
-                return el
-              })
-              actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec())
-            }
-            else {
-              let invoice = new Invoice(resolved[i])
-              actualCommand.push(invoice.save())
-              actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
-            }
-          });
-          Promise.all(actualCommand)
-            .then(cmd => {
-              console.log("command done! " + cmd.length)
-              res.send("command done! " + cmd.length)
-            })
-            .catch(function (err) {
-              console.log("command ERROR! " + err.message); // some coding error in handling happened
-              res.send("command ERROR! " + err.length)
+              let result = {
+                ...usage,
+                ref: "processed",
+                usage: usage._id,
+                _id: undefined,
+                status: "สร้างใหม่",
+                totalAmount: amount,
+                vatRate: 0.07,
+                debtText: display0(debt[i]).debtText,
+                debtAmount: display0(debt[i]).debtAmount,
+                invoiceDate: invoiceDate
+              }
+              result.invoiceAmount = result.debtAmount + (result.totalAmount * (1 + (result.vatRate ?? 0)))
+              result.billAmount = (result.totalAmount * (1 + (result.vatRate ?? 0)))
+              delete result.sequence
+              // console.log(result)
+              return result
             });
-        })
+            Promise.all(findExisted)
+              .then(invoices => {
+                invoices.forEach((element, i) => {
+                  if (element != undefined) {
+                    let prep = resolved.map(el => {
+                      delete el._id
+                      el.createdAt = new Date()
+                      return el
+                    })
+                    actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec())
+                  }
+                  else {
+                    let invoice = new Invoice(resolved[i])
+                    actualCommand.push(invoice.save())
+                    actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
+                  }
+                });
+                Promise.all(actualCommand)
+                  .then(cmd => {
+                    console.log("Processing Invoice...1 command done! " + cmd.length)
+                    res.send("Processing Invoice...1 command done! " + cmd.length)
+                  })
+                  .catch(function (err) {
+                    console.log("Processing Invoice...0 command ERROR! " + err.message); // some coding error in handling happened
+                    res.send("Processing Invoice...0 command ERROR! " + err.length)
+                  });
+              })
+              .catch(function (err) {
+                console.log("Processing Invoice...2 command ERROR! " + err.message); // some coding error in handling happened
+                res.send("Processing Invoice...2 command ERROR! " + err.length)
+              });
+          })
       })
-    });
+      .catch(function (err) {
+        console.log("Processing Invoice...3 command ERROR! " + err.message); // some coding error in handling happened
+        res.send("Processing Invoice...3 command ERROR! " + err.length)
+      });
   })
 }
 
