@@ -140,6 +140,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
       //   let year = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().year + 543
       //   return { ...c, month, year, contractYear:c.year }
       // })
+      
       prep = prep.map(el => {
         return {
           prefix: el.prefix,
