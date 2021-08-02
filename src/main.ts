@@ -23,7 +23,6 @@ const io = require("socket.io")(http, {
   path: '/api/v1/socket.io'
 });
 
-const timeout = require('connect-timeout')
 const fs = require('fs')
 const path = require('path')
 const uuid = require('uuid')
@@ -36,7 +35,6 @@ mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
 
-app.use(timeout('5s'))
 app.use(cors())
 app.use(bodyParser.json({limit: '50mb'}))
 app.use(express.urlencoded({ extended: true,limit: '50mb' }))
@@ -78,19 +76,15 @@ var upload = multer({
   storage: storage
 })
 
-app.use(haltOnTimedout)
 const invoice = require('./routers/invoice')(app)
 const payment = require('./routers/payment')(app)
 const receipt = require('./routers/receipt')(app)
-
 const area = require('./routers/area')(app)
 const areaCondition = require('./routers/areaCondition')(app)
 const areaCollection = require('./routers/areaCollection')(app)
-app.use(haltOnTimedout)
 const areaIncome = require('./routers/areaIncome')(app)
 const areaRate = require('./routers/areaRate')(app)
 const areaRation = require('./routers/areaRation')(app)
-
 const usage = require('./routers/usage')(app)
 const cost = require('./routers/cost')(app)
 const costCode = require('./routers/costCode')(app)
@@ -101,15 +95,10 @@ const auth = require('./routers/auth')(app)
 const calculation = require('./routers/calculation')(app)
 const coverLetter = require('./routers/coverLetter')(app)
 const render = require('./routers/render')(app)
-app.use(haltOnTimedout)
 const process = require('./routers/process')(app)
-app.use(haltOnTimedout)
-
 const risk = require('./routers/risk')(app)
 const report = require('./routers/report')(app)
-
 const usageRequest = require('./routers/usageRequest')(app)
-app.use(haltOnTimedout)
 
 app.get("/api/v1/", (req:any, res:any) => {
   res.send("Welcome to WMA201AM1 API Server!");
