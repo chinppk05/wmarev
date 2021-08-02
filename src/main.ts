@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 // const express = require('express')
 import multer from "multer"
-import express from "express" 
+import express from "express"
 import { DateTime } from "luxon"
 import passport from "passport";
 import passportLocal from "passport-local";
@@ -36,23 +36,24 @@ mongoose.set('useCreateIndex', true);
 
 
 app.use(cors())
-app.use(bodyParser.json({limit: '50mb'}))
-app.use(express.urlencoded({ extended: true,limit: '50mb' }))
+app.use(bodyParser.json({ limit: '150mb' }))
+app.use(express.urlencoded({ extended: true, limit: '150mb' }))
+app.use(morgan('combined', { skip: (req: any, res: any) => { return req.originalUrl.startsWith('/api/v1/user-keep-alive') } }));
 // app.use(morgan('combined'))
-app.use(morgan(function (tokens:any, req:any, res:any) {
-  let time = tokens['response-time'](req, res)
-  let prefix = "🤕"
-  if(time > 5000) prefix = "😡"
-  else prefix = "😇"
-  return [
-    prefix,
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, 'content-length'), '-',
-    tokens['response-time'](req, res), 'ms'
-  ].join(' ')
-}))
+// app.use(morgan(function (tokens:any, req:any, res:any) {
+//   let time = tokens['response-time'](req, res)
+//   let prefix = "🤕"
+//   if(time > 5000) prefix = "😡"
+//   else prefix = "😇"
+//   return [
+//     prefix,
+//     tokens.method(req, res),
+//     tokens.url(req, res),
+//     tokens.status(req, res),
+//     tokens.res(req, res, 'content-length'), '-',
+//     tokens['response-time'](req, res), 'ms'
+//   ].join(' ')
+// }))
 
 app.use('/api/v1/uploads', express.static('uploads'))
 app.use('/api/v1/manuals', express.static('manuals'))
@@ -100,11 +101,11 @@ const risk = require('./routers/risk')(app)
 const report = require('./routers/report')(app)
 const usageRequest = require('./routers/usageRequest')(app)
 
-app.get("/api/v1/", (req:any, res:any) => {
+app.get("/api/v1/", (req: any, res: any) => {
   res.send("Welcome to WMA201AM1 API Server!");
 });
 
-app.post('/api/v1/upload', upload.single('file'), function (req:any, res:any, next:any) {
+app.post('/api/v1/upload', upload.single('file'), function (req: any, res: any, next: any) {
   res.send({
     status: 'success',
     timestamp: new Date(),
@@ -115,17 +116,17 @@ app.post('/api/v1/upload', upload.single('file'), function (req:any, res:any, ne
 })
 
 let connectCounter = 0
-var users:Array<{user:string,createdAt:Date}> = []
+var users: Array<{ user: string, createdAt: Date }> = []
 
-let clearUsers = () =>{
+let clearUsers = () => {
   console.log("clearing users...")
   setTimeout(() => {
-    users.forEach((el,i)=>{
+    users.forEach((el, i) => {
       let diff = DateTime.fromJSDate(el.createdAt).diffNow('minutes').minutes
-      if(diff>3) users.splice(i,1)
+      if (diff > 3) users.splice(i, 1)
     })
     clearUsers()
-  }, 2*1000*60);
+  }, 2 * 1000 * 60);
 }
 clearUsers()
 // io.on('connection', (socket: Socket) => {
@@ -143,7 +144,7 @@ clearUsers()
 //     try {
 //       users.splice(found,1)
 //     } catch (error) {
-      
+
 //     }
 //   });
 
@@ -178,7 +179,7 @@ clearUsers()
 // });
 
 
-function haltOnTimedout (req:any, res:any, next:any) {
+function haltOnTimedout(req: any, res: any, next: any) {
   if (!req.timedout) next()
 }
 
