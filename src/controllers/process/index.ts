@@ -72,22 +72,22 @@ export const createInvoice = (req: Request, res: Response) => {
                 Promise.all(actualCommand)
                   .then(cmd => {
                     console.log("Processing Invoice...1 command done! " + cmd.length)
-                    res.send("Processing Invoice...1 command done! " + cmd.length)
+                    // res.send("Processing Invoice...1 command done! " + cmd.length)
                   })
                   .catch(function (err) {
                     console.log("Processing Invoice...0 command ERROR! " + err.message); // some coding error in handling happened
-                    res.send("Processing Invoice...0 command ERROR! " + err.length)
+                    // res.send("Processing Invoice...0 command ERROR! " + err.length)
                   });
               })
               .catch(function (err) {
                 console.log("Processing Invoice...2 command ERROR! " + err.message); // some coding error in handling happened
-                res.send("Processing Invoice...2 command ERROR! " + err.length)
+                // res.send("Processing Invoice...2 command ERROR! " + err.length)
               });
           })
       })
       .catch(function (err) {
         console.log("Processing Invoice...3 command ERROR! " + err.message); // some coding error in handling happened
-        res.send("Processing Invoice...3 command ERROR! " + err.length)
+        // res.send("Processing Invoice...3 command ERROR! " + err.length)
       });
   })
   res.send("done")
