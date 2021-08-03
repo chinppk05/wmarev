@@ -77,6 +77,7 @@ var upload = multer({
   storage: storage
 })
 
+const adjust = require('./routers/adjust')(app)
 const invoice = require('./routers/invoice')(app)
 const payment = require('./routers/payment')(app)
 const receipt = require('./routers/receipt')(app)
