@@ -3,8 +3,8 @@ import { DateTime } from "luxon";
 import AreaCollection from "../../models/areaCollection";
 import AreaIncome from "../../models/areaIncome";
 
-export const adjustIncome = (req: Request, res: Response) => {
-  AreaIncome.find({}).then((data: Array<any>) => {
+export const adjustCollection = (req: Request, res: Response) => {
+  AreaCollection.find({}).then((data: Array<any>) => {
     data.forEach((item:any) => {
       let month = item.recordDate == undefined ? 1 : DateTime.fromISO(item.recordDate).toObject().month
       item.month = month
