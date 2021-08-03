@@ -126,7 +126,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
 
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
     promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
-    promises.push(AreaCollection.find({ year: { $gt: 2500 } }).select("area quarter year recordDate amount createdAt").exec())
+    promises.push(AreaCollection.find({ year: { $gt: 2500 } }).select("area quarter month year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({ year: { $gt: 2500 } }).select("area quarter month year recordDate amount createdAt").exec())
 
     Promise.all(promises).then((responses) => {
@@ -165,7 +165,7 @@ export const getGreenYellow = (req: Request, res: Response) => {
   var start = new Date(budgetYearAD - 1, 10, 1);
   var end = new Date(budgetYearAD, 12, 30);
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
-    promises.push(AreaCollection.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter year recordDate amount createdAt").exec())
+    promises.push(AreaCollection.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter month year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter month year recordDate amount createdAt").exec())
 
     Promise.all(promises).then((responses) => {
