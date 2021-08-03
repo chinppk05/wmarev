@@ -124,7 +124,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
   let promises: Array<Promise<any>> = [];
   // promises.push(Area.find({ reportIncome: true }).select("prefix name contractNumber").exec())
 
-  Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas:Array<any>)=>{
+  Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
     promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
     promises.push(AreaCollection.find({ year: { $gt: 2500 } }).select("area quarter year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({ year: { $gt: 2500 } }).select("area quarter month year recordDate amount createdAt").exec())
@@ -140,7 +140,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
       //   let year = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().year + 543
       //   return { ...c, month, year, contractYear:c.year }
       // })
-      
+
       prep = prep.map(el => {
         return {
           prefix: el.prefix,
@@ -156,6 +156,38 @@ export const getAreaMonthly = (req: Request, res: Response) => {
     })
   })
 };
+
+
+export const getGreenYellow = (req: Request, res: Response) => {
+  let promises: Array<Promise<any>> = [];
+  let budgetYear = req.body.budgetYear??(new Date().getFullYear()+543)
+  let budgetYearAD = budgetYear - 543
+  var start = new Date(budgetYearAD - 1, 10, 1);
+  var end = new Date(budgetYearAD, 12, 30);
+  Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
+    promises.push(AreaCollection.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter year recordDate amount createdAt").exec())
+    promises.push(AreaIncome.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter month year recordDate amount createdAt").exec())
+
+    Promise.all(promises).then((responses) => {
+      let prep = JSON.parse(JSON.stringify(areas)) as Array<any>
+      let collections = JSON.parse(JSON.stringify(responses[0])) as Array<any>
+      let incomes = JSON.parse(JSON.stringify(responses[1])) as Array<any>
+
+      prep = prep.map(el => {
+        return {
+          prefix: el.prefix,
+          area: el.name,
+          _id: el._id,
+          contract: el.contractNumber,
+          collections: collections.filter(colc => colc.area == el._id),
+          incomes: incomes.filter(colc => colc.area == el._id),
+        }
+      })
+      res.send(prep)
+    })
+  })
+};
+
 export const getBillingDashboard = (req: Request, res: Response) => {
   let code = req.body.code
   let year = req.body.year
