@@ -7,7 +7,7 @@ export const adjustCollection = (req: Request, res: Response) => {
   AreaCollection.find({}).then((data: Array<any>) => {
     let i = 0
     data.forEach((item:any) => {
-      let month = item.recordDate == undefined ? 1 : DateTime.fromISO(item.recordDate).toObject().month
+      let month = item.recordDate == undefined ? 1 : DateTime.fromJSDate(item.recordDate).toObject().month
       item.month = month
       item.save()
       i++
