@@ -46,33 +46,13 @@ export const getCollectionStatus = (req: Request, res: Response) => {
   })
 };
 export const getCollectionStatistic = (req: Request, res: Response) => {
-  // Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
-  //   let areasId = areas.map(el => el._id)
-  //   AreaCollection.aggregate([
-  //     {
-  //       $match: {
-  //         area: { $in: areasId }
-  //       }
-  //     },
-  //     {
-  //       $group: {
-  //         _id: "$year",
-  //         sum: {
-  //           $sum: "$amount",
-  //         },
-  //       },
-  //     },
-  //   ]).exec((error: Error, collections: Array<any>) => {
-  //     res.send(collections);
-  //   });
-  // });
   let promises: Array<Promise<any>> = [];
   let budgetYear = req.body.budgetYear??(new Date().getFullYear()+543)
   let budgetYearAD = budgetYear - 543
   var start = new Date(budgetYearAD - 1, 10, 1);
   var end = new Date(budgetYearAD, 12, 30);
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
-    promises.push(AreaCollection.find({ }).select("area quarter month year recordDate amount createdAt").exec())
+    promises.push(AreaCollection.find({ recordDate:{$exists:true},month:{$exists:true},year:{$exists:true}}).select("area quarter month year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({  }).select("area quarter month year recordDate amount createdAt").exec())
 
     Promise.all(promises).then((responses) => {
@@ -190,7 +170,7 @@ export const getGreenYellow = (req: Request, res: Response) => {
   var start = new Date(budgetYearAD - 1, 10, 1);
   var end = new Date(budgetYearAD, 12, 30);
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
-    promises.push(AreaCollection.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter month year recordDate amount createdAt").exec())
+    promises.push(AreaCollection.find({ recordDate:{$exists:true},month:{$exists:true},year:{$exists:true}}).select("area quarter month year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({  }).select("area quarter month year recordDate amount createdAt").exec())
 
     Promise.all(promises).then((responses) => {
