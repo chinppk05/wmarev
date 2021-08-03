@@ -46,26 +46,53 @@ export const getCollectionStatus = (req: Request, res: Response) => {
   })
 };
 export const getCollectionStatistic = (req: Request, res: Response) => {
-  Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
-    let areasId = areas.map(el => el._id)
-    AreaCollection.aggregate([
-      {
-        $match: {
-          area: { $in: areasId }
+  // Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
+  //   let areasId = areas.map(el => el._id)
+  //   AreaCollection.aggregate([
+  //     {
+  //       $match: {
+  //         area: { $in: areasId }
+  //       }
+  //     },
+  //     {
+  //       $group: {
+  //         _id: "$year",
+  //         sum: {
+  //           $sum: "$amount",
+  //         },
+  //       },
+  //     },
+  //   ]).exec((error: Error, collections: Array<any>) => {
+  //     res.send(collections);
+  //   });
+  // });
+  let promises: Array<Promise<any>> = [];
+  let budgetYear = req.body.budgetYear??(new Date().getFullYear()+543)
+  let budgetYearAD = budgetYear - 543
+  var start = new Date(budgetYearAD - 1, 10, 1);
+  var end = new Date(budgetYearAD, 12, 30);
+  Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
+    promises.push(AreaCollection.find({ }).select("area quarter month year recordDate amount createdAt").exec())
+    promises.push(AreaIncome.find({  }).select("area quarter month year recordDate amount createdAt").exec())
+
+    Promise.all(promises).then((responses) => {
+      let prep = JSON.parse(JSON.stringify(areas)) as Array<any>
+      let collections = JSON.parse(JSON.stringify(responses[0])) as Array<any>
+      let incomes = JSON.parse(JSON.stringify(responses[1])) as Array<any>
+
+      prep = prep.map(el => {
+        return {
+          prefix: el.prefix,
+          area: el.name,
+          _id: el._id,
+          contract: el.contractNumber,
+          collections: collections.filter(colc => colc.area == el._id),
+          incomes: incomes.filter(colc => colc.area == el._id),
         }
-      },
-      {
-        $group: {
-          _id: "$year",
-          sum: {
-            $sum: "$amount",
-          },
-        },
-      },
-    ]).exec((error: Error, collections: Array<any>) => {
-      res.send(collections);
-    });
-  });
+      })
+      res.send(prep)
+    })
+  })
 };
 export const getComparePlanResult = (req: Request, res: Response) => {
   Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
@@ -156,8 +183,6 @@ export const getAreaMonthly = (req: Request, res: Response) => {
     })
   })
 };
-
-
 export const getGreenYellow = (req: Request, res: Response) => {
   let promises: Array<Promise<any>> = [];
   let budgetYear = req.body.budgetYear??(new Date().getFullYear()+543)
