@@ -166,7 +166,7 @@ export const getGreenYellow = (req: Request, res: Response) => {
   var end = new Date(budgetYearAD, 12, 30);
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
     promises.push(AreaCollection.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter month year recordDate amount createdAt").exec())
-    promises.push(AreaIncome.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter month year recordDate amount createdAt").exec())
+    promises.push(AreaIncome.find({  }).select("area quarter month year recordDate amount createdAt").exec())
 
     Promise.all(promises).then((responses) => {
       let prep = JSON.parse(JSON.stringify(areas)) as Array<any>
