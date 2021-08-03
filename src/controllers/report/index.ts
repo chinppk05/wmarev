@@ -163,7 +163,7 @@ export const getGreenYellow = (req: Request, res: Response) => {
   let budgetYear = req.body.budgetYear??(new Date().getFullYear()+543)
   let budgetYearAD = budgetYear - 543
   var start = new Date(budgetYearAD - 1, 10, 1);
-  var end = new Date(budgetYearAD, 12, 30);
+  var end = new Date(budgetYearAD, 9, 30);
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
     promises.push(AreaCollection.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter month year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({ recordDate: { $gte: start, $lt: end } }).select("area quarter month year recordDate amount createdAt").exec())
