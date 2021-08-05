@@ -170,7 +170,7 @@ export const getGreenYellow = (req: Request, res: Response) => {
   var start = DateTime.fromObject({year:budgetYearAD - 1, month:10, day:1}).startOf('day').toJSDate();
   var end = DateTime.fromObject({year:budgetYearAD, month:9,day: 30}).endOf('day').toJSDate();
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
-    promises.push(AreaCollection.find({ recordDate: { $gte: start, $lt: end }, month: { $exists: true }, year: { $exists: true } }).select("area quarter month year recordDate amount createdAt").exec())
+    promises.push(AreaCollection.find({ month: { $exists: true }, year: { $exists: true } }).select("area quarter month year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({}).select("area quarter month year recordDate amount createdAt").exec())
 
     Promise.all(promises).then((responses) => {
