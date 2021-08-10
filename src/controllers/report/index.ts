@@ -190,7 +190,9 @@ export const getGreenYellow = (req: Request, res: Response) => {
       //ใช้เดือนของ วันที่ชำระเป็นตัวลงช่องเขียวเหลือง
       collections = collections.map(c => {
         let month = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().month
-        return { ...c, month, remarkMonth:c.month }
+        let year = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().year + 543
+        if(month>=10) year = year + 1 
+        return { ...c, month,year, remarkMonth:c.month ,remarkYear:c.year }
       })
 
       prep = prep.map(el => {
