@@ -197,8 +197,9 @@ export const getGreenYellow = (req: Request, res: Response) => {
         let month = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().month
         let year = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().year + 543
         // if(month>=10) year = year - 1 
-        let bYear = c.year + (c.month>=10?1:0)
-        return { ...c, month, year, remarkMonth: c.month, remarkYear: c.year }
+        let bYear = year + (c.month>=10?1:0)
+        let isDebt = bYear > c.year
+        return { ...c, month, year, remarkMonth: c.month, remarkYear: c.year, isDebt }
       })
 
       incomes = incomes.map(o => {
