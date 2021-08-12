@@ -158,6 +158,11 @@ export const getAreaMonthly = (req: Request, res: Response) => {
         return { ...c, month, }
       })
 
+      incomes = incomes.map(o => {
+        let year = o.month >= 10 ? o.year - 1 : o.year
+        return { ...o, year, calendarYear: o.year }
+      })
+
       prep = prep.map(el => {
         return {
           prefix: el.prefix,
@@ -176,8 +181,8 @@ export const getAreaMonthly = (req: Request, res: Response) => {
 export const getGreenYellow = (req: Request, res: Response) => {
   let promises: Array<Promise<any>> = [];
   let budgetYear = req.body.budgetYear ?? (new Date().getFullYear())
-  var start = DateTime.fromObject({year:budgetYear - 1, month:10, day:1}).startOf('day').toJSDate();
-  var end = DateTime.fromObject({year:budgetYear, month:9,day: 30}).plus({month:3}).endOf('day').toJSDate();
+  var start = DateTime.fromObject({ year: budgetYear - 1, month: 10, day: 1 }).startOf('day').toJSDate();
+  var end = DateTime.fromObject({ year: budgetYear, month: 9, day: 30 }).plus({ month: 3 }).endOf('day').toJSDate();
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
     promises.push(AreaCollection.find({ recordDate: { $gte: start, $lt: end }, month: { $exists: true }, year: { $exists: true } }).select("area quarter month year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({}).select("area quarter month year recordDate amount createdAt").exec())
@@ -192,7 +197,7 @@ export const getGreenYellow = (req: Request, res: Response) => {
         let month = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().month
         let year = c.recordDate == undefined ? 1 : DateTime.fromISO(c.recordDate).toObject().year + 543
         // if(month>=10) year = year - 1 
-        return { ...c, month,year, remarkMonth:c.month ,remarkYear:c.year }
+        return { ...c, month, year, remarkMonth: c.month, remarkYear: c.year }
       })
 
       prep = prep.map(el => {
