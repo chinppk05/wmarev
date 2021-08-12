@@ -13,6 +13,7 @@ const schema = new Schema({
   year: Number,
   month: Number,
   quarter: Number,
+  isDebt: Boolean,
   value: String,
   value2: String,
 
