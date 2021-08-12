@@ -159,7 +159,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
       })
 
       incomes = incomes.map(o => {
-        let year = o.month >= 10 ? o.year + 1 : o.year
+        let year = o.month >= 10 ? o.year - 1 : o.year
         return { ...o, year, calendarYear: o.year }
       })
 
@@ -199,9 +199,9 @@ export const getGreenYellow = (req: Request, res: Response) => {
         // if(month>=10) year = year - 1 
         return { ...c, month, year, remarkMonth: c.month, remarkYear: c.year }
       })
-      
+
       incomes = incomes.map(o => {
-        let year = o.month >= 10 ? o.year + 1 : o.year
+        let year = o.month >= 10 ? o.year - 1 : o.year
         return { ...o, year, calendarYear: o.year }
       })
 
