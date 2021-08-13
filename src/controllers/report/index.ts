@@ -53,7 +53,7 @@ export const getCollectionStatistic = (req: Request, res: Response) => {
   var end = new Date(budgetYearAD, 12, 30);
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
     promises.push(AreaCollection.find({ recordDate: { $exists: true }, month: { $exists: true }, year: { $exists: true } }).select("area quarter month year recordDate amount createdAt").exec())
-    promises.push(AreaIncome.find({}).select("area quarter isDebt month year recordDate amount createdAt").exec())
+    promises.push(AreaIncome.find({ isDebt: { $exists: true } }).select("area quarter isDebt month year recordDate amount createdAt").exec())
 
     Promise.all(promises).then((responses) => {
       let prep = JSON.parse(JSON.stringify(areas)) as Array<any>
