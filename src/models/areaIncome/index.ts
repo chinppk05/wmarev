@@ -13,12 +13,12 @@ const schema = new Schema({
   year: Number,
   month: Number,
   quarter: Number,
-  isDebt: Boolean,
+  isDebt: { type: Boolean, detault: false },
   value: String,
   value2: String,
 
-  createdAt:Date,
-  recordDate:Date,
+  createdAt: Date,
+  recordDate: Date,
 })
 schema.plugin(mongoosePaginate)
 const AreaIncome = mongoose.model("AreaIncome", schema)
