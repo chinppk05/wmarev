@@ -14,7 +14,7 @@ import AreaIncome from "../../models/areaIncome";
 export const getCollectionStatus = (req: Request, res: Response) => {
   Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
     let areasId = areas.map(el => el._id)
-    AreaIncome.find({ area: { $in: areasId } }).then((incomes: Array<any>) => {
+    AreaIncome.find({ area: { $in: areasId }, isDebt: { $exists: true } }).then((incomes: Array<any>) => {
       AreaCollection.find({}).then((collections: Array<any>) => {
         let totalIncome = incomes
           .map((el: any) => el.amount ?? 0)
