@@ -204,7 +204,7 @@ export const getGreenYellow = (req: Request, res: Response) => {
 
       incomes = incomes.map(o => {
         let year = o.month >= 10 ? o.year - 1 : o.year
-        let isDebt = o.isDebt == undefined ? false : o.isDebt
+        let isDebt = o.isDebt //== undefined ? false : o.isDebt
         return { ...o, year, isDebt, calendarYear: o.year }
       })
 
