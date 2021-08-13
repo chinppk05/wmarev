@@ -13,7 +13,8 @@ const schema = new Schema({
   year: Number,
   month: Number,
   quarter: Number,
-  isDebt: { type: Boolean, detault: false },
+  // isDebt: { type: Boolean, detault: false },
+  isDebt:Boolean,
   value: String,
   value2: String,
 
