@@ -15,6 +15,13 @@ export const getCollectionStatus = (req: Request, res: Response) => {
   Area.find({ reportIncome: true }).select("prefix name contractNumber").then((areas: Array<any>) => {
     let areasId = areas.map(el => el._id)
     AreaIncome.find({ area: { $in: areasId }, isDebt: { $exists: true } }).then((incomes: Array<any>) => {
+
+      incomes = JSON.parse(JSON.stringify(incomes)) as Array<any>
+      incomes = incomes.map(o => {
+        let year = o.month >= 10 ? o.year - 1 : o.year
+        let isDebt = o.isDebt //== undefined ? false : o.isDebt
+        return { ...o, year, isDebt, calendarYear: o.year }
+      })
       AreaCollection.find({}).then((collections: Array<any>) => {
         let totalIncome = incomes
           .map((el: any) => el.amount ?? 0)
