@@ -192,7 +192,7 @@ let SendEmail = function (id: string, uuid: string, sendTo: string) {
     from: "รีเซ็ตรหัสผ่านของ อจน. <noreply@jmandjm.com>",
     to: sendTo,
     subject: 'อีเมล์อัตโนมัติจาก อจน.',
-    html: `<h4> คุณสามารถคลิกที่ลิงค์ <a href="http://wma.jmandjm.com/reset/submit/${uuid}">รีเซ็ต</a> เพื่อรีเซ็ตรหัสผ่านได้ทันที <h4>`
+    html: `<h4> คุณสามารถคลิกที่ลิงค์ <a href="https://inco.wma.go.th/reset/submit/${uuid}">รีเซ็ต</a> เพื่อรีเซ็ตรหัสผ่านได้ทันที <h4>`
   };
   transporter.sendMail(mailOptions, function (error: Error, info: any) {
     if (error) {
