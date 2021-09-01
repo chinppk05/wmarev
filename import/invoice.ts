@@ -55,7 +55,7 @@ let prepArray: Array<any> = [];
         rate: row.getCell("Y")=='บาท/เดือน'?row.getCell("W"):row.getCell("J"),
         totalAmount: row.getCell("K"),
         vat: vat,
-        invoiceAmount:parseFloat(row.getCell("N")),// invoiceAmount: row.getCell("N").value,
+        invoiceAmount:parseFloat(row.getCell("M")),// invoiceAmount: row.getCell("N").value,
         category: row.getCell("O").value,
         year: row.getCell("P").value,
         month: row.getCell("Q").value,

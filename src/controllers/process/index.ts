@@ -144,7 +144,16 @@ export const createReceipt = (req: Request, res: Response) => {
     let payments = JSON.parse(JSON.stringify(paymentsList))
     payments = payments.map((payment: any) => {
       findExisted.push(Receipt.findOne({ year: payment.year, month: payment.month, meter: payment.meter }).exec())
-      let result = { ...payment, ref: "processed", invoice: payment.invoice, usage: payment.usage, payment: payment._id, _id: undefined, status: "สร้างใหม่", notes: "test" }
+      let result = {
+        ...payment,
+        ref: "processed",
+        invoice: payment.invoice,
+        usage: payment.usage,
+        payment: payment._id,
+        _id: undefined,
+        status: "สร้างใหม่",
+        notes: "test"
+      }
       delete result.sequence
       delete result._id
       return result
@@ -155,8 +164,8 @@ export const createReceipt = (req: Request, res: Response) => {
           actualCommand.push(Receipt.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...payments[i] } }).exec())
         }
         else {
-          let invoice = new Receipt(payments[i])
-          actualCommand.push(invoice.save())
+          let receipt = new Receipt(payments[i])
+          actualCommand.push(receipt.save())
           actualCommand.push(Payment.findOneAndUpdate({ _id: payments[i]._id }, { $set: { isNextStage: true } }).exec())
         }
       });
