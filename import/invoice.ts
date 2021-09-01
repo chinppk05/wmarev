@@ -50,7 +50,7 @@ let prepArray: Array<any> = [];
         name: row.getCell("E"),
         address: row.getCell("F"),
         debtText: row.getCell("G"),
-        debtAmount: row.getCell("H"),
+        debtAmount: row.getCell("K"),
         qty: row.getCell("I"),
         rate: row.getCell("Y")=='บาท/เดือน'?row.getCell("W"):row.getCell("J"),
         totalAmount: row.getCell("K"),
