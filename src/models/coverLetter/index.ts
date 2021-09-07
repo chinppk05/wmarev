@@ -32,6 +32,7 @@ const schema = new Schema({
   approverPosition: String,
   remark: String,
   attachments: [String],
+  documents: [String],
   attachmentsName: [String],
   createdIP: String,
   createdAt: Date,
