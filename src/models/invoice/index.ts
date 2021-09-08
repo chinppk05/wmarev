@@ -10,6 +10,7 @@ const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
   no: Number,
   meter: String,
+  oldMeter: String,
   number: Number,
   sequence: String,
   taxId: String,
