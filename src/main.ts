@@ -2,7 +2,7 @@
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const history = require('connect-history-api-fallback');
+const historyFallBack = require('connect-history-api-fallback');
 // const express = require('express')
 import multer from "multer"
 import express from "express"
@@ -37,7 +37,7 @@ mongoose.set('useCreateIndex', true);
 
 
 app.use(cors())
-app.use(history())
+app.use(historyFallBack())
 app.use(bodyParser.json({ limit: '150mb' }))
 app.use(express.urlencoded({ extended: true, limit: '150mb' }))
 app.use(morgan('combined', { skip: (req: any, res: any) => { return req.originalUrl.startsWith('/api/v1/user-keep-alive') } }));
