@@ -36,7 +36,6 @@ const schema = new Schema({
   debtText: String,
   debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   tax: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-  vat: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
 
   billAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
 
