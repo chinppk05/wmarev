@@ -10,7 +10,7 @@
     "geninvoice": "ts-node ./import/prep/invoice.ts",
     "genreceipt": "ts-node ./import/prep/receipt.ts",
     "initdb": "ts-node import/invoice.ts && ts-node import/receipt.ts",
-    "pull": "git reset --hard && git pull && gulp build && pm2 restart WMA201AM1"
+    "pull": "git reset --hard && git pull && gulp build && pm2 restart wma201am1"
   },
   "author": "NCC",
   "license": "ISC",
