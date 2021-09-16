@@ -14,8 +14,8 @@ let prepArray: Array<any> = [];
   await Invoice.deleteMany({}).exec()
   await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname + "/prep/WMA_INV_CONSOL_R4_NEW.xlsx");
-  let sheet = workbook.getWorksheet("รวม INV")
+  await workbook.xlsx.readFile(__dirname + "/prep/excel_processed/combined_R01.xlsx");
+  let sheet = workbook.getWorksheet("ใบแจ้งหนี้")
 
   sheet.columns = [
     { header: 'Id', key: 'id', width: 10 },
@@ -35,38 +35,38 @@ let prepArray: Array<any> = [];
     { header: 'CategoryType', key: 'categoryType', width: 10 },
   ];
 
-  let no = 1
+  // let no = 1
   let lastYearMonth = ""
   let currentYearMonth = ""
   sheet.eachRow(function (row: any, rowNumber: number) {
-    if (rowNumber >= 5) {
+    if (rowNumber >= 2) {
       const used = process.memoryUsage().heapUsed / 1024 / 1024;
-      currentYearMonth = row.getCell("P")+row.getCell("Q")
-      let vatText = (row.getCell("L").text??"").replace(",","")
+      currentYearMonth = row.getCell("C")+row.getCell("D")
+      let vatText = (row.getCell("M").text??"").replace(",","")
       let vat = parseFloat(vatText)
       prepArray.push({
-        no:no,
-        sequence: row.getCell("C"),
-        name: row.getCell("E"),
-        address: row.getCell("F"),
-        debtText: row.getCell("G"),
-        debtAmount: row.getCell("K"),
-        qty: row.getCell("I"),
-        rate: row.getCell("Y")=='บาท/เดือน'?row.getCell("W"):row.getCell("J"),
-        totalAmount: row.getCell("K"),
+        no:row.getCell("A"),
+        sequence: row.getCell("B"),
+        name: row.getCell("H"),
+        address: row.getCell("I"),
+        debtText: row.getCell("O"), 
+        debtAmount: row.getCell("P"),
+        qty: row.getCell("J"),
+        rate: row.getCell("U")=='บาท/เดือน'?row.getCell("N"):row.getCell("L"),
+        totalAmount: row.getCell("Q"),
         vat: vat,
-        invoiceAmount:parseFloat(row.getCell("M")),// invoiceAmount: row.getCell("N").value,
-        category: row.getCell("O").value,
-        year: row.getCell("P").value,
-        month: row.getCell("Q").value,
-        meter: row.getCell("V")=='เลิกใช้น้ำแล้ว'?row.getCell("S"):row.getCell("V"),
-        flatRate: row.getCell("W").value,
-        categoryType: row.getCell("X").text,
-        calculationType:row.getCell("Y").text,
+        invoiceAmount:parseFloat(row.getCell("R")),// invoiceAmount: row.getCell("N").value,
+        category: row.getCell("S").value,
+        year: row.getCell("C").value,
+        month: row.getCell("D").value,
+        meter: row.getCell("F"), //meter: row.getCell("V")=='เลิกใช้น้ำแล้ว'?row.getCell("S"):row.getCell("V"),
+        categoryType: row.getCell("T").text,
+        calculationType:row.getCell("U").text,
         vatRate: 0.07,
         code: "01-kb",
         isNextStage: true, isPrint: true,
-        status: row.getCell("V").text=="เลิกใช้น้ำแล้ว"?"เลิกใช้น้ำแล้ว":"ปกติ",
+        status: row.getCell("F").text=="เลิกใช้น้ำแล้ว"?"เลิกใช้น้ำแล้ว":"ปกติ",
+        isPaid: row.getCell("V").value,
         createdAt:new Date()
         // no:no,
         // sequence: row.getCell(2),
@@ -91,15 +91,15 @@ let prepArray: Array<any> = [];
         // isNextStage: true, isPrint: true,
         // createdAt:new Date()
       })
-      if(lastYearMonth!=currentYearMonth) no = 1
-      lastYearMonth = row.getCell(3)+row.getCell(4)
+      // if(lastYearMonth!=currentYearMonth) no = 1
+      // lastYearMonth = row.getCell(3)+row.getCell(4)
       // if(row.getCell(5)==='12170456052'){
-      if(row.getCell(5)=='12170456052'){
-        console.log('row',row.getCell(3),row.getCell(4))
-      }else{
-        // console.log('row',row)
-      }
-      console.log(`reading ${rowNumber}: ${(parseFloat(row.getCell(13))*1.07) + parseFloat(row.getCell(12))} Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+      // if(row.getCell(5)=='12170456052'){
+      //   console.log('row',row.getCell(3),row.getCell(4))
+      // }else{
+      //   // console.log('row',row)
+      // }
+      // console.log(`reading ${rowNumber}: ${(parseFloat(row.getCell(13))*1.07) + parseFloat(row.getCell(12))} Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
   })
   saveInvoice()

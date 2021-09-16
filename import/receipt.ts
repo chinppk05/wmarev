@@ -15,8 +15,8 @@ let prepArray: Array<any> = [];
   await Payment.deleteMany({}).exec()
   await Receipt.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.readFile(__dirname + "/prep/receipt_new.xlsx");
-  let sheet = workbook.getWorksheet("Data")
+  await workbook.xlsx.readFile(__dirname + "/prep/excel_processed/combined_R01.xlsx");
+  let sheet = workbook.getWorksheet("ใบเสร็จรับเงิน")
 
   sheet.eachRow(function (row: any, rowNumber: number) {
     if (rowNumber > 1) {
@@ -28,27 +28,24 @@ let prepArray: Array<any> = [];
         
       }
       prepArray.push({
-        sequence: seq,
-        year: row.getCell(3).value,
-        month: row.getCell(4).value,
-        meter: row.getCell(5).value,
-        name: row.getCell(6).value,
-        address: row.getCell(7).value,
-        qty: row.getCell(8).value,
-        rate: row.getCell(9).value,
-        flatRate: row.getCell(10).value,
-        debtText: row.getCell(11).value,
-
-        debtAmount: row.getCell("L").value,
-        vatRate: row.getCell("M").value,
-        totalAmount: row.getCell("N").value,
-        paymentAmount: row.getCell("O").value,
-        paymentDate: row.getCell("P").value,
-        category: row.getCell("Q").value,
-        categoryType: row.getCell("R").value,
-        calculationType: row.getCell("S").value,
-        invoiceAmount: row.getCell("T").value, // invoiceAmount: (row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),
-        vat: row.getCell("U").value,
+        no: row.getCell("A"),
+        sequence: row.getCell("C"),
+        year: row.getCell("D").value,
+        month: row.getCell("E").value,
+        meter: row.getCell("G").value,
+        name: row.getCell("I").value,
+        address: row.getCell("J").value,
+        paymentAmount: row.getCell("K").value,
+        paymentDate: row.getCell("L").value,
+        invoiceNumber: row.getCell("M").value,
+        debtText: row.getCell("X").value,
+        debtAmount: row.getCell("Y").value,
+        debtVat: row.getCell("P").value,
+        qty: row.getCell("Q").value,
+        totalAmount: row.getCell("R").value,
+        vatRate: row.getCell("S").value,
+        vat: row.getCell("T").value,
+        invoiceAmount: row.getCell("W").value,
         code: "01-kb",
         isNextStage: true, 
         isPrint: true,
@@ -57,6 +54,39 @@ let prepArray: Array<any> = [];
         isSigned:true,
         process:true,
         createdAt:new Date()
+
+
+      
+        // no: row.getCell("A"),
+        // sequence: row.getCell("C"),
+        // year: row.getCell(3).value,
+        // month: row.getCell(4).value,
+        // meter: row.getCell(5).value,
+        // name: row.getCell(6).value,
+        // address: row.getCell(7).value,
+        // qty: row.getCell(8).value,
+        // rate: row.getCell(9).value,
+        // flatRate: row.getCell(10).value,
+        // debtText: row.getCell(11).value,
+
+        // debtAmount: row.getCell("L").value,
+        // vatRate: row.getCell("M").value,
+        // totalAmount: row.getCell("N").value,
+        // paymentAmount: row.getCell("O").value,
+        // paymentDate: row.getCell("P").value,
+        // category: row.getCell("Q").value,
+        // categoryType: row.getCell("R").value,
+        // calculationType: row.getCell("S").value,
+        // invoiceAmount: row.getCell("T").value, // invoiceAmount: (row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value),
+        // vat: row.getCell("U").value,
+        // code: "01-kb",
+        // isNextStage: true, 
+        // isPrint: true,
+        // isRequested:true,
+        // isApproved:true,
+        // isSigned:true,
+        // process:true,
+        // createdAt:new Date()
       })
       console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value), `reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
