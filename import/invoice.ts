@@ -102,7 +102,8 @@ let prepArray: Array<any> = [];
       // console.log(`reading ${rowNumber}: ${(parseFloat(row.getCell(13))*1.07) + parseFloat(row.getCell(12))} Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
   })
-  saveInvoice()
+  // saveInvoice()
+  saveUsage()
 })()
 var i = 0
 var j = 0
