@@ -11,7 +11,7 @@ mongoose.set('useCreateIndex', true);
 let prepArray: Array<any> = [];
 
 (async () => {
-  await Invoice.deleteMany({}).exec()
+  // await Invoice.deleteMany({}).exec()
   await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(__dirname + "/prep/excel_processed/combined_R01.xlsx");
