@@ -11,7 +11,7 @@ mongoose.set('useCreateIndex', true);
 let prepArray: Array<any> = [];
 
 (async () => {
-  // await Invoice.deleteMany({}).exec()
+  await Invoice.deleteMany({}).exec()
   await Usage.deleteMany({}).exec()
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(__dirname + "/prep/excel_processed/combined_R01.xlsx");
@@ -52,7 +52,7 @@ let prepArray: Array<any> = [];
         debtText: row.getCell("O"), 
         debtAmount: row.getCell("P"),
         qty: row.getCell("J"),
-        rate: row.getCell("U")=='บาท/เดือน'?row.getCell("N"):row.getCell("L"),
+        rate: row.getCell("U")=='บาท/เดือน'?row.getCell("N"):row.getCell("K"),
         totalAmount: row.getCell("Q"),
         vat: vat,
         invoiceAmount:parseFloat(row.getCell("R")),// invoiceAmount: row.getCell("N").value,
@@ -102,8 +102,8 @@ let prepArray: Array<any> = [];
       // console.log(`reading ${rowNumber}: ${(parseFloat(row.getCell(13))*1.07) + parseFloat(row.getCell(12))} Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
     }
   })
-  // saveInvoice()
-  saveUsage()
+  saveInvoice()
+  // saveUsage()
 })()
 var i = 0
 var j = 0
