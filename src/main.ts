@@ -37,15 +37,15 @@ mongoose.set('useCreateIndex', true);
 
 
 app.use(cors())
-app.use(historyFallBack())
+// app.use(historyFallBack())
 app.use(bodyParser.json({ limit: '150mb' }))
 app.use(express.urlencoded({ extended: true, limit: '150mb' }))
 app.use(morgan('combined', { skip: (req: any, res: any) => { return req.originalUrl.startsWith('/api/v1/user-keep-alive') } }));
 
-app.use(express.static('public', {
-  etag: false,
-  //  maxAge: '5000' 
-}))
+// app.use(express.static('public', {
+//   etag: false,
+//   //  maxAge: '5000' 
+// }))
 
 // app.use(morgan('combined'))
 // app.use(morgan(function (tokens:any, req:any, res:any) {
@@ -112,6 +112,9 @@ const usageRequest = require('./routers/usageRequest')(app)
 const counter = require('./routers/counter')(app)
 
 app.get("/api/v1/", (req: any, res: any) => {
+  res.send("Welcome to WMA201AM1 API Server!");
+});
+app.get("/test", (req: any, res: any) => {
   res.send("Welcome to WMA201AM1 API Server!");
 });
 
