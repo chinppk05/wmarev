@@ -382,6 +382,18 @@ let getReceiptFromSheet = (filename: string, worksheet: Excel.Worksheet, categor
         prepInvoice[invoiceIndex].isPaid = true
         prepInvoice[invoiceIndex].paidReceipt = obj.sequence
       }
+      if (obj.qty == 0 && obj.billAmount != 0){
+        obj.categoryType = "น้ำทิ้ง"
+        obj.calculationType = "บาท/เดือน"
+        obj.flatRate = 125
+      } else {
+        obj.categoryType = "น้ำเสีย"
+        obj.calculationType = "บาท/ลบ.ม."
+        obj.flatRate = 0
+      }
+      if(obj.month==1&&obj.year==2561){
+        console.log(mapper.receiptDebtAmount)
+      }
       prepReceipt.push(obj)
     }
   })
@@ -580,6 +592,9 @@ let createReceipt = async (prepInvoice: Array<any>) => {
     { header: 'ยอดค้างใบเสร็จ', key: 'receiptDebtAmount', width: 12, style: { numFmt: '#,##0.00' } },
     { header: 'ยอดหนี้ใบแจ้งหนี้', key: 'invoiceBillAmount', width: 12, style: { numFmt: '#,##0.00' } },
     { header: 'หมายเหตุ', key: 'remark', width: 30 },
+    { header: 'ประเภท', key: 'category', width: 10 },
+    { header: 'แบบ', key: 'categoryType', width: 10 },
+    { header: 'วิธีการคำนวณ', key: 'calculationType', width: 10 },
     { header: 'Reference', key: 'ref', width: 80 },
     { header: 'Id', key: 'id', width: 40 },
   ];
