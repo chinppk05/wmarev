@@ -1,7 +1,9 @@
+const passport = require('passport'); const jwt = require('jsonwebtoken');
 import * as ctrl from "../../controllers/usage"
 import {Express} from "express"
 let endpoint = "usage"
 let endpoints = "usages"
+
 
 module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}/`, ctrl.create)

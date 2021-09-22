@@ -56,15 +56,11 @@ const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
 
-//This verifies that the token sent by the user is valid
 passport.use(new JWTstrategy({
-  //secret we used to sign our JWT
-  secretOrKey: 'JMANDJM-CHN201AM1',
-  //we expect the user to send the token as a query parameter with the name 'secret_token'
-  jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token')
+  secretOrKey: 'JMANDJM-WMA201AM1',
+  jwtFromRequest: ExtractJWT.fromAuthHeaderWithScheme('JWT')
 }, async (token: { user: string }, done: Function) => {
   try {
-    //Pass the user details to the next middleware
     return done(null, token.user);
   } catch (error) {
     done(error);
@@ -82,7 +78,7 @@ export const signup = (req: Request, res: Response) => {
 
 var loginusers:Array<{username:string,path?:string,createdAt:Date}> = []
 export const login = (req: Request, res: Response) => {
-  const token = jwt.sign({ user: req.user }, 'JMANDJM-CHN201AM1');
+  const token = jwt.sign({ user: req.user }, 'JMANDJM-WMA201AM1');
 
   let i = loginusers.findIndex(el=>el.username===req.body.username)
   if(i==-1) loginusers.push({username:req.body.username, createdAt:new Date()})

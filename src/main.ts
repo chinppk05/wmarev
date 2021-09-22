@@ -11,6 +11,7 @@ import passport from "passport";
 import passportLocal from "passport-local";
 const localStrategy = require("passport-local").Strategy;
 import { Socket } from "socket.io"
+import { NextFunction } from "connect";
 var cors = require('cors')
 const app = express()
 
@@ -114,8 +115,21 @@ const counter = require('./routers/counter')(app)
 app.get("/api/v1/", (req: any, res: any) => {
   res.send("Welcome to WMA201AM1 API Server!");
 });
-app.get("/test", (req: any, res: any) => {
-  res.send("Welcome to WMA201AM1 API Server!");
+
+
+let myAuthFunction = (req: any, res: any, next:NextFunction) => {
+  console.log(req.headers)
+  console.log("this is middleware")
+  let username = req.headers.username
+  let password = req.headers.password
+  if(username=="MYSECRET" && password=="MYPASSWORD")
+    next()
+  else
+    res.status(400).send("ชั้นมันคนไม่มีสิทธิ แค่คิดดึงข้อมูลจะผิดมั้ย?");
+}
+
+app.get("/api/v1/secure", myAuthFunction, (req: any, res: any) => {
+  res.send("Welcome to WMA201AM1 API Secure Path!");
 });
 
 app.post('/api/v1/upload', upload.single('file'), function (req: any, res: any, next: any) {
