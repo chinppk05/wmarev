@@ -392,7 +392,7 @@ let getReceiptFromSheet = (filename: string, worksheet: Excel.Worksheet, categor
         obj.flatRate = 0
       }
       if(obj.month==1&&obj.year==2561){
-        console.log(mapper.receiptDebtAmount)
+        // console.log(mapper.receiptDebtAmount)
       }
       prepReceipt.push(obj)
     }
