@@ -17,11 +17,11 @@ const schema = new Schema({
   prefix: String, //คำนำหน้า
   firstName: String, //ชื่อต้น
   lastName: String, //นามสกุล
-  sector:String,
-  manager: {type:ObjectId,ref:"User"},
+  sector: String,
+  manager: { type: ObjectId, ref: "User" },
   lastLogin: Date,
   createdIP: String,
-  createdAt: Date, 
+  createdAt: Date,
 })
 schema.pre('save', async function (next: NextFunction) {
   const user = this; //'this' refers to the current document about to be saved
