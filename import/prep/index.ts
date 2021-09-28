@@ -289,6 +289,7 @@ let getReceiptFromSheet = (filename: string, worksheet: Excel.Worksheet, categor
         case 'ชำระยอดเงินที่ค้าง ':
         case 'ยอดค้างชำระ ':
         case 'ชำระยอดเงิน':
+        case 'ชำระยอดเงินก่อนหัก':  
           mapper.receiptDebtAmount = colNumber
           return
           break;
@@ -358,7 +359,7 @@ let getReceiptFromSheet = (filename: string, worksheet: Excel.Worksheet, categor
         ref: `${filename} ${worksheet.name} row: ${rowNumber}`,
         id: uuidv4(),
         no: parseInt(row.getCell(mapper.no).text),
-        sequence: row.getCell(mapper.sequence).text.replace("wma-", ""),
+        sequence: row.getCell(mapper.sequence).text.replace("wma-", "").replace("wma", ""),
         meter: row.getCell(mapper.meter).text,
         oldMeter: row.getCell(mapper.meter).text.length == 7 ? row.getCell(mapper.meter).text : "-",
         name: helper.resolveName(row.getCell(mapper.name).text, row.getCell(mapper.meter).text),
