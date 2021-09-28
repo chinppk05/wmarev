@@ -336,7 +336,7 @@ let getReceiptFromSheet = (filename: string, worksheet: Excel.Worksheet, categor
     });
     if (rowNumber > 4 && isNumber(noCell.value)) {
       var myRegexp = /ใบเสร็จ (.*?)(\d{2}) \(/g ///1-\d{2}(.*?)\d{2}\)/g ///1-(.*?)\)/g;
-      var match = myRegexp.exec(filename);
+      var match = myRegexp.exec(filename)
       let paymentAmount = helper.resolveAmount(row.getCell(mapper.paymentAmount))
       let paidFor = DateTime.fromObject({
         year: parseInt("25" + match[2]) - 543,
