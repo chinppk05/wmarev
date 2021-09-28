@@ -47,6 +47,8 @@ let prepArray: Array<any> = [];
         vat: row.getCell("T").value,
         invoiceAmount: row.getCell("W").value,
         code: "01-kb",
+        category: row.getCell("AB").value,
+        // rate: row.getCell("AD")=='บาท/เดือน'?row.getCell("R"):row.getCell("K"),
         isNextStage: true, 
         isPrint: true,
         isRequested:true,
@@ -88,7 +90,8 @@ let prepArray: Array<any> = [];
         // process:true,
         // createdAt:new Date()
       })
-      console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value), `reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+      // console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value), `reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
+      console.log(row.getCell("P").value)
     }
   })
   savePayment()
