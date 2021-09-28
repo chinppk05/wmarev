@@ -244,31 +244,38 @@ let getReceiptFromSheet = (filename: string, worksheet: Excel.Worksheet, categor
         case 'ลำดับ':
         case 'ลำดับ ':
           mapper.no = colNumber
+          return
           break;
         case 'เลขที่ผู้ใช้น้ำ':
         case 'เลขที่ผู้ใช้น้ำ(ใหม่)':
         case 'เลขผู้ใช้น้ำ':
           mapper.meter = colNumber
+          return
           break;
         case 'ที่อยู่':
           mapper.address = colNumber
+          return
           break;
         case 'ชื่อ':
         case 'ชื่อ - นามสกุล':
         case 'ชื่อ-นามสกุล':
           mapper.name = colNumber
+          return
           break;
         case 'รับจริง':
           if (worksheet.getRow(3).getCell(colNumber + 1).text == "หมายเหตุ")
             mapper.paymentAmount = colNumber
-          break;
+          return
+            break;
         case 'วันที่ชำระเงิน':
         case 'วันที่ชำระเงิน':
         case 'วันที่ชำระเงิน':
           mapper.paymentDate = colNumber
+          return
           break;
         case 'เลขที่ใบเสร็จ':
           mapper.sequence = colNumber
+          return
           break;
         case 'เดือนที่ค้าง':
         case 'จำนวนเดือนที่ค้าง ':
@@ -276,43 +283,54 @@ let getReceiptFromSheet = (filename: string, worksheet: Excel.Worksheet, categor
         case 'เดือนที่ค้าง ':
         case 'เดือนที่ชำระ':
           mapper.receiptDebtText = colNumber
+          return
           break;
         case 'ยอดเงินที่ค้าง ':
         case 'ชำระยอดเงินที่ค้าง ':
         case 'ยอดค้างชำระ ':
         case 'ชำระยอดเงิน':
           mapper.receiptDebtAmount = colNumber
+          return
           break;
 
         case 'ภาษียอดค้าง':
           mapper.debtVat = colNumber
+          return
           break;
         case 'ลบ.ม.':
           mapper.qty = colNumber
+          return
           break;
         case 'ค่าบริการ':
           mapper.billAmount = colNumber
+          return
           break;
         case 'ภาษี':
           mapper.vat = colNumber
+          return
           break;
         case 'K+L':
           mapper.totalAmount = colNumber
+          return
           break;
         case 'รวมภาษีขาย':
           mapper.totalVatAmount = colNumber
+          return
           break;
         case 'รวมเงิน':
           if (worksheet.getRow(4).getCell(colNumber).text == "ตามใบแจ้งหนี้")
             mapper.grandTotal = colNumber
-          break;
+          return
+            break;
 
 
         case 'หมายเหตุ':
           mapper.remark = colNumber
+          return
           break;
         default:
           // console.log()
+          return
           break;
       }
     });
