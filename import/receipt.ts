@@ -48,6 +48,7 @@ let prepArray: Array<any> = [];
         invoiceAmount: row.getCell("W").value,
         code: "01-kb",
         category: row.getCell("AB").value,
+        categoryType: row.getCell("AC").text,
         // rate: row.getCell("AD")=='บาท/เดือน'?row.getCell("R"):row.getCell("K"),
         isNextStage: true, 
         isPrint: true,
