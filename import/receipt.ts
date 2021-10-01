@@ -92,7 +92,7 @@ let prepArray: Array<any> = [];
         // createdAt:new Date()
       })
       // console.log((row.getCell(8).value * row.getCell(9).value) * (1 + row.getCell("M").value), `reading ${rowNumber}: Collecting... The script uses approximately ${Math.round(used * 100) / 100} MB`);
-      console.log(row.getCell("P").value)
+      // console.log(row.getCell("P").value)
     }
   })
   savePayment()
