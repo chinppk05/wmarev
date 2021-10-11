@@ -5,6 +5,7 @@ const ObjectId = Schema.Types.ObjectId
 const schema = new Schema({
   name: String,
   sequence: Number,
+  category: String,
   year: Number,
   createdIP: String,
   createdAt: Date,

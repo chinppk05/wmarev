@@ -43,7 +43,7 @@ const schema = new Schema({
 schema.pre("save", async function (next: NextFunction) {
   var options = { upsert: true, new: true, useFindAndModify: false };
   Counter.findOneAndUpdate(
-    { name: "Usage", year: this.year },
+    { name: "Usage", year: this.year, category: this.category },
     { $inc: { sequence: 1 } },
     options,
     (err: Error, doc: any) => {
