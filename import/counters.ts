@@ -16,6 +16,7 @@ mongoose.set("useCreateIndex", true);
 
 //Usage
 export const countUsage = () => {
+  console.log("Start Usage")
   Usage.aggregate([
     {
       $group: {
@@ -59,8 +60,9 @@ export const countUsage = () => {
   });
 };countUsage();
 
-Invoice
+//Invoice
 export const countInvoice = () => {
+  console.log("Start Invoice")
   Invoice.aggregate([
     {
       $group: {
@@ -104,6 +106,7 @@ export const countInvoice = () => {
 
 //Payment
 export const countPayment = () => {
+  console.log("Start Payment")
   Payment.aggregate([
     {
       $group: {
@@ -147,6 +150,7 @@ export const countPayment = () => {
 
 // Receipt
 export const countReceipt = () => {
+  console.log("Start Receipt")
   Receipt.aggregate([
     {
       $group: {
