@@ -33,7 +33,7 @@ export const countUsage = () => {
     },
   ]).exec(function (error: Error, data: Array<any>) {
     // res.send(data);
-    console.log(data);
+    // console.log(data);
     data.forEach((o) => {
       var options = { upsert: true, new: true, useFindAndModify: false };
       let max = (o.max ?? "") as string;
@@ -78,7 +78,7 @@ export const countInvoice = () => {
     },
   ]).exec(function (error: Error, data: Array<any>) {
     // res.send(data);
-    console.log(data);
+    // console.log(data);
     data.forEach((o) => {
       var options = { upsert: true, new: true, useFindAndModify: false };
       let max = (o.max ?? "") as string;
@@ -121,7 +121,7 @@ export const countPayment = () => {
     },
   ]).exec(function (error: Error, data: Array<any>) {
     // res.send(data);
-    console.log(data);
+    // console.log(data);
     data.forEach((o) => {
       var options = { upsert: true, new: true, useFindAndModify: false };
       let max = (o.max ?? "") as string;
@@ -164,7 +164,7 @@ export const countReceipt = () => {
     },
   ]).exec(function (error: Error, data: Array<any>) {
     // res.send(data);
-    console.log(data);
+    // console.log(data);
     data.forEach((o) => {
       var options = { upsert: true, new: true, useFindAndModify: false };
       let max = (o.max ?? "") as string;
