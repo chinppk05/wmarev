@@ -54,6 +54,7 @@ export const countUsage = () => {
         },
         options,
         (err: Error, doc: any) => {
+          if(err) console.error(err)
           console.log(doc)
         });
     });
@@ -98,6 +99,7 @@ export const countInvoice = () => {
         },
         options,
         (err: Error, doc: any) => {
+          if(err) console.error(err)
           console.log(doc)
         });
     });
@@ -142,6 +144,7 @@ export const countPayment = () => {
         },
         options,
         (err: Error, doc: any) => {
+          if(err) console.error(err)
           console.log(doc)
         });
     });
@@ -186,6 +189,7 @@ export const countReceipt = () => {
         },
         options,
         (err: Error, doc: any) => {
+          if(err) console.error(err)
           console.log(doc)
         });
     });
