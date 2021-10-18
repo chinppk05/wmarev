@@ -33,6 +33,7 @@ let prepArray: Array<any> = [];
         year: row.getCell("D").value,
         month: row.getCell("E").value,
         meter: row.getCell("G").value,
+        oldMeter: row.getCell("H").value,
         name: row.getCell("I").value,
         address: row.getCell("J").value,
         paymentAmount: row.getCell("K").value,

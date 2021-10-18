@@ -12,6 +12,7 @@ const schema = new Schema({
   no: Number,
   sequence: String,
   meter: String,
+  oldMeter: String,
   taxId: String,
   name: String,
   code: String,
