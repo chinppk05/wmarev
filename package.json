@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/main.ts",
     "watch": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec 'ts-node' src/main.ts",
+    "gencombine": "ts-node ./import/prep/index.ts",
     "geninvoice": "ts-node ./import/invoice.ts",
     "genreceipt": "ts-node ./import/receipt.ts",
     "initdb": "ts-node import/invoice.ts && ts-node import/receipt.ts",

@@ -66,6 +66,8 @@ let invoice = async () => {
         }
         addInvoiceColumn(worksheet)
       })
+    } else {
+      console.log("'%s' is not a xlsx file. 🥵", filePath);
     }
   }
   //Fixing Address
