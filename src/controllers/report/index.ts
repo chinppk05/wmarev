@@ -143,6 +143,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
   // promises.push(Area.find({ reportIncome: true }).select("prefix name contractNumber").exec())
 
   Area.find({ reportIncome: true }).select("_id prefix name contractNumber").then((areas: Array<any>) => {
+    console.log(areas)
     promises.push(Calculation.find({}).select("area areaCondition calendarYear quarter contributionAmount").exec())
     promises.push(AreaCollection.find({ year: { $gt: 2500 } }).select("area quarter month year recordDate amount createdAt").exec())
     promises.push(AreaIncome.find({ year: { $gt: 2500 } }).select("area quarter month year recordDate amount createdAt").exec())
