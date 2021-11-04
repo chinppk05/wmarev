@@ -19,6 +19,19 @@ export const countUsage = () => {
   console.log("Start Usage")
   Usage.aggregate([
     {
+      $project:
+      {
+        sequence: "$sequence",
+        year: {
+          $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" }
+        },
+        category: {
+          $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int" }
+        },
+
+      }
+    },
+    {
       $group: {
         _id: {
           year: "$year",
@@ -54,12 +67,12 @@ export const countUsage = () => {
         },
         options,
         (err: Error, doc: any) => {
-          if(err) console.error(err)
+          if (err) console.error(err)
           console.log(doc)
         });
     });
   });
-};countUsage();
+}; countUsage();
 
 //Invoice
 export const countInvoice = () => {
@@ -99,12 +112,12 @@ export const countInvoice = () => {
         },
         options,
         (err: Error, doc: any) => {
-          if(err) console.error(err)
+          if (err) console.error(err)
           console.log(doc)
         });
     });
   });
-};countInvoice();
+}; countInvoice();
 
 //Payment
 export const countPayment = () => {
@@ -144,12 +157,12 @@ export const countPayment = () => {
         },
         options,
         (err: Error, doc: any) => {
-          if(err) console.error(err)
+          if (err) console.error(err)
           console.log(doc)
         });
     });
   });
-};countPayment();
+}; countPayment();
 
 // Receipt
 export const countReceipt = () => {
@@ -189,10 +202,10 @@ export const countReceipt = () => {
         },
         options,
         (err: Error, doc: any) => {
-          if(err) console.error(err)
+          if (err) console.error(err)
           console.log(doc)
         });
     });
   });
-};countReceipt();
+}; countReceipt();
 
