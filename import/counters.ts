@@ -28,7 +28,6 @@ export const countUsage = () => {
         category: {
           $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int" }
         },
-
       }
     },
     {
