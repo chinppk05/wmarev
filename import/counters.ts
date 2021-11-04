@@ -23,7 +23,7 @@ export const countUsage = () => {
       {
         sequence: "$sequence",
         year: {
-          $add:[{$convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" }},2500]
+          $add: [{ $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" } }, 2500]
         },
         category: {
           $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int" }
@@ -77,6 +77,19 @@ export const countUsage = () => {
 export const countInvoice = () => {
   console.log("Start Invoice")
   Invoice.aggregate([
+
+    {
+      $project:
+      {
+        sequence: "$sequence",
+        year: {
+          $add: [{ $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" } }, 2500]
+        },
+        category: {
+          $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int" }
+        },
+      }
+    },
     {
       $group: {
         _id: {
@@ -122,6 +135,19 @@ export const countInvoice = () => {
 export const countPayment = () => {
   console.log("Start Payment")
   Payment.aggregate([
+
+    {
+      $project:
+      {
+        sequence: "$sequence",
+        year: {
+          $add: [{ $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" } }, 2500]
+        },
+        category: {
+          $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int" }
+        },
+      }
+    },
     {
       $group: {
         _id: {
@@ -167,6 +193,19 @@ export const countPayment = () => {
 export const countReceipt = () => {
   console.log("Start Receipt")
   Receipt.aggregate([
+
+    {
+      $project:
+      {
+        sequence: "$sequence",
+        year: {
+          $add: [{ $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" } }, 2500]
+        },
+        category: {
+          $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int" }
+        },
+      }
+    },
     {
       $group: {
         _id: {
