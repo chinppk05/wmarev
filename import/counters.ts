@@ -132,62 +132,62 @@ export const countInvoice = () => {
 }; countInvoice();
 
 //Payment
-export const countPayment = () => {
-  console.log("Start Payment")
-  Payment.aggregate([
+// export const countPayment = () => {
+//   console.log("Start Payment")
+//   Payment.aggregate([
 
-    {
-      $project:
-      {
-        sequence: "$sequence",
-        year: {
-          $add: [{ $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" } }, 2500]
-        },
-        category: {
-          $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int" }
-        },
-      }
-    },
-    {
-      $group: {
-        _id: {
-          year: "$year",
-          category: "$category",
-        },
-        max: {
-          $max: "$sequence",
-        },
-        last: {
-          $last: "$sequence",
-        },
-      },
-    },
-  ]).exec(function (error: Error, data: Array<any>) {
-    // res.send(data);
-    // console.log(data);
-    data.forEach((o) => {
-      var options = { upsert: true, new: true, useFindAndModify: false };
-      let max = (o.max ?? "") as string;
-      let seq = max.substring(3, max.length);
-      let year = o._id.year
-      let category = o._id.category
-      Counter.findOneAndUpdate(
-        { name: "Payment", year: year, category: category },
-        {
-          $set: {
-            year: o._id.year,
-            category: o._id.category,
-            sequence: seq,
-          },
-        },
-        options,
-        (err: Error, doc: any) => {
-          if (err) console.error(err)
-          console.log(doc)
-        });
-    });
-  });
-}; countPayment();
+//     {
+//       $project:
+//       {
+//         sequence: "$sequence",
+//         year: {
+//           $add: [{ $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" } }, 2500]
+//         },
+//         category: {
+//           $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int" }
+//         },
+//       }
+//     },
+//     {
+//       $group: {
+//         _id: {
+//           year: "$year",
+//           category: "$category",
+//         },
+//         max: {
+//           $max: "$sequence",
+//         },
+//         last: {
+//           $last: "$sequence",
+//         },
+//       },
+//     },
+//   ]).exec(function (error: Error, data: Array<any>) {
+//     // res.send(data);
+//     // console.log(data);
+//     data.forEach((o) => {
+//       var options = { upsert: true, new: true, useFindAndModify: false };
+//       let max = (o.max ?? "") as string;
+//       let seq = max.substring(3, max.length);
+//       let year = o._id.year
+//       let category = o._id.category
+//       Counter.findOneAndUpdate(
+//         { name: "Payment", year: year, category: category },
+//         {
+//           $set: {
+//             year: o._id.year,
+//             category: o._id.category,
+//             sequence: seq,
+//           },
+//         },
+//         options,
+//         (err: Error, doc: any) => {
+//           if (err) console.error(err)
+//           console.log(doc)
+//         });
+//     });
+//   });
+// }; countPayment();
 
 // Receipt
 export const countReceipt = () => {
