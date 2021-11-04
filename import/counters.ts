@@ -67,7 +67,7 @@ export const countUsage = () => {
         options,
         (err: Error, doc: any) => {
           if (err) console.error(err)
-          console.log(doc)
+          // console.log(doc)
         });
     });
   });
