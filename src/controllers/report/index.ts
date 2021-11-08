@@ -546,7 +546,16 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
         $group: {
           _id: "$code",
           totalAmount: { $sum: { $divide: ["$totalAmount", 100] } },
-          debtAmount: { $sum: { $divide: ["$debtAmount", 100] } },
+          debtAmount: 
+          { $sum: 
+            {
+              $cound: {if: {$eq:["$isPaid",true]}}, 
+                then:{ $divide: ["$debtAmount", 100] },
+                else:0
+            }
+          },
+          //   { $divide: ["$debtAmount", 100] } 
+          // },
           billAmount: { $sum: { $divide: ["$billAmount", 100] } }
         }
       }
