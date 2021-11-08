@@ -553,9 +553,9 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
                 then:0,
                 else:
                   {
-                    $cond: {if: {$eq:["$isPaid",null]},
-                    then:0,
-                    else: { $divide: ["$debtAmount", 100] }
+                    $cond: {if: {$eq:["$isPaid",false]},
+                    then:{ $divide: ["$debtAmount", 100] },
+                    else: 0
                   }
                 }
               }
