@@ -547,19 +547,14 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
           _id: "$code",
           totalAmount: { $sum: { $divide: ["$totalAmount", 100] } },
           debtAmount: 
-          { $sum: 
-            {
-              $cond: { if: {$eq:["$isPaid",true]}, 
-                then:0,
-                else:
-                  {
-                    $cond: {if: {$eq:["$isPaid",false]},
-                    then:{ $divide: ["$debtAmount", 100] },
-                    else: 0
-                  }
-                }
-              }
-            }
+          { 
+            $sum: {
+              $cond: {
+                if: { $or: [{$eq: ["$isPaid", true]},{$eq: ["$isPaid", null]}] },
+                then: 0,
+                else: { $divide: ["$debtAmount", 100] },
+              },
+            },
           },
           //   { $divide: ["$debtAmount", 100] } 
           // },
