@@ -64,7 +64,8 @@ const schema = new Schema({
   isPaidUnder: Boolean,
   isPaidExact: Boolean,
   notes: String,
-  ref: String
+  ref: String,
+  excelNum: {type:Number},
 })
 
 schema.pre("save", async function (next: NextFunction) {

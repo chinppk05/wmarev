@@ -39,6 +39,7 @@ const schema = new Schema({
   tax: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
 
   billAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  excelNum: {type:Number},
 
   
   printDate: Date,
