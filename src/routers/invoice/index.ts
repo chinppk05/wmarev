@@ -5,6 +5,7 @@ let endpoints = "invoices"
 
 module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}/`, ctrl.create)
+  app.post(`/api/v1/${endpoint}-upsert/`, ctrl.upsert)
   app.post(`/api/v1/${endpoint}-many/`, ctrl.createMany)
   app.post(`/api/v1/${endpoint}-date/`, ctrl.updateInvoiceDate)
   app.get(`/api/v1/${endpoint}/:id`, ctrl.get)
