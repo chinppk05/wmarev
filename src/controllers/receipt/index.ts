@@ -1,7 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express'
 import DBModel from '../../models/receipt/index'
+import Payment from '../../models/payment/index'
 import Counter from '../../models/counter/index'
 import mongoose from "mongoose";
+import * as _ from "lodash"
 
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -114,9 +116,14 @@ export const remove = (req: Request, res: Response) => {
 export const removeMany = (req: Request, res: Response) => {
   let list: Array<string> = req.body.list
   let ids = list.map(el => mongoose.Types.ObjectId(el))
-  DBModel.deleteMany({ _id: { $in: ids } }).then((data: any) => {
-    res.send(data);
-  });
+  DBModel.find({ _id: { $in: ids } }).then((data1: any) => {
+    let payments = _.flatten(data1.map((d:any)=>d.invoices))
+    Payment.updateMany({_id:  { $in: payments }},{$set:{isNextStage:false}}).then((data2: any) => {
+      DBModel.deleteMany({ _id: { $in: ids } }).then((data: any) => {
+        res.send(data);
+      });
+    })
+  })
 };
 
 export const information = (req: Request, res: Response) => {
