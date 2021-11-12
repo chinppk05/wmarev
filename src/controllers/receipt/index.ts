@@ -31,6 +31,18 @@ export const create = (req: Request, res: Response) => {
   );
 }
 
+export const upsert = (req: Request, res: Response) => {
+  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const newObj: any = new DBModel(req.body);
+  // newObj.createdAt = new Date();
+  newObj.modifiedAt = new Date();
+  newObj.createdIP = ip;
+  let search = req.body.search
+  let doc = { ...req.body.doc, modifiedAt: new Date(), createdIP: ip }
+  DBModel.findOneAndUpdate({ meter: doc.meter, month: doc.month, year: doc.year }, doc, { upsert: true }).then((document: any) => {
+    res.send(document)
+  })
+}
 
 export const createMany = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
