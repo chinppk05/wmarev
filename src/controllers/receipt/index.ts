@@ -39,6 +39,7 @@ export const upsert = (req: Request, res: Response) => {
   newObj.createdIP = ip;
   let search = req.body.search
   let doc = { ...req.body.doc, modifiedAt: new Date(), createdIP: ip }
+  console.log(doc)
   DBModel.findOneAndUpdate({ meter: doc.meter, month: doc.month, year: doc.year }, doc, { upsert: true }).then((document: any) => {
     res.send(document)
   })
