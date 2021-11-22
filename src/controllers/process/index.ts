@@ -147,7 +147,7 @@ export const createReceipt = (req: Request, res: Response) => {
       let result = {
         ...payment,
         ref: "processed",
-        invoice: payment.invoice,
+        invoices: [payment.invoice],
         usage: payment.usage,
         payment: payment._id,
         _id: undefined,
