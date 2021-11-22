@@ -154,6 +154,7 @@ export const createReceipt = (req: Request, res: Response) => {
         status: "สร้างใหม่",
         notes: "test"
       }
+      result.totalAmount = parseFloat((result.qty * result.rate).toFixed(2))
       result.vat = parseFloat((result.qty * result.rate * 0.07).toFixed(2))
       delete result.sequence
       delete result._id
