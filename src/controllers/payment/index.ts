@@ -6,8 +6,8 @@ import Counter from '../../models/counter';
 
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  Invoice.findOne({sequence:req.body.invoiceNumber}).then((data:any)=>{
-    const newObj:any = new DBModel({...data,...req.body});
+  Invoice.findOne({ sequence: req.body.invoiceNumber }).then((data: any) => {
+    const newObj: any = new DBModel({ ...data, ...req.body });
     newObj.createdAt = new Date();
     newObj.modifiedAt = new Date();
     newObj.createdIP = ip;
@@ -17,20 +17,19 @@ export const create = (req: Request, res: Response) => {
   })
 }
 
-
 export const upsert = (req: Request, res: Response) => {
   let prep = req.body
   delete prep._id
   console.log(prep)
-  DBModel.findOne({ invoiceNumber: prep.invoiceNumber }).then((data:any)=>{
-    if(data) {
-      DBModel.updateOne({ invoiceNumber: prep.invoiceNumber }, { ...prep, modifiedAt:new Date(), $inc: { _v: 1 } }).then((data:any) => {
+  DBModel.findOne({ invoiceNumber: prep.invoiceNumber }).then((data: any) => {
+    if (data) {
+      DBModel.updateOne({ invoiceNumber: prep.invoiceNumber }, { ...prep, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
         res.send(data)
       })
     } else {
       var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-      Invoice.findOne({sequence:prep.invoiceNumber}).then((data:any)=>{
-        const newObj:any = new DBModel({...data,...prep});
+      Invoice.findOne({ sequence: prep.invoiceNumber }).then((data: any) => {
+        const newObj: any = new DBModel({ ...data, ...prep });
         newObj.createdAt = new Date();
         newObj.modifiedAt = new Date();
         newObj.createdIP = ip;
@@ -60,7 +59,7 @@ export const get = (req: Request, res: Response) => {
 export const getByField = (req: Request, res: Response) => {
   let field = req.params.field
   let value = req.params.value
-  let search:any = {}
+  let search: any = {}
   search[field] = value
   DBModel.findOne(search).then(function (data: any) {
     res.send(data)
@@ -77,7 +76,7 @@ export const postOne = (req: Request, res: Response) => {
 export const update = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)
-  DBModel.updateOne({ _id: id }, { ...req.body, modifiedAt:new Date(), $inc: { _v: 1 } }).then((data:any) => {
+  DBModel.updateOne({ _id: id }, { ...req.body, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
     res.send(data)
   })
 }
@@ -85,36 +84,42 @@ export const update = (req: Request, res: Response) => {
 export const remove = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)
-  DBModel.deleteOne({ _id: id }, req.body).then((data:any)  => {
+  DBModel.deleteOne({ _id: id }, req.body).then((data: any) => {
     res.send(data)
   })
 }
 
 export const removeMany = (req: Request, res: Response) => {
-  let list:Array<string> = req.body.list
-  let ids = list.map(el=>mongoose.Types.ObjectId(el))
-  DBModel.deleteMany({ _id: { $in:ids } }).then((data: any) => {
+  let list: Array<string> = req.body.list
+  let ids = list.map(el => mongoose.Types.ObjectId(el))
+  DBModel.deleteMany({ _id: { $in: ids } }).then((data: any) => {
     res.send(data);
   });
 };
 
-export const information = (req:Request, res:Response) => {
-  DBModel.aggregate([{$group: {
-    _id: {
-      year:"$year",
-      month:"$month"
-    },
-    sum: {
-      "$sum":1
+export const information = (req: Request, res: Response) => {
+  DBModel.aggregate([{
+    $group: {
+      _id: {
+        year: "$year",
+        month: "$month"
+      },
+      sum: {
+        "$sum": 1
+      }
     }
-  }}, {$project: {
-    year:"$_id.year",
-    month:"$_id.month",
-    sum:"$sum",
-  }}, {$sort: {
-    year: -1,
-    month: -1,
-  }}]).then((data:Array<any>)=>{
+  }, {
+    $project: {
+      year: "$_id.year",
+      month: "$_id.month",
+      sum: "$sum",
+    }
+  }, {
+    $sort: {
+      year: -1,
+      month: -1,
+    }
+  }]).then((data: Array<any>) => {
     res.send(data)
   })
 }
@@ -127,7 +132,7 @@ export const postPaginate = (req: Request, res: Response) => {
   let skip: number = parseInt(req.body.skip);
   const options = {
     sort: { ...sort }, offset: skip, limit: limit, populate: populate, lean: false,
-    pagination: req.body.paginate!=undefined&&req.body.paginate===false,
+    pagination: req.body.paginate != undefined && req.body.paginate === false,
   };
   DBModel.paginate(
     searchObj,
@@ -146,7 +151,7 @@ export const postPaginate = (req: Request, res: Response) => {
         totalAmount: data3.map((el: any) => el.totalAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalVat: data3.map((el: any) => el.vat ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalTax: data3.map((el: any) => el.vat ?? 0).reduce((a: number, b: number) => a + b, 0),
-        totalDebt: data3.map((el: any) =>  el.debtAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
+        totalDebt: data3.map((el: any) => el.debtAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalPayment: data3.map((el: any) => el.paymentAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalInvoice: data3.map((el: any) => el.invoiceAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
       })
@@ -159,18 +164,20 @@ export const postGroup = (req: Request, res: Response) => {
   let sum = req.body.sum
   DBModel.aggregate(
     [
-      {$group:{
-        _id: group,
-        count: {
-          $sum: 1
-        },
-        sum: {
-          $sum: sum
-        },
-        children: {
-          $addToSet: "$$ROOT"
+      {
+        $group: {
+          _id: group,
+          count: {
+            $sum: 1
+          },
+          sum: {
+            $sum: sum
+          },
+          children: {
+            $addToSet: "$$ROOT"
+          }
         }
-      }}
+      }
     ]
   ).exec(function (error: Error, data: Array<any>) {
     res.send(data);
@@ -197,7 +204,7 @@ export const excelDownload = (req: Request, res: Response) => {
       header.forEach(hel => {
         let prep = el[hel] ?? "-"
         try {
-          if (JSON.stringify(prep).search('numberDecimal')!=-1) {
+          if (JSON.stringify(prep).search('numberDecimal') != -1) {
             prep = JSON.parse(JSON.stringify(prep))
             prep = parseFloat((parseInt(prep.$numberDecimal) / 100).toFixed(2))
           }
