@@ -720,9 +720,28 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
   promises.push(
     Invoice.aggregate([
       {
+        $addFields: {
+          ms: {
+            $toString: "$month",
+          },
+          ad: {
+            $toString: "$year",
+          },
+        },
+      },
+      {
+        $addFields: {
+          monthyear: {
+            $concat: ["$ms", ":", "$ad"],
+          },
+        },
+      },
+      {
         $match: {
+          monthyear: {
+            $in: req.body.monthyear//["11:2559", "12:2559"],
+          },
           code: { $in: code },
-          year: { $in: year },
         },
       },
       {
@@ -750,9 +769,28 @@ export const getBillingReceiptReport = (req: Request, res: Response) => {
   promises.push(
     Receipt.aggregate([
       {
+        $addFields: {
+          ms: {
+            $toString: "$month",
+          },
+          ad: {
+            $toString: "$year",
+          },
+        },
+      },
+      {
+        $addFields: {
+          monthyear: {
+            $concat: ["$ms", ":", "$ad"],
+          },
+        },
+      },
+      {
         $match: {
+          monthyear: {
+            $in: req.body.monthyear//["11:2559", "12:2559"],
+          },
           code: { $in: code },
-          year: { $in: year },
         },
       },
       {
