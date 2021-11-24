@@ -325,7 +325,7 @@ let getCounter = (name: string, year: number, month: number) => {
 }
 
 let getDebt = (meter: string) => {
-  return Invoice.find({ meter: meter, isPaid: false, year: { $gt: 0 }, month: { $gt: 0 } }).sort("-year -month").exec()
+  return Invoice.find({ meter: meter, isPaid: false, totalAmount: { $gt: 0 }, year: { $gt: 0 }, month: { $gt: 0 } }).sort("-year -month").exec()
 }
 
 let getSequence = (year: number, category: string, sequence: number) => {
