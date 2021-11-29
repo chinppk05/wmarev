@@ -20,6 +20,7 @@ const schema = new Schema({
     signedBy: String,
     signedPosition: String,
     category: String,
+    order: Number,
     reportIncome:Boolean,
     fileUrl1:[String],
     fileUrl2:[String],
