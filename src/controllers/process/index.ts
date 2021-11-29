@@ -33,7 +33,13 @@ export const createInvoice = (req: Request, res: Response) => {
               let usage = usages[i]
               findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
               let amount = usage.qty * usage.rate
-
+              let vat = (0.07 * amount)
+              let exception = ['1067008','1067330','12170449313','12170366079','12170407360','12170366051','12170367739','12170449304','12170366088','12170367748','12170366060']
+              if( exception.includes(usage.meter) ){
+                vat = Math.ceil(vat*100)/100
+              } else {
+                vat = Math.round(vat*100)/100
+              }
               let result = {
                 ...usage,
                 ref: "processed",
@@ -44,7 +50,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 vatRate: 0.07,
                 debtText: display0(debt[i]).debtText,
                 debtAmount: display0(debt[i]).debtAmount,
-                invoiceDate: invoiceDate
+                invoiceDate: invoiceDate,
               }
               result.invoiceAmount = result.debtAmount + (result.totalAmount * (1 + (result.vatRate ?? 0)))
               result.billAmount = (result.totalAmount * (1 + (result.vatRate ?? 0)))
