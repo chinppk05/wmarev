@@ -243,7 +243,8 @@ export const getGreenYellow = (req: Request, res: Response) => {
     .endOf("day")
     .toJSDate();
   Area.find({ reportIncome: true })
-    .select("_id prefix name contractNumber")
+    .select("_id prefix name contractNumber category order")
+    .sort('order')
     .then((areas: Array<any>) => {
       promises.push(
         AreaCollection.find({
@@ -301,6 +302,8 @@ export const getGreenYellow = (req: Request, res: Response) => {
             prefix: el.prefix,
             area: el.name,
             _id: el._id,
+            category: el.category,
+            order: el.order,
             contract: el.contractNumber,
             collections: collections.filter((colc) => colc.area == el._id),
             incomes: incomes.filter((colc) => colc.area == el._id),
