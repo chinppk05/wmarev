@@ -35,13 +35,17 @@ export const createInvoice = (req: Request, res: Response) => {
               let amount = usage.qty * usage.rate
               let vat = (0.07 * amount)
               let exception = ['1067008','1067330','12170449313','12170366079','12170407360','12170366051','12170367739','12170449304','12170366088','12170367748','12170366060']
+              let qty = usage.qty
               if( exception.includes(usage.meter) ){
                 vat = Math.ceil(vat*100)/100
+                qty = 0
               } else {
                 vat = Math.round(vat*100)/100
+                qty = usage.qty
               }
               let result = {
                 ...usage,
+                qty,
                 ref: "processed",
                 usage: usage._id,
                 _id: undefined,

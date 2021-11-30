@@ -44,6 +44,13 @@ let prepArray: Array<any> = [];
       currentYearMonth = row.getCell("C")+row.getCell("D")
       let vatText = (row.getCell("M").text??"").replace(",","")
       let vat = parseFloat(vatText)
+      let meter = row.getCell("F").value
+      let exception = ['1067008','1067330','12170449313','12170366079','12170407360','12170366051','12170367739','12170449304','12170366088','12170367748','12170366060']
+      if( exception.includes(meter) ){
+        vat = Math.ceil(vat*100)/100
+      } else {
+        vat = Math.round(vat*100)/100
+      }
       prepArray.push({
         no:row.getCell("A"),
         sequence: row.getCell("B"),
