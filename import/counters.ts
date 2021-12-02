@@ -199,7 +199,7 @@ export const countReceipt = () => {
       {
         sequence: "$sequence",
         year: {
-          $add: [{ $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int", onError:'', onNull:'' } }, 2500]
+          $add: [{ $convert: { input: { $substr: ["$sequence", 0, 2] }, to: "int" } }, 2500]
         },
         category: {
           $convert: { input: { $substr: ["$sequence", 2, 1] }, to: "int", onError:'', onNull:'' }
