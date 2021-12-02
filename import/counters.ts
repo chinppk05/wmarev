@@ -193,7 +193,9 @@ export const countInvoice = () => {
 export const countReceipt = () => {
   console.log("Start Receipt")
   Receipt.aggregate([
-
+    {
+      $match:{ sequence:{$nin:['',null]} }
+    },
     {
       $project:
       {
