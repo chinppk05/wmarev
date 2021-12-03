@@ -7,6 +7,7 @@ import RequestModel from '../../models/request/index'
 import Counter from '../../models/counter/index'
 import mongoose, { Mongoose } from "mongoose";
 import { DateTime } from "luxon";
+import * as _ from "lodash"
 
 var options = { upsert: true, new: true, useFindAndModify: false };
 
@@ -101,6 +102,7 @@ export const createInvoice = (req: Request, res: Response) => {
   res.send("done")
 }
 
+
 export const printInvoice = async (req: Request, res: Response) => {
   let list = req.body.list
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -185,6 +187,62 @@ export const createReceipt = (req: Request, res: Response) => {
       // Receipt.insertMany(payments).then((docs: Array<any>) => {
       //   res.send(docs)
       // })
+    })
+  })
+}
+
+
+
+export const createReceiptV2 = (req: Request, res: Response) => {
+  var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  let list:Array<{id:string,type:string}> = req.body.list
+  let finalPrep:Array<any> = []
+  Payment.find({ _id: { $in: list.map(o=>o.id) }}).then((paymentsList: Array<any>) => {
+    let startMeter = ""
+    paymentsList.forEach((payment: any,i) => {
+      let si = 0
+      let el = list.find(o=>o.id==payment._id)
+      let result:any = {}
+      if(el.type=="separate"){
+        // payment.ref = "processed"
+        // result = {
+        //   ...payment,
+        //   ref: "processed-separate",
+        //   invoices: [payment._id],
+        //   usage: payment.usage,
+        //   payment: payment._id,
+        //   _id: undefined,
+        //   status: "สร้างใหม่",
+        //   notes: "test"
+        // }
+        list.splice(i,1)
+      } else if(el.type=="combine"){
+        // payment.ref = "processed"
+        // let prep = _.sortBy(result,['year','month'])
+        // let group = paymentsList.filter(o=>o.meter==payment.meter)
+        // result = {
+        //   ...payment,
+        //   ref: "processed-combine",
+        //   invoices: [payment._id],
+        //   usage: payment.usage,
+        //   payment: group.map(el=>{
+        //     return {
+        //       _id:el._id??"",
+        //       month:el.month??0,
+        //       year:el.year??0
+        //     }
+        //   }),
+        //   _id: undefined,
+        // }
+        // result.totalAmount = parseFloat((result.qty * result.rate).toFixed(2))
+        // result.vat = parseFloat((result.qty * result.rate * 0.07).toFixed(2))
+        while (list[si].type=="combine") {
+          list.splice(i,1)
+          si++
+        }
+      }
+      console.log(list)
+      finalPrep.push(result)
     })
   })
 }
