@@ -148,7 +148,6 @@ export const createReceipt = (req: Request, res: Response) => {
     let findExisted: Array<Promise<any>> = []
     let actualCommand: Array<Promise<any>> = []
 
-
     let payments = JSON.parse(JSON.stringify(paymentsList))
     payments = payments.map((payment: any) => {
       findExisted.push(Receipt.findOne({ year: payment.year, month: payment.month, meter: payment.meter }).exec())
