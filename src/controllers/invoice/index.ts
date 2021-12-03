@@ -242,6 +242,7 @@ export const postPaginate = (req: Request, res: Response) => {
   DBModel.paginate(searchObj, options).then(function (data: any) {
     let docs = JSON.parse(JSON.stringify(data.docs))
     DBModel.find(searchObj).sort(sort).then((data2: any) => {
+      console.log(data2)
       let data3 = JSON.parse(JSON.stringify(data2))
       res.send({
         docs: docs,
