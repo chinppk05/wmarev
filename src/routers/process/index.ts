@@ -5,7 +5,7 @@ let endpoints = "processes"
 
 module.exports = (app: Express) => {
 
-  app.get(`/api/v1/${endpoint}/test`, ctrl.createReceiptV2)
+  app.post(`/api/v1/${endpoint}/test`, ctrl.createReceiptV2)
   // app.get(`/api/v1/${endpoint}/test`, (req,res)=>res.send("test done"))
   app.post(`/api/v1/${endpoint}/create/invoice/`, ctrl.createInvoice)
   app.post(`/api/v1/${endpoint}/print/invoice/`, ctrl.printInvoice)
