@@ -37,10 +37,10 @@ export const createInvoice = (req: Request, res: Response) => {
               let vat = (0.07 * amount)
               let exception = ['12170463906']                              //['1067008','1067330','12170449313','12170366079','12170407360','12170366051','12170367739','12170449304','12170366088','12170367748','12170366060']
               let qty = usage.qty
-              if( exception.includes(usage.meter) ){
-                vat = Math.ceil(vat*100)/100
+              if (exception.includes(usage.meter)) {
+                vat = Math.ceil(vat * 100) / 100
               } else {
-                vat = Math.round(vat*100)/100
+                vat = Math.round(vat * 100) / 100
               }
               let result = {
                 ...usage,
@@ -195,35 +195,118 @@ export const createReceipt = (req: Request, res: Response) => {
 
 export const createReceiptV2 = (req: Request, res: Response) => {
   try {
-    
-  var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  let list:Array<{id:string,type:string}> = req.body.list
-  let finalPrep:Array<any> = []
-  // res.send("ok!")
-  Payment.find({ _id: { $in: list.map(o=>o.id) }}).then((paymentsList: Array<any>) => {
-    let startMeter = ""
-    console.log("start list")
-    console.log(list)
-    paymentsList.forEach((payment: any,i) => {
-      let si = 0
-      let el = list.find(o=>o.id==payment._id)
-      let result:any = {}
-      if(el.type=="separate"){
-        list.splice(i,1)
-      } else if(el.type=="combine"){
-        while (list[si].type=="combine") {
-          list.splice(i,1)
-          si++
+    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    let list: Array<{ id: string, type: string }> = req.body.list
+    let finalPrep: Array<any> = []
+    Payment.find({ _id: { $in: list.map(o => o.id) } }).then((payments: Array<any>) => {
+      payments = JSON.parse(JSON.stringify(payments))
+      let startMeter = ""
+      // console.log("start list")
+      // console.log(payments)
+      let mapped = payments.map((payment: any) => {
+        let el = list.find(o => o.id == payment._id)
+        return {
+          ...payment,
+          type: el.type,
+          typeWithMeter:`${el.type}${payment.meter}`
+        }
+      })
+      mapped = _.uniqBy(mapped, 'typeWithMeter')
+
+      mapped.forEach((payment: any, i) => {
+        let prep: any = {}
+        let el = list.find(o => o.id == payment._id)
+        // console.log(el.type)
+        if (el.type == "separate") {
+          prep = {
+            ...payment,
+            ref: "processed/separate",
+            invoices: [payment._id],
+            usage: payment.usage,
+            payment: payment._id,
+            _id: undefined,
+            status: "สร้างใหม่",
+            notes: "test",
+            processing: true,
+          }
+          prep.totalAmount = parseFloat((prep.qty * prep.rate).toFixed(2))
+          prep.vat = parseFloat((prep.qty * prep.rate * 0.07).toFixed(2))
+          delete prep.sequence
+          delete prep._id
+          finalPrep.push(prep)
+        } else if (el.type == "combine") {
+          let sort = _.sortBy(payments, 'year')
+          sort = _.sortBy(sort, 'month')
+          let group = _.groupBy(sort, 'meter')
+          // console.log(group)
+          let something = group[payment.meter]
+          prep = {
+            ...something[something.length - 1],
+            paymentAmount: something.map(el => el.paymentAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
+            invoiceAmount: something.map(el => el.invoiceAmount ?? 0).reduce((a: number, b: number) => a + b, 0),
+            invoices: something,
+            ref: "processed/combine",
+            usage: payment.usage,
+            payment: payment._id,
+            _id: undefined,
+            status: "สร้างใหม่",
+            notes: "test",
+            processing: true,
+            payments: something.map(el => {
+              return {
+                _id: el._id ?? "",
+                month: el.month ?? 0,
+                year: el.year ?? 0
+              }
+            }),
+          }
+          prep.totalAmount = parseFloat((prep.qty * prep.rate).toFixed(2))
+          prep.vat = parseFloat((prep.qty * prep.rate * 0.07).toFixed(2))
+          delete prep.sequence
+          delete prep._id
+          finalPrep.push(prep)
+        }
+      })
+      finalPrep = _.sortBy(finalPrep, 'excelNum')
+      // Insanity Debugging
+      // console.log(finalPrep)
+
+      let chain: Promise<any> = Promise.resolve();
+      for (let item of finalPrep) {
+        try {
+          chain = chain.then(() => upsertReceipt(item));
+        } catch (error) {
+          console.log(item.url + "error!", error)
         }
       }
-      console.log(list)
-      finalPrep.push(result)
+      chain.then(() => res.send("command done!"))
     })
-    res.send(finalPrep)
-  })
   } catch (error) {
-    res.send(error)
+    res.send("error")
   }
+}
+
+const upsertReceipt = (doc: any) => {
+  let prep = JSON.parse(JSON.stringify(doc))
+  delete prep._id
+  var options = { upsert: true, new: true, useFindAndModify: false };
+  console.log(doc.excelNum, doc.year, doc.month, doc.meter)
+  Counter.findOneAndUpdate(
+    { name: "Receipt", year: doc.year, category: doc.category },
+    { $inc: { sequence: 1 } },
+    options,
+    (err: Error, counterDoc: any) => {
+      let sequence = counterDoc.year.toString().slice(-2) + (counterDoc.category ?? "9") + counterDoc.sequence.toString().padStart(7, "0");
+      prep.sequence = sequence
+      console.log(prep)
+      return new Promise((resolve, reject) => {
+        Receipt.findOneAndUpdate({ meter: doc.meter, year: doc.year, month: doc.month }, prep, options).then((docs: Array<any>) => {
+          resolve(doc)
+        }).catch((err: any) => {
+          reject(err)
+        })
+      })
+    })
 }
 
 export const approvalRequestReceipt = (req: Request, res: Response) => {

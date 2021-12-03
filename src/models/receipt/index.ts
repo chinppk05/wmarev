@@ -50,6 +50,7 @@ const schema = new Schema({
   printDate: Date,
   paymentDate: Date,
   isNextStage: Boolean,
+  processing: Boolean,
 
 
   isRequested: { type: Boolean, default: false },
@@ -87,6 +88,37 @@ schema.pre("save", async function (next: NextFunction) {
     }
   );
 });
+
+/*
+schema.pre(/findOne/g, async function (next: NextFunction) {
+  if(this.processing!==true) next()
+  var options = { upsert: true, new: true, useFindAndModify: false };
+  let year = (this.year + 0)
+  if(this.month > 10) year = year + 1
+  Counter.findOneAndUpdate(
+    { name: "Receipt", year: year, category: this.category },
+    { $inc: { sequence: 1 } },
+    options,
+    (err: Error, doc: any) => {
+      let sequence
+      if (this.sequence != undefined) sequence = this.sequence
+      else {
+        console.log('pre',this._update['$set'])
+        try {
+          sequence = this._update['$set'].year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
+        } catch (error) {
+          sequence = "0000000000"
+        }
+      }
+      let recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this._update.year - 543 }).toJSDate()
+      // console.log("sequence for receipt ", sequence)
+      this.processing = false
+      Receipt.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
+      next();
+    }
+  );
+});
+*/
 
 schema.virtual('taxDebt').get(function () {
   return parseFloat((this.debtAmount * this.vatRate).toFixed(2))
