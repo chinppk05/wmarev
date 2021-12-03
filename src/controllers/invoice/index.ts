@@ -247,7 +247,7 @@ export const postPaginate = (req: Request, res: Response) => {
         docs: docs,
         total: data.total,
         totalCount: data3.length,
-        ids: data3.map((el: any) => el._id ?? ""),
+        ids: data3.filter((el:any)=>!el.isNextStage).map((el: any) => el._id ?? ""),
         totalQty: data3.map((el: any) => el.qty ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalVat: data3.map((el: any) => el.vat ?? 0).reduce((a: number, b: number) => a + b, 0),
         totalTax: data3.map((el: any) => el.vat ?? 0).reduce((a: number, b: number) => a + b, 0),
