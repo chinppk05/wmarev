@@ -194,6 +194,8 @@ export const createReceipt = (req: Request, res: Response) => {
 
 
 export const createReceiptV2 = (req: Request, res: Response) => {
+  try {
+    
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list:Array<{id:string,type:string}> = req.body.list
   let finalPrep:Array<any> = []
@@ -219,6 +221,9 @@ export const createReceiptV2 = (req: Request, res: Response) => {
     })
     res.send(finalPrep)
   })
+  } catch (error) {
+    res.send(error)
+  }
 }
 
 export const approvalRequestReceipt = (req: Request, res: Response) => {
