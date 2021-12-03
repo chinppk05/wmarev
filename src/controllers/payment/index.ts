@@ -139,7 +139,7 @@ export const postPaginate = (req: Request, res: Response) => {
     options
   ).then(function (data: any) {
     let docs = JSON.parse(JSON.stringify(data.docs))
-    DBModel.find(searchObj).then((data2: any) => {
+    DBModel.find(searchObj).sort(sort).then((data2: any) => {
       let data3 = JSON.parse(JSON.stringify(data2))
       res.send({
         docs: docs,
