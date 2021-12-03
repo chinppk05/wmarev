@@ -86,6 +86,8 @@ var upload = multer({
   storage: storage
 })
 
+const process = require('./routers/process')(app)
+
 const adjust = require('./routers/adjust')(app)
 const invoice = require('./routers/invoice')(app)
 const payment = require('./routers/payment')(app)
@@ -106,7 +108,6 @@ const auth = require('./routers/auth')(app)
 const calculation = require('./routers/calculation')(app)
 const coverLetter = require('./routers/coverLetter')(app)
 const render = require('./routers/render')(app)
-const process = require('./routers/process')(app)
 const risk = require('./routers/risk')(app)
 const report = require('./routers/report')(app)
 const usageRequest = require('./routers/usageRequest')(app)
