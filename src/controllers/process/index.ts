@@ -216,6 +216,7 @@ export const createReceiptV2 = (req: Request, res: Response) => {
       console.log(list)
       finalPrep.push(result)
     })
+    res.send("done")
   })
 }
 
