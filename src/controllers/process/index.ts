@@ -197,27 +197,28 @@ export const createReceiptV2 = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list:Array<{id:string,type:string}> = req.body.list
   let finalPrep:Array<any> = []
-  Payment.find({ _id: { $in: list.map(o=>o.id) }}).then((paymentsList: Array<any>) => {
-    let startMeter = ""
-    console.log("start list")
-    console.log(list)
-    paymentsList.forEach((payment: any,i) => {
-      let si = 0
-      let el = list.find(o=>o.id==payment._id)
-      let result:any = {}
-      if(el.type=="separate"){
-        list.splice(i,1)
-      } else if(el.type=="combine"){
-        while (list[si].type=="combine") {
-          list.splice(i,1)
-          si++
-        }
-      }
-      console.log(list)
-      finalPrep.push(result)
-    })
-    res.send("done")
-  })
+  res.send("ok!")
+  // Payment.find({ _id: { $in: list.map(o=>o.id) }}).then((paymentsList: Array<any>) => {
+  //   let startMeter = ""
+  //   console.log("start list")
+  //   console.log(list)
+  //   paymentsList.forEach((payment: any,i) => {
+  //     let si = 0
+  //     let el = list.find(o=>o.id==payment._id)
+  //     let result:any = {}
+  //     if(el.type=="separate"){
+  //       list.splice(i,1)
+  //     } else if(el.type=="combine"){
+  //       while (list[si].type=="combine") {
+  //         list.splice(i,1)
+  //         si++
+  //       }
+  //     }
+  //     console.log(list)
+  //     finalPrep.push(result)
+  //   })
+  //   res.send("done")
+  // })
 }
 
 export const approvalRequestReceipt = (req: Request, res: Response) => {
