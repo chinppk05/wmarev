@@ -191,8 +191,6 @@ export const createReceipt = (req: Request, res: Response) => {
   })
 }
 
-
-
 export const createReceiptV2 = (req: Request, res: Response) => {
   try {
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -211,7 +209,10 @@ export const createReceiptV2 = (req: Request, res: Response) => {
           typeWithMeter:`${el.type}${payment.meter}`
         }
       })
-      mapped = _.uniqBy(mapped, 'typeWithMeter')
+      mapped = [
+        ..._.uniqBy(mapped.filter(m=>m.type=='combine'), 'typeWithMeter'),
+        ...mapped.filter(m=>m.type=='separate')
+      ]
 
       mapped.forEach((payment: any, i) => {
         let prep: any = {}
