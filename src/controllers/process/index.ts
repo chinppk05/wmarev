@@ -214,6 +214,7 @@ export const createReceiptV2 = (req: Request, res: Response) => {
         ...mapped.filter(m=>m.type=='separate')
       ]
 
+      console.log("mapped.length",mapped.length)
       mapped.forEach((payment: any, i) => {
         let prep: any = {}
         let el = list.find(o => o.id == payment._id)
@@ -229,6 +230,13 @@ export const createReceiptV2 = (req: Request, res: Response) => {
             status: "สร้างใหม่",
             notes: "test",
             processing: true,
+            payments: payment.map((el:any) => {
+              return {
+                _id: el._id ?? "",
+                month: el.month ?? 0,
+                year: el.year ?? 0
+              }
+            }),
           }
           prep.totalAmount = parseFloat((prep.qty * prep.rate).toFixed(2))
           prep.vat = parseFloat((prep.qty * prep.rate * 0.07).toFixed(2))
@@ -261,6 +269,7 @@ export const createReceiptV2 = (req: Request, res: Response) => {
               }
             }),
           }
+          
           prep.totalAmount = parseFloat((prep.qty * prep.rate).toFixed(2))
           prep.vat = parseFloat((prep.qty * prep.rate * 0.07).toFixed(2))
           delete prep.sequence
