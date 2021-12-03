@@ -4,14 +4,16 @@ let endpoint = "process"
 let endpoints = "processes"
 
 module.exports = (app: Express) => {
-  app.post(`/api/v1/process/create/invoice/`, ctrl.createInvoice)
-  app.post(`/api/v1/process/print/invoice/`, ctrl.printInvoice)
-  app.post(`/api/v1/process/create/receipt/`, ctrl.createReceipt)
-  app.post(`/api/v1/receiptv2/`, ctrl.createReceiptV2)
+
+  app.get(`/api/v1/${endpoint}/test`, (req,res)=>console.log("test done!"))
+  app.post(`/api/v1/${endpoint}/create/invoice/`, ctrl.createInvoice)
+  app.post(`/api/v1/${endpoint}/print/invoice/`, ctrl.printInvoice)
+  app.post(`/api/v1/${endpoint}/create/receipt/`, ctrl.createReceipt)
+  app.post(`/api/v1/${endpoint}/create/receiptv2/`, ctrl.createReceiptV2)
   
-  app.post(`/api/v1/process/print/receipt/`, ctrl.printReceipt)
-  app.post(`/api/v1/process/request/receipt/`, ctrl.approvalRequestReceipt)
-  app.post(`/api/v1/process/approve/receipt/`, ctrl.approvalApprovedReceipt)
-  app.post(`/api/v1/process/sign/receipt/`, ctrl.signReceipt)
-  app.post(`/api/v1/process/print/receipt/`, ctrl.printReceipt)
+  app.post(`/api/v1/${endpoint}/print/receipt/`, ctrl.printReceipt)
+  app.post(`/api/v1/${endpoint}/request/receipt/`, ctrl.approvalRequestReceipt)
+  app.post(`/api/v1/${endpoint}/approve/receipt/`, ctrl.approvalApprovedReceipt)
+  app.post(`/api/v1/${endpoint}/sign/receipt/`, ctrl.signReceipt)
+  app.post(`/api/v1/${endpoint}/print/receipt/`, ctrl.printReceipt)
 }
