@@ -235,7 +235,6 @@ export const createReceiptV2 = (req: Request, res: Response) => {
           delete prep.sequence
           delete prep._id
           finalPrep.push(prep)
-          console.log(finalPrep)
         } else if (el.type == "combine") {
           let sort = _.sortBy(payments, 'year')
           sort = _.sortBy(sort, 'month')
@@ -271,7 +270,7 @@ export const createReceiptV2 = (req: Request, res: Response) => {
       })
       finalPrep = _.sortBy(finalPrep, 'excelNum')
       // Insanity Debugging
-      // console.log(finalPrep)
+      console.log("finalPrep",finalPrep)
 
       let chain: Promise<any> = Promise.resolve();
       for (let item of finalPrep) {
