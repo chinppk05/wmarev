@@ -54,6 +54,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 debtText: display0(debt[i]).debtText,
                 debtAmount: display0(debt[i]).debtAmount,
                 invoiceDate: invoiceDate,
+                vat,
               }
               result.invoiceAmount = result.debtAmount + (result.totalAmount * (1 + (result.vatRate ?? 0)))
               result.billAmount = (result.totalAmount * (1 + (result.vatRate ?? 0)))
