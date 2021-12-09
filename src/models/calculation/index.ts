@@ -16,6 +16,9 @@ const schema = new Schema({
   isKrob3: Boolean,
   isKrob4: Boolean,
   isPrint: Boolean,
+  isVat: Boolean,
+  vat: Number,
+
   ledgers: [
     {
       selected: Boolean,
