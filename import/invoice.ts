@@ -74,7 +74,7 @@ let prepArray: Array<any> = [];
         code: "01-kb",
         isNextStage: true, isPrint: true,
         status: row.getCell("F").text=="เลิกใช้น้ำแล้ว"?"เลิกใช้น้ำแล้ว":"ปกติ",
-        isPaid: row.getCell("V").value,
+        isPaid: row.getCell("V").value!=true?false:true,
         createdAt:new Date()
         // no:no,
         // sequence: row.getCell(2),
