@@ -15,8 +15,9 @@ export const createInvoice = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
   let invoiceDate = req.body.invoiceDate ?? new Date()
+  let finalArray:Array<any> = []
   console.log("Processing Invoice... " + (list ?? []).length + " item(s)")
-  Usage.find({ _id: { $in: list } }).sort('excelNum').then((usagesList: Array<any>) => {
+  Usage.find({ _id: { $in: list } }).sort('no').then((usagesList: Array<any>) => {
     let usages = JSON.parse(JSON.stringify(usagesList))
     let promises: Array<Promise<any>> = []
     let debtPromises: Array<Promise<any>> = []
@@ -75,23 +76,38 @@ export const createInvoice = (req: Request, res: Response) => {
                       el.createdAt = new Date()
                       return el
                     })
-                    setTimeout(()=>{
-                      Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec()
-                    },i*20)
+                    finalArray.push({...resolved[i],finalType:"update"})
+                    // setTimeout(()=>{
+                    //   Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec()
+                    // },i*20)
                     // actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec())
                   }
                   else {
-                    let invoice = new Invoice(resolved[i])
-                    setTimeout(()=>{
-                      invoice.save()
-                    },i*20)
+                    // let invoice = new Invoice(resolved[i])
+                    finalArray.push({...resolved[i],finalType:"insert"})
+                    // setTimeout(()=>{
+                    //   invoice.save()
+                    // },i*20)
                     // actualCommand.push(invoice.save())
-                    actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
+                    // actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
                   }
                 });
-                for (const command of actualCommand) {
-                  await command
-                }
+                finalArray.forEach(async (element, i) => {
+                  await setTimeout(async ()=>{
+                    console.log("meter", element.meter)
+                    if(element.finalType=="update"){
+                      await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...element } }).exec()
+                      await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
+                    } else {
+                      let invoice = new Invoice(element)
+                      invoice = new Invoice(element)
+                      await invoice.save()
+                    }
+                  },i*10)
+                })
+                // for (const command of actualCommand) {
+                //   await command
+                // }
                 //@ts-ignore
                 // actualCommand.reduce((p, fn) => p.then(fn), Promise.resolve())
                 // Promise.all(actualCommand)
