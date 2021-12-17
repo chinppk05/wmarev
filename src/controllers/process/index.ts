@@ -45,7 +45,7 @@ export const createInvoice = (req: Request, res: Response) => {
               if (exception.includes(usage.meter)) {
                 vat = Math.ceil(vat * 100) / 100
               } else {
-                vat = Math.round(vat * 100) / 100
+                vat = Math.floor(vat * 100) / 100
               }
               let result = {
                 ...usage,
@@ -77,19 +77,9 @@ export const createInvoice = (req: Request, res: Response) => {
                       return el
                     })
                     finalArray.push({...resolved[i],finalType:"update"})
-                    // setTimeout(()=>{
-                    //   Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec()
-                    // },i*20)
-                    // actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec())
                   }
                   else {
-                    // let invoice = new Invoice(resolved[i])
                     finalArray.push({...resolved[i],finalType:"insert"})
-                    // setTimeout(()=>{
-                    //   invoice.save()
-                    // },i*20)
-                    // actualCommand.push(invoice.save())
-                    // actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
                   }
                 });
                 finalArray.forEach(async (element, i) => {
@@ -105,20 +95,6 @@ export const createInvoice = (req: Request, res: Response) => {
                     }
                   },i*10)
                 })
-                // for (const command of actualCommand) {
-                //   await command
-                // }
-                //@ts-ignore
-                // actualCommand.reduce((p, fn) => p.then(fn), Promise.resolve())
-                // Promise.all(actualCommand)
-                //   .then(cmd => {
-                //     console.log("Processing Invoice...1 command done! " + cmd.length)
-                //     // res.send("Processing Invoice...1 command done! " + cmd.length)
-                //   })
-                //   .catch(function (err) {
-                //     console.log("Processing Invoice...0 command ERROR! " + err.message); // some coding error in handling happened
-                //     // res.send("Processing Invoice...0 command ERROR! " + err.length)
-                //   });
               })
               .catch(function (err) {
                 console.log("Processing Invoice...2 command ERROR! " + err.message); // some coding error in handling happened
