@@ -75,11 +75,17 @@ export const createInvoice = (req: Request, res: Response) => {
                       el.createdAt = new Date()
                       return el
                     })
-                    actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec())
+                    setTimeout(()=>{
+                      Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec()
+                    },i*20)
+                    // actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec())
                   }
                   else {
                     let invoice = new Invoice(resolved[i])
-                    actualCommand.push(invoice.save())
+                    setTimeout(()=>{
+                      invoice.save()
+                    },i*20)
+                    // actualCommand.push(invoice.save())
                     actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
                   }
                 });
