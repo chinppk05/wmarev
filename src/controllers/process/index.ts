@@ -83,15 +83,17 @@ export const createInvoice = (req: Request, res: Response) => {
                     actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
                   }
                 });
-                Promise.all(actualCommand)
-                  .then(cmd => {
-                    console.log("Processing Invoice...1 command done! " + cmd.length)
-                    // res.send("Processing Invoice...1 command done! " + cmd.length)
-                  })
-                  .catch(function (err) {
-                    console.log("Processing Invoice...0 command ERROR! " + err.message); // some coding error in handling happened
-                    // res.send("Processing Invoice...0 command ERROR! " + err.length)
-                  });
+                //@ts-ignore
+                actualCommand.reduce((p, fn) => p.then(fn), Promise.resolve())
+                // Promise.all(actualCommand)
+                //   .then(cmd => {
+                //     console.log("Processing Invoice...1 command done! " + cmd.length)
+                //     // res.send("Processing Invoice...1 command done! " + cmd.length)
+                //   })
+                //   .catch(function (err) {
+                //     console.log("Processing Invoice...0 command ERROR! " + err.message); // some coding error in handling happened
+                //     // res.send("Processing Invoice...0 command ERROR! " + err.length)
+                //   });
               })
               .catch(function (err) {
                 console.log("Processing Invoice...2 command ERROR! " + err.message); // some coding error in handling happened
