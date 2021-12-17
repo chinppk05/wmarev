@@ -48,7 +48,11 @@ export const createInvoice = (req: Request, res: Response) => {
               if (exception.includes(usage.meter)) {
                 vat = Math.ceil(vat * 100) / 100
               } else {
-                vat = floorDecimals(vat,2)//Math.floor(vat * 100) / 100
+                // vat = floorDecimals(vat,2)//Math.floor(vat * 100) / 100
+                let var1 = vat.toString().split(".")
+                let final = var1[0] + "." + var1[1].slice(0, 2)
+                let finalFloat = parseFloat(final)
+                vat = finalFloat
               }
               let result = {
                 ...usage,
