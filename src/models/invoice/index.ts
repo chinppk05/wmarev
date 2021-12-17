@@ -20,6 +20,7 @@ const schema = new Schema({
   address: String,
   category: String,
   categoryType: String,
+  excelNum: Number,
 
   invoice: { type: ObjectId, ref: "Invoice" },
   usage: { type: ObjectId, ref: "Usage" },

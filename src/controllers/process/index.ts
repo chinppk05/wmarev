@@ -16,7 +16,7 @@ export const createInvoice = (req: Request, res: Response) => {
   let list = req.body.list
   let invoiceDate = req.body.invoiceDate ?? new Date()
   console.log("Processing Invoice... " + (list ?? []).length + " item(s)")
-  Usage.find({ _id: { $in: list } }).then((usagesList: Array<any>) => {
+  Usage.find({ _id: { $in: list } }).sort('excelNum').then((usagesList: Array<any>) => {
     let usages = JSON.parse(JSON.stringify(usagesList))
     let promises: Array<Promise<any>> = []
     let debtPromises: Array<Promise<any>> = []
@@ -63,7 +63,7 @@ export const createInvoice = (req: Request, res: Response) => {
               return result
             });
             Promise.all(findExisted)
-              .then(invoices => {
+              .then(async invoices => {
                 invoices.forEach((element, i) => {
                   if (element != undefined) {
                     let prep = resolved.map(el => {
@@ -79,8 +79,11 @@ export const createInvoice = (req: Request, res: Response) => {
                     actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
                   }
                 });
+                for (const command of actualCommand) {
+                  await command
+                }
                 //@ts-ignore
-                actualCommand.reduce((p, fn) => p.then(fn), Promise.resolve())
+                // actualCommand.reduce((p, fn) => p.then(fn), Promise.resolve())
                 // Promise.all(actualCommand)
                 //   .then(cmd => {
                 //     console.log("Processing Invoice...1 command done! " + cmd.length)
