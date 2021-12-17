@@ -10,7 +10,10 @@ import { DateTime } from "luxon";
 import * as _ from "lodash"
 
 var options = { upsert: true, new: true, useFindAndModify: false };
-
+function floorDecimals(value:number, decimals:number) { 
+  //@ts-ignore
+  return Number(Math.floor(value+'e'+decimals)+'e-'+decimals); 
+}
 export const createInvoice = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
@@ -45,7 +48,7 @@ export const createInvoice = (req: Request, res: Response) => {
               if (exception.includes(usage.meter)) {
                 vat = Math.ceil(vat * 100) / 100
               } else {
-                vat = Math.floor(vat * 100) / 100
+                vat = floorDecimals(vat,2)//Math.floor(vat * 100) / 100
               }
               let result = {
                 ...usage,
