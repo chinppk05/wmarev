@@ -47,13 +47,16 @@ export const createInvoice = (req: Request, res: Response) => {
               let qty = usage.qty
               if (exception.includes(usage.meter)) {
                 vat = Math.ceil(vat * 100) / 100
+                console.log('round up to ',vat)
               } else {
                 // vat = floorDecimals(vat,2)//Math.floor(vat * 100) / 100
                 let var1 = vat.toString().split(".")
                 let final = var1[0] + "." + var1[1].slice(0, 2)
                 let finalFloat = parseFloat(final)
                 vat = finalFloat
+                console.log('round down to ',vat)
               }
+
               let result = {
                 ...usage,
                 qty,
