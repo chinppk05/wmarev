@@ -88,7 +88,7 @@ export const createInvoice = (req: Request, res: Response) => {
             Promise.all(findExisted)
               .then(async invoices => {
                 invoices.forEach((element, i) => {
-                  console.log(resolved[i].map((rs:any)=>`${rs.name}: ${rs.round}/${rs.vat}`))
+                  console.log(`${resolved[i].name}: ${resolved[i].round}/${resolved[i].vat}`)
                   if (element != undefined) {
                     let prep = resolved.map(el => {
                       delete el._id
@@ -101,6 +101,7 @@ export const createInvoice = (req: Request, res: Response) => {
                     finalArray.push({...resolved[i],finalType:"insert"})
                   }
                 });
+                console.log("กำลังนำใบแจ้งหนี้ไปบันทึก...", finalArray.length , "ใบ")
                 finalArray.forEach(async (element, i) => {
                   await setTimeout(async ()=>{
                     console.log("meter", element.meter)
