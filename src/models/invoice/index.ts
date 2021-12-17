@@ -21,6 +21,7 @@ const schema = new Schema({
   category: String,
   categoryType: String,
   excelNum: Number,
+  round:String,
 
   invoice: { type: ObjectId, ref: "Invoice" },
   usage: { type: ObjectId, ref: "Usage" },
