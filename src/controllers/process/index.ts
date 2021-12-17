@@ -63,7 +63,7 @@ export const createInvoice = (req: Request, res: Response) => {
               return result
             });
             Promise.all(findExisted)
-              .then(invoices => {
+              .then(async invoices => {
                 invoices.forEach((element, i) => {
                   if (element != undefined) {
                     let prep = resolved.map(el => {
@@ -71,28 +71,25 @@ export const createInvoice = (req: Request, res: Response) => {
                       el.createdAt = new Date()
                       return el
                     })
-                    actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }).exec())
+                    actualCommand.push(Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...resolved[i] } }))
                   }
                   else {
                     let invoice = new Invoice(resolved[i])
                     actualCommand.push(invoice.save())
-                    actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec())
+                    actualCommand.push(Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }))
                   }
                 });
-                Promise.all(actualCommand)
-                  .then(cmd => {
-                    console.log("Processing Invoice...1 command done! " + cmd.length)
-                    // res.send("Processing Invoice...1 command done! " + cmd.length)
-                  })
-                  .catch(function (err) {
-                    console.log("Processing Invoice...0 command ERROR! " + err.message); // some coding error in handling happened
-                    // res.send("Processing Invoice...0 command ERROR! " + err.length)
-                  });
+                let seq = 0
+                for(const cmd of actualCommand) {
+                  try {
+                    //@ts-ignore
+                    await cmd.exec();
+                  } catch (error) {
+                    console.log(error)
+                  }
+                  console.log("cmd ", seq++)
+                }
               })
-              .catch(function (err) {
-                console.log("Processing Invoice...2 command ERROR! " + err.message); // some coding error in handling happened
-                // res.send("Processing Invoice...2 command ERROR! " + err.length)
-              });
           })
       })
       .catch(function (err) {
