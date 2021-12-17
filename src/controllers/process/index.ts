@@ -37,7 +37,12 @@ export const createInvoice = (req: Request, res: Response) => {
             let resolved = values.map((element, i) => {
               let usage = usages[i]
               findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
-              let amount = usage.qty * usage.rate
+              let amount = 0
+              if(usage.calculationType = "บาท/เดือน") {
+                amount = usage.rate
+              } else {
+                amount = usage.qty * usage.rate
+              }
               var vat = (0.07 * amount)
               let exception = 
                 ['12170463906','12170438311','1549766',
