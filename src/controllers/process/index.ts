@@ -38,19 +38,22 @@ export const createInvoice = (req: Request, res: Response) => {
               let usage = usages[i]
               findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
               let amount = usage.qty * usage.rate
-              let vat = (0.07 * amount)
+              var vat = (0.07 * amount)
               let exception = 
                 ['12170463906','12170438311','12170464125','1549766',
                 '12170532850','1067008','1067330','12170366051',
                 '12170366060','12170366079','12170366088','12170367739',
                 '12170367748','12170407360','12170449304','12170449313']                              //['1067008','1067330','12170449313','12170366079','12170407360','12170366051','12170367739','12170449304','12170366088','12170367748','12170366060']
               let qty = usage.qty
+              var round = "-"
               if (exception.includes(usage.meter)) {
                 vat = Math.ceil(vat * 100) / 100
+                round = 'round up to ' + vat
                 console.log('round up to ',vat)
               } else {
                 try {
                   vat = Math.floor(vat * 100) / 100;
+                  round = 'round down to ' + vat
                   // let var1 = vat.toString().split(".")
                   // let final = var1[0] + "." + var1[1].slice(0, 2)
                   // let finalFloat = parseFloat(final)
@@ -74,6 +77,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 debtAmount: display0(debt[i]).debtAmount,
                 invoiceDate: invoiceDate,
                 vat,
+                round,
               }
               result.invoiceAmount = result.debtAmount + (result.totalAmount * (1 + (result.vatRate ?? 0)))
               result.billAmount = (result.totalAmount * (1 + (result.vatRate ?? 0)))
@@ -84,13 +88,14 @@ export const createInvoice = (req: Request, res: Response) => {
             Promise.all(findExisted)
               .then(async invoices => {
                 invoices.forEach((element, i) => {
+                  console.log(resolved[i].map((rs:any)=>`${rs.name}: ${rs.round}/${rs.vat}`))
                   if (element != undefined) {
                     let prep = resolved.map(el => {
                       delete el._id
                       el.createdAt = new Date()
                       return el
                     })
-                    finalArray.push({...resolved[i],finalType:"update"})
+                    finalArray.push({...prep,finalType:"update"})
                   }
                   else {
                     finalArray.push({...resolved[i],finalType:"insert"})
