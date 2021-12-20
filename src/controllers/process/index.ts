@@ -38,7 +38,7 @@ export const createInvoice = (req: Request, res: Response) => {
               let usage = usages[i]
               findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
               let amount = 0
-              if(usage.calculationType = "บาท/เดือน") {
+              if(usage.calculationType == "บาท/เดือน") {
                 amount = usage.rate
               } else {
                 amount = usage.qty * usage.rate
