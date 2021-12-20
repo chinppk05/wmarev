@@ -36,7 +36,7 @@ export const createInvoice = (req: Request, res: Response) => {
           .then((debt) => {
             let resolved = values.map((element, i) => {
               let usage = usages[i]
-              findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter))
+              findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter, usage.calculationType))
               let amount = 0
               if(usage.calculationType == "บาท/เดือน") {
                 amount = usage.rate
@@ -496,8 +496,8 @@ let getSequence = (year: number, category: string, sequence: number) => {
   return year.toString().slice(-2) + (category ?? "*") + sequence.toString().padStart(7, "0");
 }
 
-let getInvoice = (year: number, month: number, category: string, categoryType: string, meter: string) => {
-  return Invoice.findOne({ year, month, category, meter }).exec()
+let getInvoice = (year: number, month: number, category: string, categoryType: string, meter: string, calculationType: string) => {
+  return Invoice.findOne({ year, month, category, meter, calculationType}).exec()
 }
 
 let display0 = (debt: Array<any>) => {
