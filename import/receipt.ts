@@ -117,7 +117,7 @@ let savePayment = async () => {
         delete mongoose.modelSchemas['Payment'];
         if (prepArray[i] != undefined) {
           try {
-            Invoice.updateOne({ year: prepArray[i].year, month: prepArray[i].month, meter: prepArray[i].meter }, { $set: { isPaid: true, paidReceipt: prepArray[i].sequence } }).then(async (newData: any) => {
+            Invoice.updateOne({$or:[{ year: prepArray[i].year, month: prepArray[i].month, meter: prepArray[i].meter },{ year: prepArray[i].year, month: prepArray[i].month, oldMeter: prepArray[i].meter }]}, { $set: { isPaid: true, paidReceipt: prepArray[i].sequence } }).then(async (newData: any) => {
               // setTimeout(() => {
               let jssl = JSON.stringify({ year: prepArray[i].year, month: prepArray[i].month, meter: prepArray[i].meter })
               // console.log(`${jssl} - ${(data ?? { sequence: "notfound" }).sequence} ${prepArray[i].year} ${prepArray[i].month} /payments ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
