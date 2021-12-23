@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 import Payment from "../src/models/payment"
 import Receipt from "../src/models/receipt"
 import Invoice from "../src/models/invoice"
+import { DateTime } from "luxon";
 
 mongoose.connect('mongodb://localhost:27017/wma', { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.set('useNewUrlParser', true);
@@ -117,7 +118,12 @@ let savePayment = async () => {
         delete mongoose.modelSchemas['Payment'];
         if (prepArray[i] != undefined) {
           try {
-            Invoice.updateOne({$or:[{ year: prepArray[i].year, month: prepArray[i].month, meter: prepArray[i].meter },{ year: prepArray[i].year, month: prepArray[i].month, oldMeter: prepArray[i].meter }]}, { $set: { isPaid: true, receipts: [prepArray[i].sequence] } }).then(async (newData: any) => {
+            let offset = DateTime.fromObject({ year: prepArray[i].year - 543, month: prepArray[i].month, day: 15 }).minus({ months: 2 }).toObject()
+            let { month, year } = offset
+            Invoice.updateOne({$or:[
+              { year: year + 543, month: month, meter: prepArray[i].meter },
+              { year: year + 543, month: month, oldMeter: prepArray[i].meter }
+            ]}, { $set: { isPaid: true, receipts: [prepArray[i].sequence] } }).then(async (newData: any) => {
               // setTimeout(() => {
               let jssl = JSON.stringify({ year: prepArray[i].year, month: prepArray[i].month, meter: prepArray[i].meter })
               // console.log(`${jssl} - ${(data ?? { sequence: "notfound" }).sequence} ${prepArray[i].year} ${prepArray[i].month} /payments ${i}: Saving... The script uses approximately ${Math.round(used * 100) / 100} MB`);
