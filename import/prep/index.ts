@@ -650,10 +650,16 @@ let createMeterMapper = async (prepInvoice: Array<any>) => {
   });
 }
 const main = async () => {
+  console.log("invoice")
   await invoice()
+  console.log("receipt")
   await receipt()
+  console.log("createMeterMapper")
   await createMeterMapper(addressMap)
-  await newWorkbook.xlsx.writeFile(finalFileCombined);
+  console.log("writeFile")
+  // await newWorkbook.xlsx.writeFile(finalFileCombined);
+  const fileStream = await fs.createWriteStream(finalFileCombined);
+  await newWorkbook.xlsx.write(fileStream);
   console.log({ summary, uniqueInvoiceColumn, uniqueReceiptColumn })
 }
 
