@@ -24,6 +24,7 @@ const schema = new Schema({
   round:String,
 
   invoice: { type: ObjectId, ref: "Invoice" },
+  receipts: [String],
   usage: { type: ObjectId, ref: "Usage" },
 
   debtText: String,
