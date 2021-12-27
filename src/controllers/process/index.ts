@@ -14,6 +14,25 @@ function floorDecimals(value:number, decimals:number) {
   //@ts-ignore
   return Number(Math.floor(value+'e'+decimals)+'e-'+decimals); 
 }
+
+export const batchChangeMeter = (req: Request, res: Response) => {
+  let { newMeter, oldMeter } = req.body
+  Usage.findOne({ meter: oldMeter }).then(async (usage: any) => {
+    usage = JSON.parse(JSON.stringify(usage))
+    let prep = { $set:{ 
+      meter:newMeter,
+      oldMeter:usage.meter,
+      oldMeter2:usage.oldMeter,
+      oldMeter3:usage.oldMeter2,
+     } }
+     await Usage.updateMany({meter:oldMeter}, prep).exec()
+     await Invoice.updateMany({meter:oldMeter}, prep).exec()
+     await Payment.updateMany({meter:oldMeter}, prep).exec()
+     await Receipt.updateMany({meter:oldMeter}, prep).exec()
+     res.send({ status:"done" })
+  })
+}
+
 export const createInvoice = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list

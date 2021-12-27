@@ -13,6 +13,8 @@ const schema = new Schema({
   sequence: String,
   meter: String,
   oldMeter: String,
+  oldMeter2: String,
+  oldMeter3: String,
   status: String,
   category: String,
   categoryType: String,

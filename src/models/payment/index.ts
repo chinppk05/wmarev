@@ -19,6 +19,8 @@ const schema = new Schema({
   address: String,
   meter: String,
   oldMeter: String,
+  oldMeter2: String,
+  oldMeter3: String,
   category: String,
   categoryType: String,
   method: String,
