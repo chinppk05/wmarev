@@ -61,6 +61,17 @@ const schema = new Schema({
     },
   ],
 
+  manuals:[
+    {
+      order: Number,
+      enable: Boolean,
+      name: String,
+      type: String,
+      calculation: String,
+      value: { type: Number, default: 0 },
+    }
+  ],
+
   modifications: [
     {
       name: String,
