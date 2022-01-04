@@ -69,6 +69,7 @@ const schema = new Schema({
       type: { type: String, default: "plus" },
       calculation: String,
       value: { type: Number, default: 0 },
+      eValue: { type: Number, default: 0 },
     }
   ],
 
