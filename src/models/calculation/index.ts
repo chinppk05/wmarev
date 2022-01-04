@@ -66,7 +66,7 @@ const schema = new Schema({
       order: Number,
       enable: Boolean,
       name: String,
-      type: String,
+      type: { type: String, default: "plus" },
       calculation: String,
       value: { type: Number, default: 0 },
     }
