@@ -12,6 +12,7 @@ module.exports = (app: Express) => {
   app.get(`/api/v1/${endpoint}-by-field/:field/:value`, ctrl.getByField)
   app.post(`/api/v1/${endpoint}-find`, ctrl.postOne)
   app.patch(`/api/v1/${endpoint}/:id`, ctrl.update)
+  app.patch(`/api/v1/${endpoint}-number/:number`, ctrl.updateByNumber)
   app.delete(`/api/v1/${endpoint}/:id`, ctrl.remove)
   app.post(`/api/v1/${endpoints}-delete`, ctrl.removeMany)
   app.get(`/api/v1/${endpoints}/`, ctrl.list)
