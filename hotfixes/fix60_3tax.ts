@@ -16,7 +16,7 @@ const patchUpdate = (row:any) => {
   }
   console.log(sequence, prep)
   delayed = delayed + 10
-  Invoice.updateOne({sequence},{$set:{vat}}).then((result)=>{
+  Invoice.updateOne({sequence},{$set:{vat}}).then((result:any)=>{
     console.log('done', sequence)
   })
   // setTimeout(() => {
