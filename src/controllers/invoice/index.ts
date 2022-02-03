@@ -181,6 +181,14 @@ export const update = (req: Request, res: Response) => {
     res.send(data);
   });
 };
+export const updateByNumber = (req: Request, res: Response) => {
+  DBModel.updateOne(
+    { sequence: req.params.sequence },
+    { ...req.body, modifiedAt: new Date(), $inc: { _v: 1 } }
+  ).then((data: any) => {
+    res.send(data);
+  });
+};
 
 export const remove = (req: Request, res: Response) => {
   let sid =
