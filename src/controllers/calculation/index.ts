@@ -50,7 +50,29 @@ export const quarterSum = (req: Request, res: Response) => {
   let yearInt = parseInt(year)
   let quarterInt = parseInt(quarter)
   let id = mongoose.Types.ObjectId(area)
-  DBModel.find({ area:id, calendarYear:yearInt, quarter:{$lt:quarterInt} }).then(function (data: any) {
+  DBModel.aggregate(
+    // { $match:{ area:id, calendarYear:yearInt, quarter:{$lt:quarterInt} } },
+    [{$match: {
+      area: id,
+      calendarYear: yearInt,
+      quarter: {
+       $lt: quarterInt
+      }
+     }}, {$group: {
+      _id: {
+       calendarYear: '$calendarYear',
+       quarter: '$quarter'
+      },
+      max: {
+       $max: '$createdAt'
+      },
+      doc: {
+       $first: '$$ROOT'
+      }
+     }}, {$replaceRoot: {
+      newRoot: '$doc'
+     }}]
+    ).exec(function (error: Error, data: Array<any>) {
     let lean = JSON.parse(JSON.stringify(data))
     let sumExpense = lean.reduce((acc:number, cur:any) => acc+cur.wmaExpenses??0,0)
     let sumeExpense = lean.reduce((acc:number, cur:any) => acc+cur.eWmaExpenses??0,0)
