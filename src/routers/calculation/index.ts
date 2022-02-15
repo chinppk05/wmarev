@@ -8,6 +8,7 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}-upsert/`, ctrl.upsert)
   app.get(`/api/v1/${endpoint}/:id`, ctrl.get)
   app.post(`/api/v1/${endpoint}-quarter-sum/:area/:year/:quarter`, ctrl.quarterSum)
+  app.get(`/api/v1/${endpoint}-quarter-sum/:area/:year/:quarter`, ctrl.quarterSum)
   app.get(`/api/v1/${endpoint}-by-field/:field/:value`, ctrl.getByField)
   app.post(`/api/v1/${endpoint}-find`, ctrl.postOne)
   app.patch(`/api/v1/${endpoint}/:id`, ctrl.update)
