@@ -52,8 +52,8 @@ export const quarterSum = (req: Request, res: Response) => {
   let id = mongoose.Types.ObjectId(area)
   DBModel.find({ area:id, calendarYear:yearInt, quarter:{$lt:quarterInt} }).then(function (data: any) {
     let lean = JSON.parse(JSON.stringify(data))
-    let sumExpense = lean.reduce((acc:number, cur:any) => acc+cur.wmaExpenses,0)
-    let sumeExpense = lean.reduce((acc:number, cur:any) => acc+cur.eWmaExpenses,0)
+    let sumExpense = lean.reduce((acc:number, cur:any) => acc+cur.wmaExpenses??0,0)
+    let sumeExpense = lean.reduce((acc:number, cur:any) => acc+cur.eWmaExpenses??0,0)
     res.send({lean, sumExpense, sumeExpense})
   })
 }
