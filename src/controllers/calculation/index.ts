@@ -56,7 +56,8 @@ export const quarterSum = (req: Request, res: Response) => {
       area: id,
       calendarYear: yearInt,
       quarter: {
-       $lt: quarterInt
+       $lt: quarterInt,
+       $gt: 0
       }
      }}, {$group: {
       _id: {
