@@ -204,7 +204,7 @@ export const getCustomerList = (req: Request, res: Response) => {
   let limit: number = parseInt(req.body.limit);
   let skip: number = parseInt(req.body.skip);
   console.log(searchObj)
-  Usage.aggregate(
+  Invoice.aggregate(
     [
       {
         $match: searchObj
@@ -265,7 +265,7 @@ export const getCustomerList = (req: Request, res: Response) => {
       }, { $skip: skip }, { $limit: limit }
     ]
   ).exec(function (error: Error, data: Array<any>) {
-    Usage.aggregate(
+    Invoice.aggregate(
       [
         {
           $match: searchObj

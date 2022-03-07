@@ -232,6 +232,7 @@ export const getAreaMonthly = (req: Request, res: Response) => {
       });
     });
 };
+
 export const getGreenYellow = (req: Request, res: Response) => {
   let promises: Array<Promise<any>> = [];
   let budgetYear = req.body.budgetYear ?? new Date().getFullYear();
@@ -263,11 +264,12 @@ export const getGreenYellow = (req: Request, res: Response) => {
 
       Promise.all(promises).then((responses) => {
         let prep = JSON.parse(JSON.stringify(areas)) as Array<any>;
+
+        console.log("prep", prep)
         let collections = JSON.parse(
           JSON.stringify(responses[0])
         ) as Array<any>;
         let incomes = JSON.parse(JSON.stringify(responses[1])) as Array<any>;
-
         //ใช้เดือนของ วันที่ชำระเป็นตัวลงช่องเขียวเหลือง
         collections = collections.map((c) => {
           let month =
@@ -290,6 +292,12 @@ export const getGreenYellow = (req: Request, res: Response) => {
             isDebt,
           };
         });
+        // อุบล 60640c7ac426854f543f15ba
+        // มาบตาพุด 60640cfec426854f543f15bc
+        console.log("incomes")
+        console.log(incomes.filter(inc=>inc.area=='60640cfec426854f543f15bc'))
+        console.log("collection")
+        console.log(collections.filter(col=>col.area=='60640cfec426854f543f15bc'))
 
         incomes = incomes.map((o) => {
           let year = o.month >= 10 ? o.year - 1 : o.year;
