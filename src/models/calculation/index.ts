@@ -99,6 +99,10 @@ const schema = new Schema({
   contributionText: String,
   contributionAmount: Number,
 
+  remainingAmount: Number,
+  eRemainingAmount: Number,
+
+
   //สตง.รับรอง
   eContributionAmount: Number,
   eTreatmentQty: Number,
