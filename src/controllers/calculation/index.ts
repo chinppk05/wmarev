@@ -75,6 +75,7 @@ export const quarterSum = (req: Request, res: Response) => {
      }}]
     ).exec(function (error: Error, data: Array<any>) {
     let lean = JSON.parse(JSON.stringify(data))
+    console.log("lean", lean.length)
     let sumExpense = lean.reduce((acc:number, cur:any) => acc+cur.contributionAmount??0,0)
     let sumeExpense = lean.reduce((acc:number, cur:any) => acc+cur.eContributionAmount??0,0)
     let sumFinal = lean.reduce((acc:number, cur:any) => acc+(cur.eContributionAmount??cur.contributionAmount??0),0)
