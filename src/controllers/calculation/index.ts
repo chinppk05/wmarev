@@ -78,8 +78,12 @@ export const quarterSum = (req: Request, res: Response) => {
     console.log("lean", lean)
     let sumExpense = lean.reduce((acc:number, cur:any) => acc+cur.contributionAmount??0,0)
     let sumeExpense = lean.reduce((acc:number, cur:any) => acc+cur.eContributionAmount??0,0)
-    let sumFinal = lean.reduce((acc:number, cur:any) => acc+(cur.eContributionAmount??cur.contributionAmount??0),0)
-    res.send({sumExpense, sumeExpense, sumFinal, lean})
+    let sumFinal = lean.reduce((acc:number, cur:any) => acc+(Math.max(cur.eContributionAmount,cur.contributionAmount)),0)
+    res.send({
+      sumExpense: Math.min(sumExpense,sumeExpense), 
+      sumeExpense: Math.min(sumExpense,sumeExpense),
+      sumFinal, 
+      lean})
   })
 }
 
