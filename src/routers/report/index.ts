@@ -20,14 +20,12 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}-billing-receipt/`, ctrl.getBillingReceiptReport)
 
 
+  app.get(`/api/v1/${endpoint}-income-fixed-collection/:id`, ctrl.getIncomeFixedCollection)
   app.get(`/api/v1/${endpoint}-income-collectionstatus/`, ctrl.getCollectionStatus)
   app.get(`/api/v1/${endpoint}-income-collectionstatistic/`, ctrl.getCollectionStatistic)
   app.get(`/api/v1/${endpoint}-income-compareplanresult/`, ctrl.getComparePlanResult)
   app.get(`/api/v1/${endpoint}-income-areamonthly/`, ctrl.getAreaMonthly)
   app.get(`/api/v1/${endpoint}-get-green-yellow/`, ctrl.getGreenYellow)
   app.post(`/api/v1/${endpoint}-green-yellow/`, ctrl.getGreenYellow)
-
-
-
 
 }

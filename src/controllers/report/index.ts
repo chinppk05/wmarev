@@ -10,6 +10,7 @@ import Calculation from "../../models/calculation";
 import AreaCollection from "../../models/areaCollection";
 import Area from "../../models/area";
 import AreaIncome from "../../models/areaIncome";
+import AreaCondition from "../../models/areaCondition";
 
 export const getCollectionStatus = (req: Request, res: Response) => {
   Area.find({ reportIncome: true })
@@ -295,9 +296,9 @@ export const getGreenYellow = (req: Request, res: Response) => {
         // อุบล 60640c7ac426854f543f15ba
         // มาบตาพุด 60640cfec426854f543f15bc
         console.log("incomes")
-        console.log(incomes.filter(inc=>inc.area=='60640cfec426854f543f15bc'))
+        console.log(incomes.filter(inc => inc.area == '60640cfec426854f543f15bc'))
         console.log("collection")
-        console.log(collections.filter(col=>col.area=='60640cfec426854f543f15bc'))
+        console.log(collections.filter(col => col.area == '60640cfec426854f543f15bc'))
 
         incomes = incomes.map((o) => {
           let year = o.month >= 10 ? o.year - 1 : o.year;
@@ -1130,3 +1131,82 @@ let display1 = (debt: Array<any>) => {
     debtAmount,
   };
 };
+
+
+export const getIncomeFixedCollection = async (request: Request, response: Response) => {
+  let area = await Area.findById(request.params.id).lean();
+  let areaCondition = await AreaCondition.findOne({ area: mongoose.Types.ObjectId(request.params.id) }).lean();
+  let result:Array<any> = []
+  let conditions:Array<any> = areaCondition.conditions;
+  let contractStart = DateTime.fromJSDate(area.contractStart).reconfigure({ outputCalendar: "buddhist" })
+  let operationStart = DateTime.fromJSDate(areaCondition.operationDate).reconfigure({ outputCalendar: "buddhist" })
+  let budgetYearStart = 0
+  let budgetMonthStart = DateTime.fromJSDate(area.contractStart).reconfigure({ outputCalendar: "buddhist" }).month
+  try {
+    budgetYearStart = parseInt(contractStart.toFormat("yyyy"))
+    if(budgetMonthStart<=10) budgetYearStart += 1
+  } catch (error) {
+    
+  }
+  conditions.forEach((con,i) => {
+    let quarter:Array<any> = []
+    let newContractStart = contractStart
+    newContractStart.plus({year:i})
+    let newOperationStart = operationStart
+    newOperationStart.plus({year:i})
+    let quarterDay = 0
+    for (let j = 1; j <= 4; j++) {
+      let quarterStart:DateTime
+      if(j==1) quarterStart = operationStart.set({month:10}).minus({year:1}).startOf("month").plus({days:1})
+      else if(j==2) quarterStart = operationStart.set({month:1}).startOf("month").plus({days:1})
+      else if(j==3) quarterStart = operationStart.set({month:4}).startOf("month").plus({days:1})
+      else if(j==4) quarterStart = operationStart.set({month:7}).startOf("month").plus({days:1})
+      let quarterEnd = quarterStart.plus({month:3})
+      quarterDay = Math.round(quarterEnd.diff(quarterStart,'days').days)
+      let change = quarterEnd>newOperationStart && quarterStart<=newOperationStart
+      let split = [0,quarterDay]
+      if(change) split = [Math.round(quarterEnd.diff(newOperationStart,'days').days),Math.round(newOperationStart.diff(quarterStart,'days').days)]
+      let sumI_0 = 0
+      let sumI_1 = 0
+      let sumQuarter = 0
+      try { sumI_1 += (conditions[i-1].contributionLimit??0) / 4 } catch(error) { }
+      try { sumI_0 += (conditions[i].contributionLimit??0) / 4 } catch(error) { }
+      try { sumQuarter += sumI_0/quarterDay*sumI_0 } catch(error) { }
+      try { sumQuarter += sumI_1/quarterDay*sumI_1 } catch(error) { }
+      if(operationStart>quarterStart){ split[0] = 0 }
+      if(operationStart>quarterEnd){ sumQuarter = 0 }
+      quarter.push({
+        quarterStart: quarterStart.toJSDate(),
+        quarterEnd: quarterEnd.toJSDate(),
+        operationStart,
+        change,
+        newOperationStart,
+        split,
+        quarterDay,
+        number:j,
+        sumQuarter,
+        sumI_0,
+        sumI_1
+      })
+    }
+    result.push({
+      year: i+1,
+      annual: con.contributionLimit??0,
+      calendarYear: budgetYearStart + i,
+      startCount: newContractStart.diff(operationStart,'days').days,
+      quarter,
+    })
+  });
+  response.send({
+    name: `${area.prefix}${area.name}`,
+    information: {
+      contractStart,
+      operationStart,
+      contractEnd: new Date()
+    },
+    result,
+    area,
+    conditions,
+    areaCondition
+  })
+}
