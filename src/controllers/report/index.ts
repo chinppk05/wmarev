@@ -1179,20 +1179,22 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       let calculation = [0,0]
       let rate = [0,0]
       if(change) {
-        rate = [quarterSum,quarterSum]
+        rate = [lastQuarterSum, quarterSum]
         split = [Math.round(newOperationStart.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(newOperationStart,'days').days)-1]
-        calculation[0] = lastQuarterSum/quarterDay * split[0]
+        // calculation[0] = lastQuarterSum/quarterDay * split[0]
       } else { 
-        rate = [lastQuarterSum,quarterSum]
-        calculation[0] = quarterSum/quarterDay * split[0]
+        if(newOperationStart>quarterEnd) rate = [lastQuarterSum, lastQuarterSum]
+        else rate = [quarterSum, quarterSum]
+        // calculation[0] = quarterSum/quarterDay * split[0]
       }
-      calculation[1] = quarterSum/quarterDay * split[1]
+      calculation[0] = rate[0]/quarterDay * split[0]
+      calculation[1] = rate[1]/quarterDay * split[1]
       if(operationStart>quarterStart){ calculation[0] = 0 }
       if(operationStart>quarterEnd){ calculation = [0,0] }
       if(change) {
-        detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0]} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
-        detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1]} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
-        detail3 = `(3) ${calculation[0]} + ${calculation[1]} = ${quarterSum}`
+        detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
+        detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
+        detail3 = `(3) ${calculation[0].formatFull()} + ${calculation[1].formatFull()} = ${quarterSum.formatFull()}`
       }
       // let sumI_0 = 0
       // let sumI_1 = 0
@@ -1238,9 +1240,13 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       contractEnd: new Date()
     },
     result,
-    sum:{
-
-    },
+    sum:[
+      result.map(el=>el.annualCalc??0).reduce((a,b)=>a+b,0),
+      result.map(el=>el.quarter[0].sum??0).reduce((a,b)=>a+b,0),
+      result.map(el=>el.quarter[1].sum??0).reduce((a,b)=>a+b,0),
+      result.map(el=>el.quarter[2].sum??0).reduce((a,b)=>a+b,0),
+      result.map(el=>el.quarter[3].sum??0).reduce((a,b)=>a+b,0),
+    ],
     area,
     conditions,
     areaCondition
