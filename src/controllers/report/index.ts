@@ -1190,8 +1190,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       if(operationStart>quarterStart){ calculation[0] = 0 }
       if(operationStart>quarterEnd){ calculation = [0,0] }
       if(change) {
-        detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0]} / ${quarterDay} x ${split[0]} = ${calculation[0]}`
-        detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1]} / ${quarterDay} x ${split[1]} = ${calculation[1]}`
+        detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0]} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
+        detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1]} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
         detail3 = `${calculation[0]} + ${calculation[1]} = ${quarterSum}`
       }
       // let sumI_0 = 0
@@ -1246,3 +1246,60 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
     areaCondition
   })
 }
+// export {};
+
+declare global {
+  interface String {
+    capitalize(): String;
+    formatComma(): String;
+    formatCizitenId(): String;
+    formatThai():String;
+  }
+  interface Number {
+    formatDash(): string;
+    formatComma(): string;
+    formatFull(): string;
+    formatMB(): string;
+  }
+}
+
+String.prototype.formatThai = function(){
+  var array = { "1": "๑", "2": "๒", "3": "๓", "4": "๔", "5": "๕", "6": "๖", "7": "๗", "8": "๘", "9": "๙", "0": "๐" };
+  var str = this
+  for (var val in array) {
+    //@ts-ignore
+    str = str.split(val).join(array[val]);
+  }
+  return str;
+}
+String.prototype.capitalize = function() {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+};
+String.prototype.formatComma = function() {
+  return this.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+String.prototype.formatCizitenId = function() {
+  try {
+    return this.replace(
+      /(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/g,
+      "$1-$2-$3-$4-$5"
+    );
+  } catch (err) {
+    return "";
+  }
+};
+
+Number.prototype.formatComma = function() {
+  return this.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+Number.prototype.formatDash = function() {
+  // if(this == -1) return "-"
+  return this.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+Number.prototype.formatFull = function() {
+  return this.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+Number.prototype.formatMB = function() {
+  let num = this as number
+  return (num/1000000).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
