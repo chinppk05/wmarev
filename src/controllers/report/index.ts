@@ -1149,32 +1149,58 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
     
   }
   conditions.forEach((con,i) => {
+    let detail1 = ""
+    let detail2 = ""
+    let detail3 = ""
     let quarter:Array<any> = []
     let newContractStart = contractStart
     newContractStart.plus({year:i})
     let newOperationStart = operationStart
-    newOperationStart.plus({year:i})
+    newOperationStart = newOperationStart.plus({year:i})
     let quarterDay = 0
+    let annualSum = con.contributionLimit??0
     for (let j = 1; j <= 4; j++) {
       let quarterStart:DateTime
-      if(j==1) quarterStart = operationStart.set({month:10}).minus({year:1}).startOf("month").plus({days:1})
-      else if(j==2) quarterStart = operationStart.set({month:1}).startOf("month").plus({days:1})
-      else if(j==3) quarterStart = operationStart.set({month:4}).startOf("month").plus({days:1})
-      else if(j==4) quarterStart = operationStart.set({month:7}).startOf("month").plus({days:1})
+      let quarterSum = annualSum/4
+      let lastQuarterSum = 0
+      try {
+        lastQuarterSum = (conditions[i-1].contributionLimit??0)/4
+      } catch (error) {
+        
+      }
+      if(j==1) quarterStart = newOperationStart.set({month:10}).minus({year:1}).startOf("month").plus({days:1})
+      else if(j==2) quarterStart = newOperationStart.set({month:1}).startOf("month").plus({days:1})
+      else if(j==3) quarterStart = newOperationStart.set({month:4}).startOf("month").plus({days:1})
+      else if(j==4) quarterStart = newOperationStart.set({month:7}).startOf("month").plus({days:1})
       let quarterEnd = quarterStart.plus({month:3})
       quarterDay = Math.round(quarterEnd.diff(quarterStart,'days').days)
       let change = quarterEnd>newOperationStart && quarterStart<=newOperationStart
       let split = [0,quarterDay]
-      if(change) split = [Math.round(quarterEnd.diff(newOperationStart,'days').days),Math.round(newOperationStart.diff(quarterStart,'days').days)]
-      let sumI_0 = 0
-      let sumI_1 = 0
-      let sumQuarter = 0
-      try { sumI_1 += (conditions[i-1].contributionLimit??0) / 4 } catch(error) { }
-      try { sumI_0 += (conditions[i].contributionLimit??0) / 4 } catch(error) { }
-      try { sumQuarter += sumI_0/quarterDay*sumI_0 } catch(error) { }
-      try { sumQuarter += sumI_1/quarterDay*sumI_1 } catch(error) { }
-      if(operationStart>quarterStart){ split[0] = 0 }
-      if(operationStart>quarterEnd){ sumQuarter = 0 }
+      let calculation = [0,0]
+      let rate = [0,0]
+      if(change) {
+        rate = [quarterSum,quarterSum]
+        split = [Math.round(newOperationStart.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(newOperationStart,'days').days)-1]
+        calculation[0] = lastQuarterSum/quarterDay * split[0]
+      } else { 
+        rate = [lastQuarterSum,quarterSum]
+        calculation[0] = quarterSum/quarterDay * split[0]
+      }
+      calculation[1] = quarterSum/quarterDay * split[1]
+      if(operationStart>quarterStart){ calculation[0] = 0 }
+      if(operationStart>quarterEnd){ calculation = [0,0] }
+      if(change) {
+        detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0]} / ${quarterDay} x ${split[0]} = ${calculation[0]}`
+        detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1]} / ${quarterDay} x ${split[1]} = ${calculation[1]}`
+        detail3 = `${calculation[0]} + ${calculation[1]} = ${quarterSum}`
+      }
+      // let sumI_0 = 0
+      // let sumI_1 = 0
+      // let sumQuarter = 0
+      // try { sumI_1 += (conditions[i-1].contributionLimit??0) / 4 } catch(error) { }
+      // try { sumI_0 += (conditions[i].contributionLimit??0) / 4 } catch(error) { }
+      // try { sumQuarter += sumI_0/quarterDay*sumI_0 } catch(error) { }
+      // try { sumQuarter += sumI_1/quarterDay*sumI_1 } catch(error) { }
       quarter.push({
         quarterStart: quarterStart.toJSDate(),
         quarterEnd: quarterEnd.toJSDate(),
@@ -1182,19 +1208,26 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         change,
         newOperationStart,
         split,
+        rate,
+        calculation,
+        sum:calculation.reduce((a,b)=>a+b,0),
         quarterDay,
         number:j,
-        sumQuarter,
-        sumI_0,
-        sumI_1
+        // sumQuarter,
+        // sumI_0,
+        // sumI_1
       })
     }
     result.push({
       year: i+1,
-      annual: con.contributionLimit??0,
+      annualSum,
+      annualCalc:quarter.map(el=>el.sum).reduce((a,b)=>a+b,0),
       calendarYear: budgetYearStart + i,
       startCount: newContractStart.diff(operationStart,'days').days,
       quarter,
+      detail1,
+      detail2,
+      detail3
     })
   });
   response.send({
@@ -1205,6 +1238,9 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       contractEnd: new Date()
     },
     result,
+    sum:{
+
+    },
     area,
     conditions,
     areaCondition
