@@ -1192,7 +1192,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       if(change) {
         detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0]} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
         detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1]} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
-        detail3 = `${calculation[0]} + ${calculation[1]} = ${quarterSum}`
+        detail3 = `(3) ${calculation[0]} + ${calculation[1]} = ${quarterSum}`
       }
       // let sumI_0 = 0
       // let sumI_1 = 0
