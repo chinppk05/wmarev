@@ -1148,6 +1148,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   } catch (error) {
     
   }
+  
+  conditions.push({...conditions[conditions.length-1],isLast:true})
   conditions.forEach((con,i) => {
     let detail1 = ""
     let detail2 = ""
@@ -1160,6 +1162,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
     let quarterDay = 0
     let annualSum = con.contributionLimit??0
     for (let j = 1; j <= 4; j++) {
+
       let quarterStart:DateTime
       let quarterSum = annualSum/4
       let lastQuarterSum = 0
@@ -1174,6 +1177,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       else if(j==4) quarterStart = newOperationStart.set({month:7}).startOf("month").plus({days:1})
       let quarterEnd = quarterStart.plus({month:3})
       quarterDay = Math.round(quarterEnd.diff(quarterStart,'days').days)
+      let dat1 = quarterEnd>newOperationStart
+      let dat2 = quarterStart<=newOperationStart
       let change = quarterEnd>newOperationStart && quarterStart<=newOperationStart
       let split = [0,quarterDay]
       let calculation = [0,0]
@@ -1191,6 +1196,14 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       calculation[1] = rate[1]/quarterDay * split[1]
       if(operationStart>quarterStart){ calculation[0] = 0 }
       if(operationStart>quarterEnd){ calculation = [0,0] }
+      if(con.isLast) {
+        if(dat1 && dat2){
+          calculation[1] = 0
+        }
+        else if(!dat2){
+          calculation[1] = 0
+        }
+      }
       if(change) {
         detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
         detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
@@ -1204,6 +1217,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       // try { sumQuarter += sumI_0/quarterDay*sumI_0 } catch(error) { }
       // try { sumQuarter += sumI_1/quarterDay*sumI_1 } catch(error) { }
       quarter.push({
+        dat1,
+        dat2,
         quarterStart: quarterStart.toJSDate(),
         quarterEnd: quarterEnd.toJSDate(),
         operationStart,
