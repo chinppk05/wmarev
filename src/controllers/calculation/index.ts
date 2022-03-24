@@ -84,8 +84,9 @@ export const quarterSum = (req: Request, res: Response) => {
         sumExpense: Math.min(sumExpense,sumeExpense), 
         sumeExpense: Math.min(sumExpense,sumeExpense),
         sumFinal, 
-        lean,
-        allCalculations:ar})
+        lean: lean.map((ln:any)=>({...ln,ledgers:undefined,endorsedLedgers:undefined})),
+        // allCalculations:ar
+      })
     })
   })
 }
