@@ -50,40 +50,43 @@ export const quarterSum = (req: Request, res: Response) => {
   let yearInt = parseInt(year)
   let quarterInt = parseInt(quarter)
   let id = mongoose.Types.ObjectId(area)
-  DBModel.aggregate(
-    // { $match:{ area:id, calendarYear:yearInt, quarter:{$lt:quarterInt} } },
-    [{$match: {
-      area: id,
-      calendarYear: yearInt,
-      quarter: {
-       $lt: quarterInt,
-       $gt: 0
-      }
-     }}, {$group: {
-      _id: {
-       calendarYear: '$calendarYear',
-       quarter: '$quarter'
-      },
-      max: {
-       $max: '$createdAt'
-      },
-      doc: {
-       $first: '$$ROOT'
-      }
-     }}, {$replaceRoot: {
-      newRoot: '$doc'
-     }}]
-    ).exec(function (error: Error, data: Array<any>) {
-    let lean = JSON.parse(JSON.stringify(data))
-    // console.log("lean", lean)
-    let sumExpense = lean.reduce((acc:number, cur:any) => acc+(Math.max(cur.eContributionAmount,cur.contributionAmount)),0)
-    let sumeExpense = lean.reduce((acc:number, cur:any) => acc+(Math.max(cur.eContributionAmount,cur.contributionAmount)),0)
-    let sumFinal = lean.reduce((acc:number, cur:any) => acc+(Math.max(cur.eContributionAmount,cur.contributionAmount)),0)
-    res.send({
-      sumExpense: Math.min(sumExpense,sumeExpense), 
-      sumeExpense: Math.min(sumExpense,sumeExpense),
-      sumFinal, 
-      lean})
+  DBModel.findOne({area:id}).then((ar:any)=>{
+    DBModel.aggregate(
+      // { $match:{ area:id, calendarYear:yearInt, quarter:{$lt:quarterInt} } },
+      [{$match: {
+        area: id,
+        calendarYear: yearInt,
+        quarter: {
+         $lt: quarterInt,
+         $gt: 0
+        }
+       }}, {$group: {
+        _id: {
+         calendarYear: '$calendarYear',
+         quarter: '$quarter'
+        },
+        max: {
+         $max: '$createdAt'
+        },
+        doc: {
+         $first: '$$ROOT'
+        }
+       }}, {$replaceRoot: {
+        newRoot: '$doc'
+       }}]
+      ).exec(function (error: Error, data: Array<any>) {
+      let lean = JSON.parse(JSON.stringify(data))
+      // console.log("lean", lean)
+      let sumExpense = lean.reduce((acc:number, cur:any) => acc+(Math.max(cur.eContributionAmount,cur.contributionAmount)),0)
+      let sumeExpense = lean.reduce((acc:number, cur:any) => acc+(Math.max(cur.eContributionAmount,cur.contributionAmount)),0)
+      let sumFinal = lean.reduce((acc:number, cur:any) => acc+(Math.max(cur.eContributionAmount,cur.contributionAmount)),0)
+      res.send({
+        sumExpense: Math.min(sumExpense,sumeExpense), 
+        sumeExpense: Math.min(sumExpense,sumeExpense),
+        sumFinal, 
+        lean,
+        allCalculations:ar})
+    })
   })
 }
 
