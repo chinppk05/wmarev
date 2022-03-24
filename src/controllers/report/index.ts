@@ -1148,8 +1148,14 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   } catch (error) {
     
   }
+  let contractEnd = contractStart
+  contractEnd = contractEnd.plus({ years: conditions.length + 1 })
   
-  conditions.push({...conditions[conditions.length-1],isLast:true})
+  let compare1 = operationStart
+  let compare2 = DateTime.fromJSDate(area.contractEnd)
+
+  console.log(compare1.plus({years:15})<compare2, compare1, compare2)
+  if(compare1.plus({years:15})<compare2) conditions.push({...conditions[conditions.length-1],isLast:true})
   conditions.forEach((con,i) => {
     let detail1 = ""
     let detail2 = ""
@@ -1198,6 +1204,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       if(operationStart>quarterEnd){ calculation = [0,0] }
       if(con.isLast) {
         if(dat1 && dat2){
+          split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
+          // calculation[0] = rate[0]/quarterDay * split[0]
           calculation[1] = 0
         }
         else if(!dat2){
@@ -1208,6 +1216,13 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
         detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
         detail3 = `(3) ${calculation[0].formatFull()} + ${calculation[1].formatFull()} = ${quarterSum.formatFull()}`
+      }
+      if(con.isLast) {
+        if(dat1 && dat2){
+          detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${contractEnd.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
+          detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${contractEnd.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
+          detail3 = `(3) ${calculation[0].formatFull()} + ${calculation[1].formatFull()} = ${quarterSum.formatFull()}`
+        }
       }
       // let sumI_0 = 0
       // let sumI_1 = 0
@@ -1252,7 +1267,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
     information: {
       contractStart,
       operationStart,
-      contractEnd: new Date()
+      contractEnd
     },
     result,
     sum:[
