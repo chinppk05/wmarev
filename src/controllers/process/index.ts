@@ -101,7 +101,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 usage: usage._id,
                 _id: undefined,
                 status: "สร้างใหม่",
-                totalAmount: 900900000 + rounddown(amount*1.07),
+                totalAmount: rounddown(amount*1.07),
                 vatRate: 0.07,
                 debtText: display0(debt[i]).debtText,
                 debtAmount: display0(debt[i]).debtAmount,
@@ -140,7 +140,7 @@ export const createInvoice = (req: Request, res: Response) => {
                     // console.log("meter update", element)
                     let updateResult1 = await Invoice.findOneAndUpdate({ _id: element._id }, { $set: { ...element } }).exec()
                     let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
-                    console.log('updateResult1', updateResult1)
+                    console.log('updateResult1', updateResult1, element)
                     console.log('updateResult2', updateResult2)
                   } else {
                     console.log("meter insert", element)
