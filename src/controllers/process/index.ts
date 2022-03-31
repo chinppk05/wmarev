@@ -136,7 +136,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 let count_i = 0
                 for(const [i, final] of finalArray.entries()){
                   console.log("กำลังประมวลผลใบที่ ", count_i++)
-                  let element = final as any
+                  let element = final[i] as any
                   if(element.finalType=="update"){
                     // console.log("meter update", element)
                     let updateResult1 = await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element.invoiceId) }, { $set: { ...element } }).exec()
