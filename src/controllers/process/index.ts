@@ -10,34 +10,117 @@ import { DateTime } from "luxon";
 import * as _ from "lodash"
 
 var options = { upsert: true, new: true, useFindAndModify: false };
-function floorDecimals(value:number, decimals:number) { 
+function floorDecimals(value: number, decimals: number) {
   //@ts-ignore
-  return Number(Math.floor(value+'e'+decimals)+'e-'+decimals); 
+  return Number(Math.floor(value + 'e' + decimals) + 'e-' + decimals);
 }
 
 export const batchChangeMeter = (req: Request, res: Response) => {
   let { newMeter, oldMeter } = req.body
   Usage.findOne({ meter: oldMeter }).then(async (usage: any) => {
     usage = JSON.parse(JSON.stringify(usage))
-    let prep = { $set:{ 
-      meter:newMeter,
-      oldMeter:usage.meter,
-      oldMeter2:usage.oldMeter,
-      oldMeter3:usage.oldMeter2,
-     } }
-     await Usage.updateMany({meter:oldMeter}, prep).exec()
-     await Invoice.updateMany({meter:oldMeter}, prep).exec()
-     await Payment.updateMany({meter:oldMeter}, prep).exec()
-     await Receipt.updateMany({meter:oldMeter}, prep).exec()
-     res.send({ status:"done" })
+    let prep = {
+      $set: {
+        meter: newMeter,
+        oldMeter: usage.meter,
+        oldMeter2: usage.oldMeter,
+        oldMeter3: usage.oldMeter2,
+      }
+    }
+    await Usage.updateMany({ meter: oldMeter }, prep).exec()
+    await Invoice.updateMany({ meter: oldMeter }, prep).exec()
+    await Payment.updateMany({ meter: oldMeter }, prep).exec()
+    await Receipt.updateMany({ meter: oldMeter }, prep).exec()
+    res.send({ status: "done" })
   })
 }
 
-export const createInvoice = (req: Request, res: Response) => {
+
+let rounddown = (num: number) => {
+  let result = Math.floor(num * 100) / 100;
+  return result
+}
+let roundup = (num: number) => {
+  let result = Math.ceil(num * 100) / 100;
+  return result
+}
+
+export const createInvoice = async (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
   let invoiceDate = req.body.invoiceDate ?? new Date()
-  let finalArray:Array<any> = []
+  let finalArray: Array<any> = []
+  var usages: Array<any> = await Usage.find({ _id: { $in: list } }).sort('no').lean().exec()
+  let count_i = 0
+  for (const usage of usages) {
+    let { year, month, category, meter, calculationType } = usage
+    let invoice = await Invoice.findOne({ year, month, category, meter, calculationType }).lean().exec()
+    if (invoice) {
+      usage.foundInvoice = true
+      usage.invoice = JSON.parse(JSON.stringify(invoice))
+    } else {
+      usage.foundInvoice = false
+    }
+    let exception = ['12170463906'] // สำนักงานสรรพสามิตพื้นที่กระบี่
+    let qty = usage.qty / 100
+    let rate = usage.rate / 100
+    let amount = 0
+    if (usage.calculationType == "บาท/เดือน") {
+      amount = qty
+    } else {
+      amount = qty * rate
+    }
+    var vat = (0.07 * amount)
+    if (exception.includes(usage.meter)) {
+      vat = roundup(vat)
+    } else {
+      vat = rounddown(vat)
+    }
+    let debt = await Invoice.find({
+      meter: meter,
+      isPaid: false,
+      totalAmount: { $gt: 0 },
+      year: { $gt: 0 },
+      month: { $gt: 0 }
+    }).sort("-year -month").exec()
+    debt = JSON.parse(JSON.stringify(debt))
+    debt = debt.filter((d: any) => d.month < usage.month && d.year < usage.year)
+    let result = {
+      ...usage,
+      qty,
+      rate,
+      ref: "processed",
+      usage: usage._id,
+      _id: undefined,
+      status: "สร้างใหม่",
+      totalAmount: rounddown(amount * 1.07),
+      vatRate: 0.07,
+      debtText: display0(debt).debtText,
+      debtAmount: display0(debt).debtAmount,
+      invoiceDate: invoiceDate,
+      vat,
+    }
+    console.log(usage.name, (usage.invoice ?? {}).name)
+    result.invoiceAmount = (result.debtAmount + result.totalAmount)
+    result.billAmount = rounddown((result.totalAmount * (1 + (result.vatRate ?? 0))))
+    if (usage.foundInvoice) {
+      let prep = JSON.parse(JSON.stringify(result))
+      delete prep._id
+      let updateResult1 = await Invoice.findOneAndUpdate({ _id: usage.invoice._id }, { $set: prep }).exec()
+      let updateResult2 = await Usage.findOneAndUpdate({ _id: usage._id }, { $set: { isNextStage: true } }).exec()
+      console.log("update done", count_i++)
+    } else {
+      let invoice = new Invoice(result)
+      await invoice.save()
+      console.log("insert done", count_i++)
+    }
+  }
+}
+export const createInvoiceOld = (req: Request, res: Response) => {
+  var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  let list = req.body.list
+  let invoiceDate = req.body.invoiceDate ?? new Date()
+  let finalArray: Array<any> = []
   console.log("Processing Invoice... " + (list ?? []).length + " item(s)")
   Usage.find({ _id: { $in: list } }).sort('no').then((usagesList: Array<any>) => {
     let usages = JSON.parse(JSON.stringify(usagesList))
@@ -57,18 +140,18 @@ export const createInvoice = (req: Request, res: Response) => {
               let usage = usages[i]
               findExisted.push(getInvoice(usage.year, usage.month, usage.category, usage.categoryType, usage.meter, usage.calculationType))
               let amount = 0
-              if(usage.calculationType == "บาท/เดือน") {
+              if (usage.calculationType == "บาท/เดือน") {
                 amount = usage.rate
               } else {
                 amount = usage.qty * usage.rate
               }
               var vat = (0.07 * amount)
-              let exception = 
-                ['12170463906','12170438311','1549766',
-                '12170532850','1067008','1067330','12170366051',
-                '12170366060','12170366079','12170366088','12170367739',
-                '12170367748','12170407360','12170449304','12170449313']    
-                // '12170464125' นางสุวรรณา ครองสิริวัฒน์ เอาออกเมื่อวันที่ 17 ธันวาคม 2564               //['1067008','1067330','12170449313','12170366079','12170407360','12170366051','12170367739','12170449304','12170366088','12170367748','12170366060']
+              let exception =
+                ['12170463906', '12170438311', '1549766',
+                  '12170532850', '1067008', '1067330', '12170366051',
+                  '12170366060', '12170366079', '12170366088', '12170367739',
+                  '12170367748', '12170407360', '12170449304', '12170449313']
+              // '12170464125' นางสุวรรณา ครองสิริวัฒน์ เอาออกเมื่อวันที่ 17 ธันวาคม 2564               //['1067008','1067330','12170449313','12170366079','12170407360','12170366051','12170367739','12170449304','12170366088','12170367748','12170366060']
               let qty = usage.qty
               var round = "-"
               if (exception.includes(usage.meter)) {
@@ -85,11 +168,11 @@ export const createInvoice = (req: Request, res: Response) => {
                   // vat = finalFloat
                   // console.log('round down to ',vat)
                 } catch (error) {
-                  vat = floorDecimals(vat,2)//Math.floor(vat * 100) / 100
+                  vat = floorDecimals(vat, 2)//Math.floor(vat * 100) / 100
                 }
               }
 
-              let rounddown = (num:number) =>{
+              let rounddown = (num: number) => {
                 let result = Math.floor(num * 100) / 100;
                 return result
               }
@@ -101,7 +184,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 usage: usage._id,
                 _id: undefined,
                 status: "สร้างใหม่",
-                totalAmount: rounddown(amount*1.07),
+                totalAmount: rounddown(amount * 1.07),
                 vatRate: 0.07,
                 debtText: display0(debt[i]).debtText,
                 debtAmount: display0(debt[i]).debtAmount,
@@ -110,7 +193,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 round,
               }
               result.invoiceAmount = (result.debtAmount + result.totalAmount)
-              console.log("result", result.debtAmount, result.totalAmount,result.debtAmount + result.totalAmount)
+              console.log("result", result.debtAmount, result.totalAmount, result.debtAmount + result.totalAmount)
               result.billAmount = rounddown((result.totalAmount * (1 + (result.vatRate ?? 0))))
               delete result.sequence
               // console.log(result)
@@ -119,30 +202,36 @@ export const createInvoice = (req: Request, res: Response) => {
             Promise.all(findExisted)
               .then(async invoices => {
                 invoices.forEach((element, i) => {
-                  console.log(`${resolved[i].name}: ${resolved[i].round}/${resolved[i].vat}`)
+                  let match = resolved.find((el) => el.meter == element.meter)
                   if (element != undefined) {
                     let prep = resolved.map(el => {
-                      delete el._id
+                      // delete el._id
                       el.invoiceId = element._id
+                      el.element = element
+                      el.match = match
                       el.createdAt = new Date()
                       return el
                     })
-                    finalArray.push({...prep,finalType:"update"})
+                    finalArray.push({ ...prep, finalType: "update" })
                   }
                   else {
-                    finalArray.push({...resolved[i],finalType:"insert"})
+                    finalArray.push({ ...resolved[i], finalType: "insert" })
                   }
                 });
-                console.log("กำลังนำใบแจ้งหนี้ไปบันทึก...", finalArray.length , "ใบ")
+                console.log("กำลังนำใบแจ้งหนี้ไปบันทึก...", finalArray.length, "ใบ")
                 let count_i = 0
-                for(const [ii, final] of finalArray.entries()){
+                for (const [ii, final] of finalArray.entries()) {
                   let element = final as any
                   console.log("กำลังประมวลผลใบที่ ", count_i++)
-                  if(element.finalType=="update"){
+                  if (element.finalType == "update") {
                     // console.log("meter update", element)
-                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element[ii].invoiceId) }, { $set: { ...element[ii] } }).exec()
+                    let prepElement = JSON.parse(JSON.stringify(element[ii]))
+                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: element[ii].invoiceId }, { $set: prepElement }).exec()
                     let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[ii]._id }, { $set: { isNextStage: true } }).exec()
-                    console.log('updateResult1', updateResult1!=undefined?"update done":"update fail")
+                    if (count_i == 1) {
+                      console.log('updateResult1', element[ii].invoiceId, updateResult1 != undefined ? "update done" : "update fail")
+                      console.dir(prepElement)
+                    }
                   } else {
                     // console.log("meter insert", element)
                     let invoice = new Invoice(element)
@@ -153,7 +242,7 @@ export const createInvoice = (req: Request, res: Response) => {
               .catch(function (err) {
                 console.log("Processing Invoice...2 command ERROR! "); // some coding error in handling happened
                 // res.send("Processing Invoice...2 command ERROR! " + err.length)
-              }).finally (()=>{
+              }).finally(() => {
                 console.log("Processing Invoice 2 Done")
               })
           })
@@ -161,7 +250,7 @@ export const createInvoice = (req: Request, res: Response) => {
       .catch(function (err) {
         console.log("Processing Invoice...3 command ERROR! "); // some coding error in handling happened
         // res.send("Processing Invoice...3 command ERROR! " + err.length)
-      }).finally (()=>{
+      }).finally(() => {
         console.log("Processing Invoice 3 Done")
       })
   })
@@ -272,15 +361,15 @@ export const createReceiptV2 = (req: Request, res: Response) => {
         return {
           ...payment,
           type: el.type,
-          typeWithMeter:`${el.type}${payment.meter}`
+          typeWithMeter: `${el.type}${payment.meter}`
         }
       })
       mapped = [
-        ..._.uniqBy(mapped.filter(m=>m.type=='combine'), 'typeWithMeter'),
-        ...mapped.filter(m=>m.type=='separate')
+        ..._.uniqBy(mapped.filter(m => m.type == 'combine'), 'typeWithMeter'),
+        ...mapped.filter(m => m.type == 'separate')
       ]
 
-      console.log("mapped.length",mapped.length)
+      console.log("mapped.length", mapped.length)
       mapped.forEach((payment: any, i) => {
         let prep: any = {}
         let el = list.find(o => o.id == payment._id)
@@ -328,7 +417,7 @@ export const createReceiptV2 = (req: Request, res: Response) => {
               }
             }),
           }
-          
+
           prep.totalAmount = parseFloat((prep.qty * prep.rate).toFixed(2))
           prep.vat = parseFloat((prep.qty * prep.rate * 0.07).toFixed(2))
           delete prep.sequence
@@ -338,7 +427,7 @@ export const createReceiptV2 = (req: Request, res: Response) => {
       })
       finalPrep = _.sortBy(finalPrep, 'excelNum')
       // Insanity Debugging
-      console.log("finalPrep",finalPrep)
+      console.log("finalPrep", finalPrep)
 
       let chain: Promise<any> = Promise.resolve();
       for (let item of finalPrep) {
@@ -529,7 +618,7 @@ let getSequence = (year: number, category: string, sequence: number) => {
 }
 
 let getInvoice = (year: number, month: number, category: string, categoryType: string, meter: string, calculationType: string) => {
-  return Invoice.findOne({ year, month, category, meter, calculationType}).exec()
+  return Invoice.findOne({ year, month, category, meter, calculationType }).exec()
 }
 
 let display0 = (debt: Array<any>) => {
