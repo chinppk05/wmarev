@@ -142,7 +142,7 @@ export const createInvoice = (req: Request, res: Response) => {
                     let updateResult1 = await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element.invoiceId) }, { $set: { ...element } }).exec()
                     let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
                     console.log('updateResult1', updateResult1, typeof element, element.invoiceId)
-                    console.dir(element.invoiceId)
+                    console.dir(element)
                     // console.log('updateResult2', updateResult2)
                   } else {
                     // console.log("meter insert", element)
