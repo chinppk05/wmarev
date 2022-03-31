@@ -134,16 +134,14 @@ export const createInvoice = (req: Request, res: Response) => {
                 });
                 console.log("กำลังนำใบแจ้งหนี้ไปบันทึก...", finalArray.length , "ใบ")
                 let count_i = 0
-                for(const [i, final] of finalArray.entries()){
+                for(const [ii, final] of finalArray.entries()){
                   let element = final as any
                   console.log("กำลังประมวลผลใบที่ ", count_i++)
                   if(element.finalType=="update"){
                     // console.log("meter update", element)
-                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element.invoiceId) }, { $set: { ...element } }).exec()
-                    let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
-                    console.log('updateResult1', updateResult1, typeof element, element.invoiceId)
-                    console.dir(element)
-                    // console.log('updateResult2', updateResult2)
+                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element[ii].invoiceId) }, { $set: { ...element[ii] } }).exec()
+                    let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[ii]._id }, { $set: { isNextStage: true } }).exec()
+                    console.log('updateResult1', updateResult1!=undefined?"update done":"update fail")
                   } else {
                     // console.log("meter insert", element)
                     let invoice = new Invoice(element)
