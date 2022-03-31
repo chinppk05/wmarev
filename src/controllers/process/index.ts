@@ -101,7 +101,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 usage: usage._id,
                 _id: undefined,
                 status: "สร้างใหม่",
-                totalAmount: amount*1.07,
+                totalAmount: rounddown(amount*1.07),
                 vatRate: 0.07,
                 debtText: display0(debt[i]).debtText,
                 debtAmount: display0(debt[i]).debtAmount,
