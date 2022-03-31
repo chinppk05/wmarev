@@ -121,6 +121,7 @@ export const createInvoice = (req: Request, res: Response) => {
                   console.log(`${resolved[i].name}: ${resolved[i].round}/${resolved[i].vat}`)
                   if (element != undefined) {
                     let prep = resolved.map(el => {
+                      el.id = el._id
                       delete el._id
                       el.createdAt = new Date()
                       return el
@@ -138,7 +139,7 @@ export const createInvoice = (req: Request, res: Response) => {
                   let element = final as any
                   if(element.finalType=="update"){
                     // console.log("meter update", element)
-                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: element._id }, { $set: { ...element } }).exec()
+                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: element.id }, { $set: { ...element } }).exec()
                     let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
                     console.log('updateResult1', updateResult1, typeof element, element._id)
                     // console.log('updateResult2', updateResult2)
