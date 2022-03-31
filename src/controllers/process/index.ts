@@ -100,6 +100,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 ref: "processed",
                 usage: usage._id,
                 _id: undefined,
+                id: element._id,
                 status: "สร้างใหม่",
                 totalAmount: rounddown(amount*1.07),
                 vatRate: 0.07,
@@ -121,7 +122,6 @@ export const createInvoice = (req: Request, res: Response) => {
                   console.log(`${resolved[i].name}: ${resolved[i].round}/${resolved[i].vat}`)
                   if (element != undefined) {
                     let prep = resolved.map(el => {
-                      el.id = String(el._id)
                       delete el._id
                       el.createdAt = new Date()
                       return el
@@ -146,7 +146,6 @@ export const createInvoice = (req: Request, res: Response) => {
                   } else {
                     // console.log("meter insert", element)
                     let invoice = new Invoice(element)
-                    invoice = new Invoice(element)
                     await invoice.save()
                   }
                 }
