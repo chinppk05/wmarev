@@ -74,7 +74,7 @@ export const createInvoice = (req: Request, res: Response) => {
               if (exception.includes(usage.meter)) {
                 vat = Math.ceil(vat * 100) / 100
                 round = 'round up to ' + vat
-                console.log('round up to ',vat)
+                // console.log('round up to ',vat)
               } else {
                 try {
                   vat = Math.floor(vat * 100) / 100;
@@ -83,7 +83,7 @@ export const createInvoice = (req: Request, res: Response) => {
                   // let final = var1[0] + "." + var1[1].slice(0, 2)
                   // let finalFloat = parseFloat(final)
                   // vat = finalFloat
-                  console.log('round down to ',vat)
+                  // console.log('round down to ',vat)
                 } catch (error) {
                   vat = floorDecimals(vat,2)//Math.floor(vat * 100) / 100
                 }
@@ -141,9 +141,9 @@ export const createInvoice = (req: Request, res: Response) => {
                     let updateResult1 = await Invoice.findOneAndUpdate({ _id: element._id }, { $set: { ...element } }).exec()
                     let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
                     console.log('updateResult1', updateResult1, element)
-                    console.log('updateResult2', updateResult2)
+                    // console.log('updateResult2', updateResult2)
                   } else {
-                    console.log("meter insert", element)
+                    // console.log("meter insert", element)
                     let invoice = new Invoice(element)
                     invoice = new Invoice(element)
                     await invoice.save()
@@ -169,13 +169,17 @@ export const createInvoice = (req: Request, res: Response) => {
               .catch(function (err) {
                 console.log("Processing Invoice...2 command ERROR! " + err.message); // some coding error in handling happened
                 // res.send("Processing Invoice...2 command ERROR! " + err.length)
-              });
+              }).finally (()=>{
+                console.log("Processing Invoice 2 Done")
+              })
           })
       })
       .catch(function (err) {
         console.log("Processing Invoice...3 command ERROR! " + err.message); // some coding error in handling happened
         // res.send("Processing Invoice...3 command ERROR! " + err.length)
-      });
+      }).finally (()=>{
+        console.log("Processing Invoice 3 Done")
+      })
   })
   res.send("done")
 }
