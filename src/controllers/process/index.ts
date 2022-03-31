@@ -101,7 +101,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 usage: usage._id,
                 _id: undefined,
                 status: "สร้างใหม่",
-                totalAmount: rounddown(amount*1.07),
+                totalAmount: 900900000 + rounddown(amount*1.07),
                 vatRate: 0.07,
                 debtText: display0(debt[i]).debtText,
                 debtAmount: display0(debt[i]).debtAmount,
@@ -109,7 +109,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 vat,
                 round,
               }
-              result.invoiceAmount = 100000000 + rounddown(result.debtAmount + rounddown(result.totalAmount * (1 + (result.vatRate ?? 0))))
+              result.invoiceAmount = rounddown(result.debtAmount + rounddown(result.totalAmount * (1 + (result.vatRate ?? 0))))
               result.billAmount = rounddown((result.totalAmount * (1 + (result.vatRate ?? 0))))
               delete result.sequence
               // console.log(result)
