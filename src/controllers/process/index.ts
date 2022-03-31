@@ -100,7 +100,6 @@ export const createInvoice = (req: Request, res: Response) => {
                 ref: "processed",
                 usage: usage._id,
                 _id: undefined,
-                id: element._id,
                 status: "สร้างใหม่",
                 totalAmount: rounddown(amount*1.07),
                 vatRate: 0.07,
@@ -123,6 +122,7 @@ export const createInvoice = (req: Request, res: Response) => {
                   if (element != undefined) {
                     let prep = resolved.map(el => {
                       delete el._id
+                      el.invoiceId = element._id
                       el.createdAt = new Date()
                       return el
                     })
@@ -139,9 +139,9 @@ export const createInvoice = (req: Request, res: Response) => {
                   let element = final as any
                   if(element.finalType=="update"){
                     // console.log("meter update", element)
-                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: element.id }, { $set: { ...element } }).exec()
+                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element.invoiceId) }, { $set: { ...element } }).exec()
                     let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
-                    console.log('updateResult1', updateResult1, typeof element, element.id)
+                    console.log('updateResult1', updateResult1, typeof element, element.invoiceId)
                     // console.log('updateResult2', updateResult2)
                   } else {
                     // console.log("meter insert", element)
