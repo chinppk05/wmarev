@@ -140,7 +140,7 @@ export const createInvoice = (req: Request, res: Response) => {
                     // console.log("meter update", element)
                     let updateResult1 = await Invoice.findOneAndUpdate({ _id: element._id }, { $set: { ...element } }).exec()
                     let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
-                    console.log('updateResult1', updateResult1, element)
+                    console.log('updateResult1', updateResult1, typeof element)
                     // console.log('updateResult2', updateResult2)
                   } else {
                     // console.log("meter insert", element)
@@ -149,22 +149,6 @@ export const createInvoice = (req: Request, res: Response) => {
                     await invoice.save()
                   }
                 }
-                // finalArray.forEach(async (element, i) => {
-                //   await setTimeout(async ()=>{
-                //     if(element.finalType=="update"){
-                //       // console.log("meter update", element)
-                //       let updateResult1 = await Invoice.findOneAndUpdate({ _id: element._id }, { $set: { ...element } }).exec()
-                //       let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
-                //       console.log('updateResult1', updateResult1)
-                //       console.log('updateResult2', updateResult2)
-                //     } else {
-                //       console.log("meter insert", element)
-                //       let invoice = new Invoice(element)
-                //       invoice = new Invoice(element)
-                //       await invoice.save()
-                //     }
-                //   },i*10)
-                // })
               })
               .catch(function (err) {
                 console.log("Processing Invoice...2 command ERROR! "); // some coding error in handling happened
