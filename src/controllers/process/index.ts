@@ -134,11 +134,12 @@ export const createInvoice = (req: Request, res: Response) => {
                 console.log("กำลังนำใบแจ้งหนี้ไปบันทึก...", finalArray.length , "ใบ")
                 finalArray.forEach(async (element, i) => {
                   await setTimeout(async ()=>{
-                    console.log("meter", element.meter)
                     if(element.finalType=="update"){
+                      console.log("meter update", element)
                       await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...element } }).exec()
                       await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
                     } else {
+                      console.log("meter insert", element)
                       let invoice = new Invoice(element)
                       invoice = new Invoice(element)
                       await invoice.save()
