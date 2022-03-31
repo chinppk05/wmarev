@@ -167,7 +167,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 // })
               })
               .catch(function (err) {
-                console.log("Processing Invoice...2 command ERROR! " + err.message); // some coding error in handling happened
+                console.log("Processing Invoice...2 command ERROR! "); // some coding error in handling happened
                 // res.send("Processing Invoice...2 command ERROR! " + err.length)
               }).finally (()=>{
                 console.log("Processing Invoice 2 Done")
@@ -175,7 +175,7 @@ export const createInvoice = (req: Request, res: Response) => {
           })
       })
       .catch(function (err) {
-        console.log("Processing Invoice...3 command ERROR! " + err.message); // some coding error in handling happened
+        console.log("Processing Invoice...3 command ERROR! "); // some coding error in handling happened
         // res.send("Processing Invoice...3 command ERROR! " + err.length)
       }).finally (()=>{
         console.log("Processing Invoice 3 Done")
