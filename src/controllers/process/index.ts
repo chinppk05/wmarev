@@ -132,26 +132,39 @@ export const createInvoice = (req: Request, res: Response) => {
                   }
                 });
                 console.log("กำลังนำใบแจ้งหนี้ไปบันทึก...", finalArray.length , "ใบ")
-
-                for(const element in finalArray){
-
+                let count_i = 0
+                for(const [i, final] of finalArray.entries()){
+                  console.log("กำลังประมวลผลใบที่ ", count_i++)
+                  let element = final as any
+                  if(element.finalType=="update"){
+                    // console.log("meter update", element)
+                    let updateResult1 = await Invoice.findOneAndUpdate({ _id: element._id }, { $set: { ...element } }).exec()
+                    let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
+                    console.log('updateResult1', updateResult1)
+                    console.log('updateResult2', updateResult2)
+                  } else {
+                    console.log("meter insert", element)
+                    let invoice = new Invoice(element)
+                    invoice = new Invoice(element)
+                    await invoice.save()
+                  }
                 }
-                finalArray.forEach(async (element, i) => {
-                  await setTimeout(async ()=>{
-                    if(element.finalType=="update"){
-                      // console.log("meter update", element)
-                      let updateResult1 = await Invoice.findOneAndUpdate({ _id: element._id }, { $set: { ...element } }).exec()
-                      let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
-                      console.log('updateResult1', updateResult1)
-                      console.log('updateResult2', updateResult2)
-                    } else {
-                      console.log("meter insert", element)
-                      let invoice = new Invoice(element)
-                      invoice = new Invoice(element)
-                      await invoice.save()
-                    }
-                  },i*10)
-                })
+                // finalArray.forEach(async (element, i) => {
+                //   await setTimeout(async ()=>{
+                //     if(element.finalType=="update"){
+                //       // console.log("meter update", element)
+                //       let updateResult1 = await Invoice.findOneAndUpdate({ _id: element._id }, { $set: { ...element } }).exec()
+                //       let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
+                //       console.log('updateResult1', updateResult1)
+                //       console.log('updateResult2', updateResult2)
+                //     } else {
+                //       console.log("meter insert", element)
+                //       let invoice = new Invoice(element)
+                //       invoice = new Invoice(element)
+                //       await invoice.save()
+                //     }
+                //   },i*10)
+                // })
               })
               .catch(function (err) {
                 console.log("Processing Invoice...2 command ERROR! " + err.message); // some coding error in handling happened
