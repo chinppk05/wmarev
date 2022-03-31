@@ -109,7 +109,7 @@ export const createInvoice = (req: Request, res: Response) => {
                 vat,
                 round,
               }
-              result.invoiceAmount = rounddown(result.debtAmount + rounddown(result.totalAmount * (1 + (result.vatRate ?? 0))))
+              result.invoiceAmount = rounddown(result.debtAmount + rounddown(result.totalAmount + result.vat))
               result.billAmount = rounddown((result.totalAmount * (1 + (result.vatRate ?? 0))))
               delete result.sequence
               // console.log(result)
