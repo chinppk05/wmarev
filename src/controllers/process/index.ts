@@ -135,9 +135,11 @@ export const createInvoice = (req: Request, res: Response) => {
                 finalArray.forEach(async (element, i) => {
                   await setTimeout(async ()=>{
                     if(element.finalType=="update"){
-                      console.log("meter update", element)
-                      await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...element } }).exec()
-                      await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
+                      // console.log("meter update", element)
+                      let updateResult1 = await Invoice.findOneAndUpdate({ _id: mongoose.Types.ObjectId(element._id) }, { $set: { ...element } }).exec()
+                      let updateResult2 = await Usage.findOneAndUpdate({ _id: usages[i]._id }, { $set: { isNextStage: true } }).exec()
+                      console.log('updateResult1', updateResult1)
+                      console.log('updateResult2', updateResult2)
                     } else {
                       console.log("meter insert", element)
                       let invoice = new Invoice(element)
