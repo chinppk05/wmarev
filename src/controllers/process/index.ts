@@ -52,6 +52,7 @@ export const createInvoice = async (req: Request, res: Response) => {
   let finalArray: Array<any> = []
   var usages: Array<any> = await Usage.find({ _id: { $in: list } }).sort({ no: 1 }).lean().exec()
   var count_i = 0
+  res.send("done")
   for (const usage of usages) {
     let { year, month, category, meter, calculationType } = usage
     let invoice = await Invoice.findOne({ year, month, category, meter, calculationType }).lean().exec()
@@ -102,6 +103,7 @@ export const createInvoice = async (req: Request, res: Response) => {
       invoiceDate: invoiceDate,
       vat,
     }
+    delete result.sequence
     console.log(usage.name, (usage.invoice ?? {}).name)
     result.invoiceAmount = (result.debtAmount + result.totalAmount)
     result.billAmount = rounddown((result.totalAmount * (1 + (result.vatRate ?? 0))))
@@ -117,7 +119,6 @@ export const createInvoice = async (req: Request, res: Response) => {
       console.log("insert done", invoice.sequence, "month", invoice.month, result.year, count_i++)
     }
   }
-  res.send("done")
 }
 export const createInvoiceOld = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
