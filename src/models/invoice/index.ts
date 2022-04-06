@@ -63,7 +63,9 @@ const schema = new Schema({
 schema.pre("save", async function (next: NextFunction) {
   var options = { upsert: true, new: true, useFindAndModify: false };
   let year = (this.year + 0)
-  if(this.month >= 10) year = year + 1
+  let budgetYear = 0
+  if(this.month >= 10) budgetYear = year + 1
+  else budgetYear = year
   Counter.findOneAndUpdate(
     { name: "Invoice", year: year, category: (this.category??"9") },
     { $inc: { sequence: 1 } },
@@ -82,6 +84,8 @@ schema.pre("save", async function (next: NextFunction) {
         year: this.year - 543,
       }).toJSDate();
       console.log("year", year);
+      console.log("year", typeof year);
+      console.log("budgetYear", budgetYear);
       console.log("sequence", sequence);
       console.log(doc)
       Invoice.findOneAndUpdate(
