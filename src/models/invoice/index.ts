@@ -81,7 +81,8 @@ schema.pre("save", async function (next: NextFunction) {
         month: this.month,
         year: this.year - 543,
       }).toJSDate();
-      // console.log(sequence)
+      console.log("sequence", sequence);
+      console.log(doc)
       Invoice.findOneAndUpdate(
         { _id: this._id },
         { $set: { sequence, recordDate } }
