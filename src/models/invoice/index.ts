@@ -65,7 +65,7 @@ schema.pre("save", async function (next: NextFunction) {
   var options = { upsert: true, new: true, useFindAndModify: false };
   let year = (this.year + 0)
   let budgetYear = 0
-  if (this.month >= 10) budgetYear = year + 1
+  if (this.month > 10) budgetYear = year + 1
   else budgetYear = year
   Counter.findOneAndUpdate(
     { name: "Invoice", year: budgetYear, category: (self.category ?? "9") },
@@ -85,12 +85,10 @@ schema.pre("save", async function (next: NextFunction) {
         month: self.month,
         year: self.year - 543,
       }).toJSDate();
-      console.log("sequence", sequence);
       let result = await Invoice.findOneAndUpdate(
         { _id: this._id },
         { $set: { sequence, recordDate } }
       ).exec();
-      console.log("findOneAndUpdate", result)
       next();
     }
   );
