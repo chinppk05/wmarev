@@ -67,7 +67,7 @@ schema.pre("save", async function (next: NextFunction) {
   if(this.month >= 10) budgetYear = year + 1
   else budgetYear = year
   Counter.findOneAndUpdate(
-    { name: "Invoice", year: year, category: (this.category??"9") },
+    { name: "Invoice", year: budgetYear, category: (this.category??"9") },
     { $inc: { sequence: 1 } },
     options,
     (err: Error, doc: any) => {
@@ -75,7 +75,7 @@ schema.pre("save", async function (next: NextFunction) {
       if (this.sequence) sequence = this.sequence;
       else
         sequence =
-          year.toString().slice(-2) +
+        budgetYear.toString().slice(-2) +
           (this.category ?? "9") +
           doc.sequence.toString().padStart(7, "0");
       let recordDate = DateTime.fromObject({
