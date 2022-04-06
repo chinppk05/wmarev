@@ -81,6 +81,7 @@ schema.pre("save", async function (next: NextFunction) {
         month: this.month,
         year: this.year - 543,
       }).toJSDate();
+      console.log("year", year);
       console.log("sequence", sequence);
       console.log(doc)
       Invoice.findOneAndUpdate(
