@@ -71,11 +71,13 @@ export const createInvoice = async (req: Request, res: Response) => {
       amount = qty * rate
     }
     var vat = (0.07 * amount)
+    var totalAmount = 0
     if (exception.includes(usage.meter)) {
       vat = roundup(vat)
     } else {
       vat = rounddown(vat)
     }
+    totalAmount = amount + vat
     let debt = await Invoice.find({
       meter: meter,
       isPaid: false,
@@ -93,7 +95,7 @@ export const createInvoice = async (req: Request, res: Response) => {
       usage: usage._id,
       _id: undefined,
       status: "สร้างใหม่",
-      totalAmount: rounddown(amount * 1.07),
+      totalAmount,
       vatRate: 0.07,
       debtText: display0(debt).debtText,
       debtAmount: display0(debt).debtAmount,
