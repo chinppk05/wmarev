@@ -23,7 +23,7 @@ const schema = new Schema({
   category: String,
   categoryType: String,
   excelNum: Number,
-  round:String,
+  round: String,
 
   invoice: { type: ObjectId, ref: "Invoice" },
   receipts: [String],
@@ -61,37 +61,36 @@ const schema = new Schema({
 });
 
 schema.pre("save", async function (next: NextFunction) {
+  let self = this
   var options = { upsert: true, new: true, useFindAndModify: false };
   let year = (this.year + 0)
   let budgetYear = 0
-  if(this.month >= 10) budgetYear = year + 1
+  if (this.month >= 10) budgetYear = year + 1
   else budgetYear = year
   Counter.findOneAndUpdate(
-    { name: "Invoice", year: budgetYear, category: (this.category??"9") },
+    { name: "Invoice", year: budgetYear, category: (self.category ?? "9") },
     { $inc: { sequence: 1 } },
     options,
-    (err: Error, doc: any) => {
+    async (err: Error, doc: any) => {
       let sequence;
-      if (this.sequence) sequence = this.sequence;
-      else
+      if (self.sequence) { sequence = self.sequence; }
+      else {
         sequence =
-        budgetYear.toString().slice(-2) +
-          (this.category ?? "9") +
+          doc.year.toString().slice(-2) +
+          (self.category ?? "9") +
           doc.sequence.toString().padStart(7, "0");
+      }
       let recordDate = DateTime.fromObject({
         day: 15,
-        month: this.month,
-        year: this.year - 543,
+        month: self.month,
+        year: self.year - 543,
       }).toJSDate();
-      console.log("year", year);
-      console.log("year", typeof year);
-      console.log("budgetYear", budgetYear);
       console.log("sequence", sequence);
-      console.log(doc)
-      Invoice.findOneAndUpdate(
+      let result = await Invoice.findOneAndUpdate(
         { _id: this._id },
         { $set: { sequence, recordDate } }
       ).exec();
+      console.log("findOneAndUpdate", result)
       next();
     }
   );
