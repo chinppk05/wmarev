@@ -73,7 +73,7 @@ schema.pre("save", async function (next: NextFunction) {
       if (this.sequence) sequence = this.sequence;
       else
         sequence =
-          doc.year.toString().slice(-2) +
+          year.toString().slice(-2) +
           (this.category ?? "9") +
           doc.sequence.toString().padStart(7, "0");
       let recordDate = DateTime.fromObject({
