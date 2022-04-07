@@ -65,35 +65,67 @@ schema.pre("save", async function (next: NextFunction) {
   var options = { upsert: true, new: true, useFindAndModify: false };
   let year = (this.year + 0)
   let budgetYear = 0
-  if (this.month > 10) budgetYear = year + 1
-  else budgetYear = year
-  Counter.findOneAndUpdate(
-    { name: "Invoice", year: budgetYear, category: (self.category ?? "9") },
-    { $inc: { sequence: 1 } },
-    options,
-    async (err: Error, doc: any) => {
-      let sequence;
-      if (self.sequence) { sequence = self.sequence; }
-      else {
-        sequence =
-          doc.year.toString().slice(-2) +
-          (self.category ?? "9") +
-          doc.sequence.toString().padStart(7, "0");
-      }
-      let recordDate = DateTime.fromObject({
-        day: 15,
-        month: self.month,
-        year: self.year - 543,
-      }).toJSDate();
-      let result = await Invoice.findOneAndUpdate(
-        { _id: this._id },
-        { $set: { sequence, recordDate } }
-      ).exec();
-      if(result.sequence == undefined)
-        console.log(this.name, this.meter, result)
-      next();
-    }
-  );
+  if (this.month > 10) { budgetYear = year + 1 }
+  else { budgetYear = year }
+
+
+  try {
+    let counter = await Counter.findOneAndUpdate(
+      { name: "Invoice", year: budgetYear, category: (self.category ?? "9") },
+      { $inc: { sequence: 1 } },
+      options).exec()
+    let sequence = counter.year.toString().slice(-2) +
+      (self.category ?? "9") +
+      counter.sequence.toString().padStart(7, "0");
+    let recordDate = DateTime.fromObject({
+      day: 15,
+      month: self.month,
+      year: self.year - 543,
+    }).toJSDate();
+    this.sequence = sequence;
+    this.recordDate = recordDate
+    this.save()
+    // let result = await Invoice.findOneAndUpdate(
+    //   { _id: this._id },
+    //   { $set: { sequence, recordDate } }
+    // ).exec();
+  } catch (error) {
+
+  }
+  next();
+
+  // Counter.findOneAndUpdate(
+  //   { name: "Invoice", year: budgetYear, category: (self.category ?? "9") },
+  //   { $inc: { sequence: 1 } },
+  //   options,
+  //   async (err: Error, doc: any) => {
+  //     let sequence = "";
+  //     // if (self.sequence) { sequence = self.sequence; }
+  //     // else {
+  //     sequence =
+  //       doc.year.toString().slice(-2) +
+  //       (self.category ?? "9") +
+  //       doc.sequence.toString().padStart(7, "0");
+  //     // }
+  //     let recordDate = DateTime.fromObject({
+  //       day: 15,
+  //       month: self.month,
+  //       year: self.year - 543,
+  //     }).toJSDate();
+  //     let result = await Invoice.findOneAndUpdate(
+  //       { _id: this._id },
+  //       { $set: { sequence, recordDate } }
+  //     ).exec();
+  //     try {
+  //       if (result.sequence == undefined)
+  //         console.log(this.name, this.meter, result)
+  //     } catch (error) {
+  //       console.log("error")
+  //       console.log(error)
+  //     }
+  //     next();
+  //   }
+  // );
 });
 
 schema.set("toJSON", {
