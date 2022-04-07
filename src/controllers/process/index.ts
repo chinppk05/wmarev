@@ -59,6 +59,8 @@ export const createInvoice = async (req: Request, res: Response) => {
   let task = new Task({
     name: "สร้างใบแจ้งหนี้จากทะเบียนคุมผู้ใช้บริการ",
     status: "started",
+    year: usages[0].year,
+    month: usages[0].month,
     percent: 1,
     createdAt: new Date(),
     createdIP: ip
