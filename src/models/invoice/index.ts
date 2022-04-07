@@ -84,7 +84,6 @@ schema.pre("save", async function (next: NextFunction) {
     }).toJSDate();
     this.sequence = sequence;
     this.recordDate = recordDate
-    this.save()
     // let result = await Invoice.findOneAndUpdate(
     //   { _id: this._id },
     //   { $set: { sequence, recordDate } }
