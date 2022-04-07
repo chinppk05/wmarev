@@ -58,8 +58,10 @@ export const createInvoice = async (req: Request, res: Response) => {
   res.send("done")
   let task = new Task({
     name: "สร้างใบแจ้งหนี้จากทะเบียนคุมผู้ใช้บริการ",
-    percent:0,
-    createdAt:new Date(),
+    status: "started",
+    percent: 0,
+    createdAt: new Date(),
+    createdIP: ip
   })
   for (const usage of usages) {
     let { year, month, category, meter, calculationType } = usage
@@ -126,9 +128,11 @@ export const createInvoice = async (req: Request, res: Response) => {
       await invoice.save()
       console.log("insert done", invoice.sequence, "month", invoice.month, result.year, count_i++)
     }
-    task.percent = Math.floor((current / total) * 100)
+    task.percent = Math.floor(((current++) / total) * 100)
     await task.save()
   }
+  task.status = "done"
+  await task.save()
 }
 export const createInvoiceOld = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
