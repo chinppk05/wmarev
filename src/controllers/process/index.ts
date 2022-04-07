@@ -59,7 +59,7 @@ export const createInvoice = async (req: Request, res: Response) => {
   let task = new Task({
     name: "สร้างใบแจ้งหนี้จากทะเบียนคุมผู้ใช้บริการ",
     status: "started",
-    percent: 0,
+    percent: 1,
     createdAt: new Date(),
     createdIP: ip
   })
@@ -128,7 +128,7 @@ export const createInvoice = async (req: Request, res: Response) => {
       await invoice.save()
       console.log("insert done", invoice.sequence, "month", invoice.month, result.year, count_i++)
     }
-    task.percent = Math.floor(((current++) / total) * 100)
+    task.percent = ((current++) / total) * 100
     await task.save()
   }
   task.status = "done"
