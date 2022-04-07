@@ -130,8 +130,7 @@ export const createInvoice = async (req: Request, res: Response) => {
       await invoice.save()
       console.log("insert done", count_i++)
     }
-    usage.isNextStage = true
-    await usage.save()
+    await Usage.findOneAndUpdate({ _id: usage._id }, { $set: { isNextStage: true } }).exec()
     task.percent = ((current++) / total) * 100
     // task.history.push(["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|"))
     // task.historyText += ["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|")+"\r\n"
