@@ -122,15 +122,15 @@ export const createInvoice = async (req: Request, res: Response) => {
       delete prep._id
       let updateResult1 = await Invoice.findOneAndUpdate({ _id: usage.invoice._id }, { $set: prep }).exec()
       let updateResult2 = await Usage.findOneAndUpdate({ _id: usage._id }, { $set: { isNextStage: true } }).exec()
-      // console.log("update done", count_i++)
+      console.log("update done", count_i++)
     } else {
       let invoice = new Invoice(result)
       await invoice.save()
-      // console.log("insert done", invoice.sequence, "month", invoice.month, result.year, count_i++)
+      console.log("insert done", count_i++)
     }
     task.percent = ((current++) / total) * 100
-    task.history.push(["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|"))
-    task.historyText += ["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|")+"\r\n"
+    // task.history.push(["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|"))
+    // task.historyText += ["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|")+"\r\n"
     await task.save()
   }
   task.status = "done"
