@@ -109,6 +109,7 @@ const render = require('./routers/render')(app)
 const process = require('./routers/process')(app)
 const risk = require('./routers/risk')(app)
 const report = require('./routers/report')(app)
+const task = require('./routers/task')(app)
 const usageRequest = require('./routers/usageRequest')(app)
 const counter = require('./routers/counter')(app)
 
