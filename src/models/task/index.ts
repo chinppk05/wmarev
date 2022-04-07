@@ -7,6 +7,8 @@ const schema = new Schema({
   description: String,
   percent: Number,
   status: String,
+  historyText:String,
+  history:[String],
   createdIP: String,
   createdAt: Date,
   modifiedAt: Date,

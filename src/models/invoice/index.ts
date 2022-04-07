@@ -89,7 +89,8 @@ schema.pre("save", async function (next: NextFunction) {
         { _id: this._id },
         { $set: { sequence, recordDate } }
       ).exec();
-      console.log(this.name, this.meter, result)
+      if(result.sequence == undefined)
+        console.log(this.name, this.meter, result)
       next();
     }
   );
