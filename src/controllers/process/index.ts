@@ -5,6 +5,7 @@ import Usage from '../../models/usage/index'
 import Payment from '../../models/payment/index'
 import RequestModel from '../../models/request/index'
 import Counter from '../../models/counter/index'
+import Task from '../../models/task/index'
 import mongoose, { Mongoose } from "mongoose";
 import { DateTime } from "luxon";
 import * as _ from "lodash"
@@ -52,7 +53,14 @@ export const createInvoice = async (req: Request, res: Response) => {
   let finalArray: Array<any> = []
   var usages: Array<any> = await Usage.find({ _id: { $in: list } }).sort({ no: 1 }).lean().exec()
   var count_i = 0
+  var total = usages.length
+  var current = 0 // for progress bar
   res.send("done")
+  let task = new Task({
+    name: "สร้างใบแจ้งหนี้จากทะเบียนคุมผู้ใช้บริการ",
+    percent:0,
+    createdAt:new Date(),
+  })
   for (const usage of usages) {
     let { year, month, category, meter, calculationType } = usage
     let invoice = await Invoice.findOne({ year, month, category, meter, calculationType }).lean().exec()
@@ -118,6 +126,8 @@ export const createInvoice = async (req: Request, res: Response) => {
       await invoice.save()
       console.log("insert done", invoice.sequence, "month", invoice.month, result.year, count_i++)
     }
+    task.percent = Math.floor((current / total) * 100)
+    await task.save()
   }
 }
 export const createInvoiceOld = (req: Request, res: Response) => {
