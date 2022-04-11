@@ -1268,7 +1268,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       operationStart,
       contractEnd
     },
-    result:result.filter((rs,i)=>i==4),
+    result:result,//.filter((rs,i)=>i==4),
     sum:[
       result.map(el=>el.annualCalc??0).reduce((a,b)=>a+b,0),
       result.map(el=>el.quarter[0].sum??0).reduce((a,b)=>a+b,0),
