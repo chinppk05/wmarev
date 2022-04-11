@@ -241,6 +241,9 @@ export const upsert = (req: Request, res: Response) => {
 
       console.log("found!!! and updated!!!")
         res.send(data)
+      }).catch((error:any)=>{
+        console.log("error")
+        console.log(error)
       })
     } else {
       console.log("not found!!!")
