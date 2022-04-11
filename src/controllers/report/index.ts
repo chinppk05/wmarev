@@ -1212,9 +1212,9 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         }
       }
       if(change) {
-        detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
-        detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${newOperationStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
-        detail3 = `(3) ${calculation[0].formatFull()} + ${calculation[1].formatFull()} = ${quarterSum.formatFull()}`
+        detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.minus({days:1}).reconfigure({ outputCalendar: "buddhist" }).toFormat("d/MMM/yyyy")} จนถึงวันที่ ${quarterStart.plus({days:split[0]-2}).reconfigure({ outputCalendar: "buddhist" }).toFormat("d/MMM/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
+        detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.plus({days:split[0]-1}).reconfigure({ outputCalendar: "buddhist" }).toFormat("d/MMM/yyyy")} จนถึงวันที่ ${quarterStart.plus({month:2}).endOf("month").reconfigure({ outputCalendar: "buddhist" }).toFormat("d/MMM/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
+        detail3 = `(3) ${calculation[0].formatFull()} + ${calculation[1].formatFull()} = ${(calculation[0]+calculation[1]).formatFull()}`
       }
       if(con.isLast) {
         if(dat1 && dat2){
@@ -1268,7 +1268,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       operationStart,
       contractEnd
     },
-    result,
+    result:result.filter((rs,i)=>i==4),
     sum:[
       result.map(el=>el.annualCalc??0).reduce((a,b)=>a+b,0),
       result.map(el=>el.quarter[0].sum??0).reduce((a,b)=>a+b,0),
