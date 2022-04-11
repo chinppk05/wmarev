@@ -235,11 +235,13 @@ export const upsert = (req: Request, res: Response) => {
   DBModel.findOne({ meter: prep.meter, year: prep.year, month: prep.month }).then((data: any) => {
     console.log(data)
     if (data) {
-      console.log("found!!!")
-      // delete prep.no
-      // DBModel.updateOne({ meter: prep.meter, year: prep.year, month: prep.month }, { ...prep, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
-      //   res.send(data)
-      // })
+      const updatePrep = JSON.parse(JSON.stringify(prep.no))
+      delete updatePrep.no
+      DBModel.updateOne({ meter: prep.meter, year: prep.year, month: prep.month }, { ...updatePrep, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
+
+      console.log("found!!! and updated!!!")
+        res.send(data)
+      })
     } else {
       console.log("not found!!!")
       // var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
