@@ -233,10 +233,11 @@ export const upsert = (req: Request, res: Response) => {
   let prep = req.body
   delete prep._id
   DBModel.findOne({ meter: prep.meter, year: prep.year, month: prep.month }).then((data: any) => {
-    console.log(data)
+    
     if (data) {
-      const updatePrep = JSON.parse(JSON.stringify(prep.no))
+      const updatePrep = JSON.parse(JSON.stringify(prep))
       delete updatePrep.no
+      console.log(updatePrep)
       DBModel.updateOne({ meter: prep.meter, year: prep.year, month: prep.month }, { ...updatePrep, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
 
       console.log("found!!! and updated!!!")
