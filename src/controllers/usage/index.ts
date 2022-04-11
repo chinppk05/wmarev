@@ -228,3 +228,26 @@ export const excelDownload = (req: Request, res: Response) => {
     res.end();
   })
 }
+
+export const upsert = (req: Request, res: Response) => {
+  let prep = req.body
+  delete prep._id
+  DBModel.findOne({ meter: prep.meter, year: prep.year, month: prep.month }).then((data: any) => {
+    console.log(data)
+    if (data) {
+      delete prep.no
+      DBModel.updateOne({ invoiceNumber: prep.invoiceNumber }, { ...prep, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
+        res.send(data)
+      })
+    } else {
+      var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      const newObj: any = new DBModel({ ...data, ...prep });
+      newObj.createdAt = new Date();
+      newObj.modifiedAt = new Date();
+      newObj.createdIP = ip;
+      newObj.save().then((document: any) => {
+        res.send(document)
+      })
+    }
+  })
+};
