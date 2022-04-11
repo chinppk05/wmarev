@@ -12,6 +12,8 @@ const schema = new Schema({
   calendarYear: Number,
   collectYear: Number,
   paybackYearText: String,
+  collectYearText: String,
+  expenseYearText: String,
   quarter: Number,
   isKrob2: Boolean,
   isKrob3: Boolean,
