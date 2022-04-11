@@ -248,14 +248,14 @@ export const upsert = (req: Request, res: Response) => {
       })
     } else {
       console.log("not found!!!")
-      // var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-      // const newObj: any = new DBModel({ ...data, ...prep });
-      // newObj.createdAt = new Date();
-      // newObj.modifiedAt = new Date();
-      // newObj.createdIP = ip;
-      // newObj.save().then((document: any) => {
-      //   res.send(document)
-      // })
+      var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+      const newObj: any = new DBModel({ ...data, ...prep });
+      newObj.createdAt = new Date();
+      newObj.modifiedAt = new Date();
+      newObj.createdIP = ip;
+      newObj.save().then((document: any) => {
+        res.send(document)
+      })
     }
   })
 };
