@@ -38,12 +38,12 @@ export const batchChangeMeter = (req: Request, res: Response) => {
 
 
 let rounddown = (num: number) => {
-  let newNum = parseFloat(num.toFixed(2))
+  let newNum = parseFloat(num.toFixed(3))
   let result = Math.floor(newNum * 100) / 100;
   return result
 }
 let roundup = (num: number) => {
-  let newNum = parseFloat(num.toFixed(2))
+  let newNum = parseFloat(num.toFixed(3))
   let result = Math.ceil(newNum * 100) / 100;
   return result
 }
