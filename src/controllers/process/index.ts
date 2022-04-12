@@ -117,6 +117,7 @@ export const createInvoice = async (req: Request, res: Response) => {
       debtAmount: display0(debt).debtAmount,
       invoiceDate: invoiceDate,
       vat,
+      debtDetail:{display0,debt}
     }
     delete result.sequence
     console.log(usage.name, (usage.invoice ?? {}).name)

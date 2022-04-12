@@ -24,6 +24,7 @@ const schema = new Schema({
   categoryType: String,
   excelNum: Number,
   round: String,
+  debtDetail:"Mixed",
 
   invoice: { type: ObjectId, ref: "Invoice" },
   receipts: [String],
