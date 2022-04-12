@@ -80,13 +80,12 @@ export const createInvoice = async (req: Request, res: Response) => {
     let qty = usage.qty / 100
     let rate = usage.rate / 100
     let amount = 0
-    let vat = 0
     if (usage.calculationType == "บาท/เดือน") {
-      amount = qty
-      vat = (0.07 * amount)
+      amount = rate
     } else {
-      vat = (0.07 * rate)
+      amount = qty * rate
     }
+    var vat = (0.07 * amount)
     var totalAmount = 0
     if (exception.includes(usage.meter)) {
       vat = roundup(vat)
