@@ -38,11 +38,13 @@ export const batchChangeMeter = (req: Request, res: Response) => {
 
 
 let rounddown = (num: number) => {
-  let result = Math.floor(num * 100) / 100;
+  let newNum = parseFloat(num.toFixed(2))
+  let result = Math.floor(newNum * 100) / 100;
   return result
 }
 let roundup = (num: number) => {
-  let result = Math.ceil(num * 100) / 100;
+  let newNum = parseFloat(num.toFixed(2))
+  let result = Math.ceil(newNum * 100) / 100;
   return result
 }
 
@@ -692,7 +694,6 @@ let display0 = (debt: Array<any>) => {
         debtText += current.reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
         debtText += "/"
         debtText += next.reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
-
       }
     }
 
