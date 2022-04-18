@@ -1151,10 +1151,9 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   let contractEnd = contractStart
   contractEnd = contractEnd.plus({ years: conditions.length + 1 })
   
-  let compare1 = operationStart
+  let compare1 = contractStart
   let compare2 = DateTime.fromJSDate(area.contractEnd)
-
-  if(compare1.plus({years:15})<compare2) conditions.push({...conditions[conditions.length-1],isLast:true})
+  if(compare1.plus({years:conditions.length})<compare2) conditions.push({...conditions[conditions.length-1],isLast:true})
   conditions.forEach((con,i) => {
     let detail1 = ""
     let detail2 = ""
@@ -1261,6 +1260,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       detail3
     })
   });
+  // let lastResult = result[result.length-1]
+  // result.push({})
   response.send({
     name: `${area.prefix}${area.name}`,
     information: {
@@ -1268,6 +1269,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       operationStart,
       contractEnd
     },
+    length:result.length,
     result:result,//.filter((rs,i)=>i==4),
     sum:[
       result.map(el=>el.annualCalc??0).reduce((a,b)=>a+b,0),
