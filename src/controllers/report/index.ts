@@ -1161,8 +1161,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
     let quarter:Array<any> = []
     let newContractStart = contractStart
     newContractStart.plus({year:i})
-    let newOperationStart = contractStart
-    newOperationStart = newOperationStart.plus({year:i - 1})
+    let newOperationStart = operationStart
+    newOperationStart = newOperationStart.plus({year:i - 0})
     let quarterDay = 0
     let annualSum = con.contributionLimit??0
     for (let j = 1; j <= 4; j++) {
