@@ -1151,9 +1151,10 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   let contractEnd = contractStart
   contractEnd = contractEnd.plus({ years: conditions.length + 1 })
   
-  let compare1 = contractStart
+  let month = contractStart.toObject().month
+  let compare1 = contractStart.plus({years:conditions.length}).set({month:9,day:1}).plus({year:month<10?0:1})
   let compare2 = DateTime.fromJSDate(area.contractEnd)
-  if(compare1.plus({years:conditions.length})<compare2) conditions.push({...conditions[conditions.length-1],isLast:true})
+  if(compare1<compare2) conditions.push({...conditions[conditions.length-1],isLast:true})
   conditions.forEach((con,i) => {
     let detail1 = ""
     let detail2 = ""
