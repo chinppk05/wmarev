@@ -10,7 +10,7 @@ const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   date: Date,
   time: Number,
-  sequence: String,
+  sequence: { type: String, unique: true },
   invoiceAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   invoiceNumber: String,
   amount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },

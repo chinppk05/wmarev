@@ -13,6 +13,8 @@ const schema = new Schema({
   monthText: Number,
   historyText:String,
   history:[String],
+  success: Number,
+  failed:Number,
   createdIP: String,
   createdAt: Date,
   modifiedAt: Date,

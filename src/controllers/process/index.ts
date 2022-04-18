@@ -125,6 +125,7 @@ export const createInvoice = async (req: Request, res: Response) => {
     console.log(usage.name, (usage.invoice ?? {}).name)
     result.invoiceAmount = (result.debtAmount + result.totalAmount)
     result.billAmount = rounddown((result.totalAmount * (1 + (result.vatRate ?? 0))))
+    let invoiceResult
     if (usage.foundInvoice) {
       let prep = JSON.parse(JSON.stringify(result))
       delete prep._id
@@ -133,11 +134,13 @@ export const createInvoice = async (req: Request, res: Response) => {
       console.log("update done", count_i++)
     } else {
       let invoice = new Invoice(result)
-      await invoice.save()
+      invoiceResult = await invoice.save()
       console.log("insert done", count_i++)
     }
     await Usage.findOneAndUpdate({ _id: usage._id }, { $set: { isNextStage: true } }).exec()
     task.percent = ((current++) / total) * 100
+    if(invoiceResult) task.success = (task.success??0) + 1
+    else task.failed = (task.failed??0) + 1
     // task.history.push(["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|"))
     // task.historyText += ["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|")+"\r\n"
     await task.save()

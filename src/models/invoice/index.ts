@@ -14,7 +14,7 @@ const schema = new Schema({
   oldMeter2: String,
   oldMeter3: String,
   number: Number,
-  sequence: String,
+  sequence: { type: String, unique: true },
   taxId: String,
   code: String,
   name: String,
@@ -24,7 +24,7 @@ const schema = new Schema({
   categoryType: String,
   excelNum: Number,
   round: String,
-  debtDetail:"Mixed",
+  debtDetail: "Mixed",
 
   invoice: { type: ObjectId, ref: "Invoice" },
   receipts: [String],

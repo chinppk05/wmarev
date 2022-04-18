@@ -10,7 +10,7 @@ const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   customer: { type: ObjectId, ref: "Customer" },
   no: Number,
-  sequence: String,
+  sequence: { type: String, unique: true },
   meter: String,
   oldMeter: String,
   oldMeter2: String,
