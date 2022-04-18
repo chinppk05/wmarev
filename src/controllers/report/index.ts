@@ -1143,7 +1143,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   let budgetYearStart = 0
   let budgetMonthStart = DateTime.fromJSDate(area.contractStart).reconfigure({ outputCalendar: "buddhist" }).month
   try {
-    budgetYearStart = parseInt(contractStart.toFormat("yyyy"))
+    budgetYearStart = parseInt(contractStart.toFormat("yyyy")) + 1
     if(budgetMonthStart>=10) budgetYearStart += 1
   } catch (error) {
     
