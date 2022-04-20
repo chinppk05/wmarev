@@ -1172,7 +1172,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   // console.log("c1", compare1)
   // console.log("c2", compare2)
   // console.log("compared", compare1 < compare2)
-  if(compare1<compare2) conditions.push({...conditions[conditions.length-1],isLast:true})
+  if(compare1<=compare2) conditions.push({...conditions[conditions.length-1],isLast:true})
   else conditions[conditions.length-1].isLast = true
   conditions.forEach((con,i) => {
     let detail1 = ""
@@ -1230,7 +1230,6 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       }
       if(isEnding&&isEnded){
         split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
-        
       }
       calculation[0] = (rate[0]/quarterDay * split[0])
       calculation[1] = (rate[1]/quarterDay * split[1])
