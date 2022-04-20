@@ -1154,10 +1154,11 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   let month = contractStart.toObject().month
   let compare1 = contractStart.plus({years:conditions.length}).set({month:9,day:1}).plus({year:month<10?-1:0})
   let compare2 = DateTime.fromJSDate(area.contractEnd)
-  console.log("c1", compare1)
-  console.log("c2", compare2)
-  console.log("compared", compare1 < compare2)
+  // console.log("c1", compare1)
+  // console.log("c2", compare2)
+  // console.log("compared", compare1 < compare2)
   if(compare1<compare2) conditions.push({...conditions[conditions.length-1],isLast:true})
+  else conditions[conditions.length-1].isLast = true
   conditions.forEach((con,i) => {
     let detail1 = ""
     let detail2 = ""
@@ -1169,6 +1170,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
     newOperationStart = newOperationStart.plus({year:i - 0})
     let quarterDay = 0
     let annualSum = con.contributionLimit??0
+    if(newOperationStart>contractEnd) return
+    let isLast = false
     for (let j = 1; j <= 4; j++) {
 
       let quarterStart:DateTime
@@ -1191,6 +1194,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       let split = [0,quarterDay]
       let calculation = [0,0]
       let rate = [0,0]
+      let isEnding = false
+      let isEnded = false
       if(change) {
         rate = [lastQuarterSum, quarterSum]
         split = [Math.round(newOperationStart.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(newOperationStart,'days').days)-1]
@@ -1200,13 +1205,26 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         else rate = [quarterSum, quarterSum]
         // calculation[0] = quarterSum/quarterDay * split[0]
       }
+      if(quarterEnd>contractEnd) {
+        isEnding = true
+        isLast = true
+      } 
+      if(quarterEnd>contractEnd) {
+        isEnded = true
+        isLast = true
+      }
+      if(isEnding&&isEnded){
+        split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
+        
+      }
       calculation[0] = rate[0]/quarterDay * split[0]
       calculation[1] = rate[1]/quarterDay * split[1]
       if(operationStart>quarterStart){ calculation[0] = 0 }
       if(operationStart>quarterEnd){ calculation = [0,0] }
-      if(con.isLast) {
+      if(isLast) {
         if(dat1 && dat2){
           split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
+          rate = [quarterSum, quarterSum]
           // calculation[0] = rate[0]/quarterDay * split[0]
           calculation[1] = 0
         }
@@ -1219,12 +1237,10 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.plus({days:split[0]-1}).toJSDate().toThaiShort()} จนถึงวันที่ ${quarterStart.plus({month:2}).endOf("month").toJSDate().toThaiShort()} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
         detail3 = `(3) ${calculation[0].formatFull()} + ${calculation[1].formatFull()} = ${(calculation[0]+calculation[1]).formatFull()}`
       }
-      if(con.isLast) {
-        if(dat1 && dat2){
-          detail1 = ""//`(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${contractEnd.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
-          detail2 = ""//`(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${contractEnd.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
-          detail3 = ""//`(3) ${calculation[0].formatFull()} + ${calculation[1].formatFull()} = ${quarterSum.formatFull()}`
-        }
+      if(isEnded) {
+        detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${contractEnd.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
+        detail2 = ""//`(2) ตั้งแต่วันที่ ${quarterStart.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จนถึงวันที่ ${contractEnd.reconfigure({ outputCalendar: "buddhist" }).toFormat("d/M/yyyy")} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
+        detail3 = `(3) ${calculation[0].formatFull()} = ${quarterSum.formatFull()}`
       }
       // let sumI_0 = 0
       // let sumI_1 = 0
@@ -1247,6 +1263,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         sum:calculation.reduce((a,b)=>a+b,0),
         quarterDay,
         number:j,
+        isEnding,
+        isEnded
         // sumQuarter,
         // sumI_0,
         // sumI_1
@@ -1261,30 +1279,31 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       quarter,
       detail1,
       detail2,
-      detail3
+      detail3,
+      isLast
     })
   });
   // let lastResult = result[result.length-1]
   // result.push({})
   response.send({
     name: `${area.prefix}${area.name}`,
-    information: {
-      contractStart,
-      operationStart,
-      contractEnd
-    },
-    length:result.length,
+    // information: {
+    //   contractStart,
+    //   operationStart,
+    //   contractEnd
+    // },
+    // length:result.length,
     result:result,//.filter((rs,i)=>i==4),
-    sum:[
-      result.map(el=>el.annualCalc??0).reduce((a,b)=>a+b,0),
-      result.map(el=>el.quarter[0].sum??0).reduce((a,b)=>a+b,0),
-      result.map(el=>el.quarter[1].sum??0).reduce((a,b)=>a+b,0),
-      result.map(el=>el.quarter[2].sum??0).reduce((a,b)=>a+b,0),
-      result.map(el=>el.quarter[3].sum??0).reduce((a,b)=>a+b,0),
-    ],
-    area,
-    conditions,
-    areaCondition
+    // sum:[
+    //   result.map(el=>el.annualCalc??0).reduce((a,b)=>a+b,0),
+    //   result.map(el=>el.quarter[0].sum??0).reduce((a,b)=>a+b,0),
+    //   result.map(el=>el.quarter[1].sum??0).reduce((a,b)=>a+b,0),
+    //   result.map(el=>el.quarter[2].sum??0).reduce((a,b)=>a+b,0),
+    //   result.map(el=>el.quarter[3].sum??0).reduce((a,b)=>a+b,0),
+    // ],
+    // area,
+    // conditions,
+    // areaCondition
   })
 }
 // export {};
