@@ -1133,6 +1133,21 @@ let display1 = (debt: Array<any>) => {
 };
 
 
+let rounddown = (num: number) => {
+  let newNum = parseFloat(num.toFixed(3))
+  let multiply100 = newNum * 100
+  multiply100 = parseFloat(multiply100.toFixed(3))
+  let result = Math.floor(multiply100) / 100;
+  return result
+}
+let roundup = (num: number) => {
+  let newNum = parseFloat(num.toFixed(3))
+  let multiply100 = newNum * 100
+  multiply100 = parseFloat(multiply100.toFixed(3))
+  let result = Math.ceil(multiply100) / 100;
+  return result
+}
+
 export const getIncomeFixedCollection = async (request: Request, response: Response) => {
   let area = await Area.findById(request.params.id).lean();
   let areaCondition = await AreaCondition.findOne({ area: mongoose.Types.ObjectId(request.params.id) }).lean();
@@ -1217,8 +1232,8 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
         
       }
-      calculation[0] = rate[0]/quarterDay * split[0]
-      calculation[1] = rate[1]/quarterDay * split[1]
+      calculation[0] = rounddown(rate[0]/quarterDay * split[0])
+      calculation[1] = rounddown(rate[1]/quarterDay * split[1])
       if(operationStart>quarterStart){ calculation[0] = 0 }
       if(operationStart>quarterEnd){ calculation = [0,0] }
       if(isLast) {
