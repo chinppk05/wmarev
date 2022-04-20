@@ -1228,15 +1228,15 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         isLast = true
       } 
       if(isEnding){
-        split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
+        // split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
 
-        if(quarterEnd.startOf('day')>contractEnd.startOf('day')) {
+        if(quarterStart.startOf('day') < contractEnd.startOf('day') && quarterEnd.startOf('day') > contractEnd.startOf('day')) {
+          split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,0]
+          rate = [rate[0],0]
+        }
+        else{
           split = [0,0]
           rate = [0,0]
-        }
-        else if(quarterStart.startOf('day')>contractEnd.startOf('day')) {
-          split = [split[0],0]
-          rate = [rate[0],0]
         }
       }
       if(isEnded){
