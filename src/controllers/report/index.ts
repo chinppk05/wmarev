@@ -1237,17 +1237,6 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       calculation[1] = (rate[1]/quarterDay * split[1])
       if(operationStart>quarterStart){ calculation[0] = 0 }
       if(operationStart>quarterEnd){ calculation = [0,0] }
-      if(isLast) {
-        if(dat1 && dat2){
-          split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
-          rate = [quarterSum, quarterSum]
-          // calculation[0] = rate[0]/quarterDay * split[0]
-          calculation[1] = 0
-        }
-        else if(!dat2){
-          calculation[1] = 0
-        }
-      }
       if(change) {
         detail1 = `(1) ตั้งแต่วันที่ ${quarterStart.minus({days:1}).toJSDate().toThaiShort()} จนถึงวันที่ ${quarterStart.plus({days:split[0]-2}).toJSDate().toThaiShort()} จำนวน ${split[0]} วัน <br/>คำนวณ ${rate[0].formatFull()} / ${quarterDay} x ${split[0]} = ${calculation[0].formatFull()}`
         detail2 = `(2) ตั้งแต่วันที่ ${quarterStart.plus({days:split[0]-1}).toJSDate().toThaiShort()} จนถึงวันที่ ${quarterStart.plus({month:2}).endOf("month").toJSDate().toThaiShort()} จำนวน ${split[1]} วัน <br/>คำนวณ ${rate[1].formatFull()} / ${quarterDay} x ${split[1]} = ${calculation[1].formatFull()}`
