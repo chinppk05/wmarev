@@ -1160,12 +1160,13 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   try {
     budgetYearStart = parseInt(contractStart.toFormat("yyyy"))
     budgetYearStart += 1
-    // if(budgetMonthStart>=10) budgetYearStart += 1
+    if(budgetMonthStart>=10) budgetYearStart += 1
   } catch (error) {
     
   }
-  let contractEnd = contractStart
-  contractEnd = contractEnd.plus({ years: conditions.length + 1 })
+  let contractEnd = DateTime.fromJSDate(area.contractEnd).reconfigure({ outputCalendar: "buddhist" })
+  // let contractEnd = contractStart
+  // contractEnd = contractEnd.plus({ years: conditions.length + 1 })
   
   let month = contractStart.toObject().month
   let compare1 = contractStart.plus({years:conditions.length}).set({month:9,day:1}).plus({year:month<10?-1:0})
@@ -1226,10 +1227,6 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         isEnding = true
         isLast = true
       } 
-      if(quarterEnd>contractEnd) {
-        isEnded = true
-        isLast = true
-      }
       if(isEnding&&isEnded){
         split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
       }
