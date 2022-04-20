@@ -1231,7 +1231,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
         split = [Math.round(contractEnd.diff(quarterStart,'days').days)+1,Math.round(quarterEnd.diff(contractEnd,'days').days)-1]
       }
       if(isEnded){
-        rate = [0,0]
+        // rate = [0,0]
       }
       calculation[0] = (rate[0]/quarterDay * split[0])
       calculation[1] = (rate[1]/quarterDay * split[1])
