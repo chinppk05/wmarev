@@ -1287,23 +1287,23 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
   // result.push({})
   response.send({
     name: `${area.prefix}${area.name}`,
-    // information: {
-    //   contractStart,
-    //   operationStart,
-    //   contractEnd
-    // },
-    // length:result.length,
+    information: {
+      contractStart,
+      operationStart,
+      contractEnd
+    },
+    length:result.length,
     result:result,//.filter((rs,i)=>i==4),
-    // sum:[
-    //   result.map(el=>el.annualCalc??0).reduce((a,b)=>a+b,0),
-    //   result.map(el=>el.quarter[0].sum??0).reduce((a,b)=>a+b,0),
-    //   result.map(el=>el.quarter[1].sum??0).reduce((a,b)=>a+b,0),
-    //   result.map(el=>el.quarter[2].sum??0).reduce((a,b)=>a+b,0),
-    //   result.map(el=>el.quarter[3].sum??0).reduce((a,b)=>a+b,0),
-    // ],
-    // area,
-    // conditions,
-    // areaCondition
+    sum:[
+      result.map(el=>el.annualCalc??0).reduce((a,b)=>a+b,0),
+      result.map(el=>el.quarter[0].sum??0).reduce((a,b)=>a+b,0),
+      result.map(el=>el.quarter[1].sum??0).reduce((a,b)=>a+b,0),
+      result.map(el=>el.quarter[2].sum??0).reduce((a,b)=>a+b,0),
+      result.map(el=>el.quarter[3].sum??0).reduce((a,b)=>a+b,0),
+    ],
+    area,
+    conditions,
+    areaCondition
   })
 }
 // export {};
