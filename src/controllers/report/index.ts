@@ -1288,7 +1288,7 @@ export const getIncomeFixedCollection = async (request: Request, response: Respo
       year: i+1,
       annualSum,
       annualCalc:quarter.map(el=>el.sum).reduce((a,b)=>a+b,0),
-      calendarYear: budgetYearStart + i,
+      calendarYear: budgetYearStart + i - 1,
       startCount: newContractStart.diff(operationStart,'days').days,
       quarter,
       detail1,
