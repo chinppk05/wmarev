@@ -16,9 +16,7 @@ const main = async () => {
   // }
   let deleteQuery = {
     $or:[
-      {paymentDate:{$gte: new Date('2021-12-01T00:00:00.000+07:00'), $lte: new Date('2021-12-31T23:59:59.999+07:00')}},
-      {paymentDate:{$gte: new Date('2022-01-01T00:00:00.000+07:00'), $lte: new Date('2022-01-31T23:59:59.999+07:00')}},
-      {paymentDate:{$gte: new Date('2022-02-01T00:00:00.000+07:00'), $lte: new Date('2022-02-28T23:59:59.999+07:00')}}
+      {paymentDate:{$gte: new Date('2021-10-01T00:00:00.000+07:00'), $lte: new Date('2021-10-31T23:59:59.999+07:00')}},
     ]
   }
   let prepArray: Array<any> = [];
