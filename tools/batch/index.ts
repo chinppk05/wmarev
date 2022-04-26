@@ -29,9 +29,9 @@ const main = async () => {
     console.log(rowNumber)
     if(rowNumber==1) return
     prepArray.push({
-      no: row.getCell("H"),
-      number: row.getCell("H"),
-      sequence: row.getCell("G"),
+      no: parseInt(row.getCell("H").value),
+      number: row.getCell("H").text,
+      sequence: row.getCell("G").text,
       year: row.getCell("E").value,
       month: row.getCell("D").value,
       meter: row.getCell("K").value,
@@ -61,13 +61,20 @@ const main = async () => {
     })
   })
   let i = 0
+  let count_2 = 0
+  let count_3 = 0
   for(const prep of prepArray){
     const payment = new Payment(prep)
     await payment.save()
     const receipt = new Receipt(prep)
     await receipt.save()
-    console.log("done ", ++i)
+    console.log("done ", ++i, prep.sequence)
+    if(prep.category == "2") count_2++
+    if(prep.category == "3") count_3++
   }
+
+  console.log({count_2,count_3})
+
 }
 
 main()
