@@ -15,9 +15,9 @@ const main = async () => {
   //   ]
   // }
   let deleteQuery = {
-    // $or:[
-    //   {paymentDate:{$gte: new Date('2021-10-01T00:00:00.000+07:00'), $lte: new Date('2021-10-31T23:59:59.999+07:00')}},
-    // ]
+    $or:[
+      { paymentDate:{$gte: new Date('2021-10-01T00:00:00.000+07:00'), $lte: new Date('2021-10-31T23:59:59.999+07:00')} },
+    ]
   }
   let prepArray: Array<any> = [];
   await Payment.deleteMany(deleteQuery).exec()
@@ -65,12 +65,17 @@ const main = async () => {
   let count_3 = 0
   for(const prep of prepArray){
     const payment = new Payment(prep)
-    await payment.save()
+    let paymentResult = await payment.save()
     const receipt = new Receipt(prep)
-    await receipt.save()
+    let receiptResult = await receipt.save()
     console.log("done ", ++i, prep.sequence)
     if(prep.category == "2") count_2++
     if(prep.category == "3") count_3++
+    if(!paymentResult || !receiptResult) {
+
+      console.log(paymentResult)
+      console.log(receiptResult)
+    }
   }
 
   console.log({count_2,count_3})
