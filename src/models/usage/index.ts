@@ -35,6 +35,8 @@ const schema = new Schema({
   qty: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   flatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
+  debtText: String,
   isNextStage: Boolean,
   isPrint: Boolean,
   calculationType: String,

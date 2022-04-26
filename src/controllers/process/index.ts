@@ -96,15 +96,32 @@ export const createInvoice = async (req: Request, res: Response) => {
       vat = rounddown(vat)
     }
     totalAmount = amount + vat
-    let debt = await Invoice.find({
-      meter: meter,
-      isPaid: false,
-      totalAmount: { $gt: 0 },
-      year: { $gt: 0 },
-      month: { $gt: 0 }
-    }).sort("-year -month").exec()
-    debt = JSON.parse(JSON.stringify(debt))
-    debt = debt.filter((d: any) => d.month < usage.month && d.year < usage.year)
+    let debtAmount = 0
+    let debtText = "-"
+    let debtDetail:any
+    let leanUsage = JSON.parse(JSON.stringify(usage))
+    if(leanUsage.debtAmount!==undefined){
+      console.log("import")
+      debtText = leanUsage.debtText
+      debtAmount = parseInt(leanUsage.debtAmount["$numberDecimal"])/100
+      debtDetail = "import"
+      console.log( {debtAmount,debtText})
+    } else {
+      console.log("process")
+      let debt = await Invoice.find({
+        meter: meter,
+        isPaid: false,
+        totalAmount: { $gt: 0 },
+        year: { $gt: 0 },
+        month: { $gt: 0 }
+      }).sort("-year -month").exec()
+      debt = JSON.parse(JSON.stringify(debt))
+      debt = debt.filter((d: any) => d.month < usage.month && d.year < usage.year)
+      debtText = display0(debt).debtText,
+      debtAmount = display0(debt).debtAmount,
+      debtDetail = { display0, debt }
+      console.log( {debtAmount,debtText})
+    }
     let result = {
       ...usage,
       qty,
@@ -115,11 +132,11 @@ export const createInvoice = async (req: Request, res: Response) => {
       status: "สร้างใหม่",
       totalAmount,
       vatRate: 0.07,
-      debtText: display0(debt).debtText,
-      debtAmount: display0(debt).debtAmount,
+      debtText,
+      debtAmount,
       invoiceDate: invoiceDate,
       vat,
-      debtDetail:{display0,debt}
+      debtDetail
     }
     delete result.sequence
     console.log(usage.name, (usage.invoice ?? {}).name)
@@ -139,8 +156,8 @@ export const createInvoice = async (req: Request, res: Response) => {
     }
     await Usage.findOneAndUpdate({ _id: usage._id }, { $set: { isNextStage: true } }).exec()
     task.percent = ((current++) / total) * 100
-    if(invoiceResult) task.success = (task.success??0) + 1
-    else task.failed = (task.failed??0) + 1
+    if (invoiceResult) task.success = (task.success ?? 0) + 1
+    else task.failed = (task.failed ?? 0) + 1
     // task.history.push(["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|"))
     // task.historyText += ["insert done", invoice.sequence, "month", invoice.month, result.year, count_i++].join("|")+"\r\n"
     await task.save()
