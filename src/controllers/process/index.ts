@@ -98,30 +98,50 @@ export const createInvoice = async (req: Request, res: Response) => {
     totalAmount = amount + vat
     let debtAmount = 0
     let debtText = "-"
-    let debtDetail:any
+    let debtDetail: any
     let leanUsage = JSON.parse(JSON.stringify(usage))
-    if(leanUsage.debtAmount!==undefined){
+    let debt = await Invoice.find({
+      meter: meter,
+      isPaid: false,
+      totalAmount: { $gt: 0 },
+      year: { $gt: 0 },
+      month: { $gt: 0 }
+    }).sort("-year -month").exec()
+    console.log(leanUsage.debtAmount["$numberDecimal"], leanUsage.debtAmount["$numberDecimal"] === '0')
+    // console.log({debt})
+    // console.log({debtText:display0(debt).debtText})
+    // console.log({debtAmount:rounddown(display0(debt).debtAmount)})
+    if (leanUsage.debtAmount["$numberDecimal"] !== '0') {
       console.log("import")
       debtText = leanUsage.debtText
-      debtAmount = parseInt(leanUsage.debtAmount["$numberDecimal"])/100
+      debtAmount = parseInt(leanUsage.debtAmount["$numberDecimal"]) / 100
       debtDetail = "import"
-      console.log( {debtAmount,debtText})
+      console.log({ type: 'true', debtAmount, debtText })
     } else {
       console.log("process")
-      let debt = await Invoice.find({
-        meter: meter,
-        isPaid: false,
-        totalAmount: { $gt: 0 },
-        year: { $gt: 0 },
-        month: { $gt: 0 }
-      }).sort("-year -month").exec()
+      let current_dt = DateTime.fromObject({year:usage.year-543,month:usage.month,day:10})
       debt = JSON.parse(JSON.stringify(debt))
-      debt = debt.filter((d: any) => d.month < usage.month && d.year < usage.year)
-      debtText = display0(debt).debtText,
-      debtAmount = display0(debt).debtAmount,
+      debt = debt.map((d:any)=>{
+        return {
+          ...d,
+          dt: DateTime.fromObject({
+            year: d.year-543,
+            month: d.month,
+            day:10
+          })
+        }
+      })
+      debt = debt.filter((d: any) =>{
+        return current_dt > d.dt
+      })
+      debtText = display0(debt).debtText
+      debtAmount = rounddown(display0(debt).debtAmount)
       debtDetail = { display0, debt }
-      console.log( {debtAmount,debtText})
+      console.log({ type: 'false', debtAmount, debtText })
     }
+
+    debtText = display0(debt).debtText
+    debtAmount = rounddown(display0(debt).debtAmount)
     let result = {
       ...usage,
       qty,
@@ -139,7 +159,7 @@ export const createInvoice = async (req: Request, res: Response) => {
       debtDetail
     }
     delete result.sequence
-    console.log(usage.name, (usage.invoice ?? {}).name)
+    // console.log(usage.name, (usage.invoice ?? {}).name)
     result.invoiceAmount = (result.debtAmount + result.totalAmount)
     result.billAmount = rounddown((result.totalAmount * (1 + (result.vatRate ?? 0))))
     let invoiceResult
