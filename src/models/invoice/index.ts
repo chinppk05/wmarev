@@ -35,8 +35,8 @@ const schema = new Schema({
 
   qty: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-  year: { type: Number, default: 0 },
-  month: Number,
+  year: { type: Number, default: 0, index:true },
+  month: { type: Number, default: 0, index:true },
   area: { type: ObjectId, ref: "Contract" },
   condition: { type: ObjectId, ref: "Condition" },
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
