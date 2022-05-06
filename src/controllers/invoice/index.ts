@@ -281,6 +281,33 @@ export const postPaginate = (req: Request, res: Response) => {
   });
 };
 
+
+export const postPaginateLight = (req: Request, res: Response) => {
+  let searchObj = req.body.search;
+  let sort: any = { excelNum:1, ...req.body.sort };
+  let populate: any = req.body.populate;
+  let limit: number = parseInt(req.body.limit);
+  let skip: number = parseInt(req.body.skip);
+  const options = {
+    sort: sort,
+    offset: skip,
+    limit: limit,
+    populate: populate,
+    lean: false,
+  };
+  DBModel.paginate(searchObj, options).then(function (data: any) {
+    let docs = JSON.parse(JSON.stringify(data.docs))
+    DBModel.find(searchObj).sort(sort).then((data2: any) => {
+      let data3 = JSON.parse(JSON.stringify(data2))
+      res.send({
+        docs: docs,
+        total: data.total,
+        totalCount: data3.length,
+      })
+    })
+  });
+};
+
 export const postGroup = (req: Request, res: Response) => {
   let group = req.body.group;
   let sum = req.body.sum;
