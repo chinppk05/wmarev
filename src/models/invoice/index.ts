@@ -14,7 +14,7 @@ const schema = new Schema({
   oldMeter2: String,
   oldMeter3: String,
   number: Number,
-  sequence: { type: String, unique: true },
+  sequence: { type: String, unique: true, index:true },
   taxId: String,
   code: String,
   name: String,
