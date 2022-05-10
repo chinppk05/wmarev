@@ -20,7 +20,6 @@ export const create = (req: Request, res: Response) => {
 export const upsert = (req: Request, res: Response) => {
   let prep = req.body
   delete prep._id
-  console.log(prep)
   DBModel.findOne({ invoiceNumber: prep.invoiceNumber }).then((data: any) => {
     if (data) {
       DBModel.updateOne({ invoiceNumber: prep.invoiceNumber }, { ...prep, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
@@ -38,6 +37,8 @@ export const upsert = (req: Request, res: Response) => {
         })
       })
     }
+  }).catch((error:any)=>{
+    console.log(error)
   })
 };
 
