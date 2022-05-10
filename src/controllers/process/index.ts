@@ -520,6 +520,12 @@ export const createReceiptV2 = async (req: Request, res: Response) => {
     var options = { upsert: true, new: true, useFindAndModify: false };
     let payments = await Payment.find({ _id: { $in: list.map(o => o.id) } }).sort({excelNum:1}).lean().exec()
     for(const payment of payments){
+      let processType = "separate"
+      try {
+        processType = list.find(li=>li.id==payment._id.toString()).type
+      } catch (error) {
+        
+      }
       console.log({meter:payment.meter, excelNum:payment.excelNum})
       try {
         delete payment._id
@@ -537,10 +543,21 @@ export const createReceiptV2 = async (req: Request, res: Response) => {
         payment.totalAmount = payment.totalAmount/100
         payment.paymentAmount = payment.paymentAmount/100
         payment.invoiceAmount = payment.invoiceAmount/100
+        let invoices:Array<any> = []
+        if(processType==="combine"){
+          let combinedList = payments.filter((pay:any)=>pay.excelNum===payment.excelNum)
+          let invoicesText = combinedList.map((pay:any)=>pay.invoiceNumber)
+          invoices = invoicesText
+        } else {
+          invoices = [payment.invoiceNumber]
+        }
+        payment.invoices = invoices
         let result = await Receipt.findOneAndUpdate({ meter: payment.meter, year: payment.year, month: payment.month }, payment, options).exec()
         if(result.sequence === undefined){
           result.save()
         }
+        let invoice = await Invoice.findOneAndUpdate({sequence:payment.invoiceNumber},{$set:{isPaid:true, receipts:[result.sequence]}})
+        console.log({invoice})
         console.log({sequence:result.sequence, name:result.name, excelNum:result.excelNum})
       } catch (error) {
         console.log(error)

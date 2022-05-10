@@ -13,7 +13,6 @@ import * as _ from "lodash"
 var options = { upsert: true, new: true, useFindAndModify: false };
 
 
-
 export const findZeroRemaining = async (req: Request, res: Response) => {
   let results = await Invoice.aggregate([{
     $group: {
@@ -43,18 +42,50 @@ export const invoiceNumberAdjustment = async (req: Request, res: Response) => {
     invoice.sequence = starter + String(start++).padStart(7, "0")
     let result = await invoice.save()
     console.log(result)
-    
   }
   res.send("done!")
 }
-//{paymentDate:{$gte: ISODate('2021-12-01T00:00:00.000+07:00'), $lte: ISODate('2021-12-31T23:59:59.999+07:00')}}
+
+
+
+export const receiptNumberAdjustment = async (req: Request, res: Response) => {
+  let { month, year, start, starter, category } = req.body
+  let paymentStart = DateTime.fromObject({ day: 1, month, year:year-543 }).plus({month:2}).startOf('day').toJSDate()
+  let paymentEnd = DateTime.fromObject({ day: 1, month, year:year-543 }).plus({month:2}).endOf('month').endOf('day').toJSDate()
+  //{paymentDate:{$gte: ISODate('2021-12-01T00:00:00.000+07:00'), $lte: ISODate('2021-12-31T23:59:59.999+07:00')}}
+  let receipts = await Receipt.find({
+    paymentDate: {
+      $gte: paymentStart,
+      $lte: paymentEnd
+    },
+    category
+  }).sort({ excelNum: 1 }).exec()
+  for (const receipt of receipts) {
+    starter = starter ?? "642"
+    receipt.sequence = starter + String(start++).padStart(6, "0")
+    let result = await receipt.save()
+    console.log(result)
+  }
+  res.send("done!")
+}
+//
 
 export const receiptSequenceTemp = async (req: Request, res: Response) => {
   let { month, year, start, starter, category } = req.body
+  let deleteResult = await Receipt.deleteMany({sequence:{$exists:false}}).exec()
+  console.log({deleteResult})
+
   let receipts = await Receipt.find({}).sort({ no: 1 }).exec()
+  let i = 0
   for (const receipt of receipts) {
-    receipt.temp
+    try {
+      receipt.tempSequence = receipt.sequence
+      let result = await receipt.save()
+      console.log(i++, receipts.length)
+    } catch (error) {
+      
+    }
     
   }
-  res.send("done!")
+  res.send("done receipt!")
 }

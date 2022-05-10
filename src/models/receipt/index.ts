@@ -11,7 +11,7 @@ const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   number: Number,
   no: Number,
-  sequence: { type: String, unique: true },
+  sequence: { type: String, index: true },
   meter: String,
   oldMeter: String,
   oldMeter2: String,
@@ -42,7 +42,7 @@ const schema = new Schema({
 
   invoiceNumber: String,
   invoice: { type: ObjectId, ref: 'Invoice' },
-  invoices: [{ type: ObjectId, ref: 'Invoice' }],
+  invoices: [String],
   usage: { type: ObjectId, ref: 'Usage' },
   customer: { type: ObjectId, ref: 'Customer' },
   year: { type: Number, default: 0 },
@@ -73,16 +73,19 @@ const schema = new Schema({
 
 schema.pre("save", async function (next: NextFunction) {
   var options = { upsert: true, new: true, useFindAndModify: false };
-  let payment = DateTime.fromJSDate(this.paymentDate)
-  let month = (payment.month ?? (new Date().getMonth() + 1)) - 2
-  let year = (payment.year ?? new Date().getFullYear()) + 543
-  if (month > 10) year = year + 1
   if (this.sequence === undefined) {
+    let payment = DateTime.fromJSDate(this.paymentDate)
+    if(!payment) payment = DateTime.now()
+    let month = (payment.month ?? (new Date().getMonth() + 1)) - 2
+    let year = (payment.year ?? new Date().getFullYear()) + 543
+    if (month > 10) year = year + 1
+    console.log(this)
     Counter.findOneAndUpdate(
       { name: "Receipt", year: year, category: this.category },
       { $inc: { sequence: 1 } },
       options,
       (err: Error, doc: any) => {
+        console.log(year, this.category,doc )
         let sequence
         if (this.sequence != undefined) sequence = this.sequence
         else sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(6, "0");
