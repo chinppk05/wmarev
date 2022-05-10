@@ -75,23 +75,23 @@ schema.pre("save", async function (next: NextFunction) {
   let payment = DateTime.fromJSDate(this.paymentDate)
   let month = (payment.month ?? (new Date().getMonth() + 1)) - 2
   let year = (payment.year ?? new Date().getFullYear()) + 543
-  console.log({ year, month })
   if (month > 10) year = year + 1
-  console.log({ year, month })
-  Counter.findOneAndUpdate(
-    { name: "Receipt", year: year, category: this.category },
-    { $inc: { sequence: 1 } },
-    options,
-    (err: Error, doc: any) => {
-      let sequence
-      if (this.sequence != undefined) sequence = this.sequence
-      else sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(6, "0");
-      let recordDate = DateTime.fromObject({ day: 15, month: month, year: year - 543 }).toJSDate()
-      // console.log("sequence for receipt ", sequence)
-      Receipt.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
-      next();
-    }
-  );
+  if (this.sequence === undefined) {
+    Counter.findOneAndUpdate(
+      { name: "Receipt", year: year, category: this.category },
+      { $inc: { sequence: 1 } },
+      options,
+      (err: Error, doc: any) => {
+        let sequence
+        if (this.sequence != undefined) sequence = this.sequence
+        else sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(6, "0");
+        let recordDate = DateTime.fromObject({ day: 15, month: month, year: year - 543 }).toJSDate()
+        // console.log("sequence for receipt ", sequence)
+        Receipt.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
+        next();
+      }
+    );
+  }
 });
 
 /*
