@@ -68,6 +68,7 @@ const schema = new Schema({
   notes: String,
   ref: String,
   excelNum: { type: Number },
+  tempSequence: String
 })
 
 schema.pre("save", async function (next: NextFunction) {
