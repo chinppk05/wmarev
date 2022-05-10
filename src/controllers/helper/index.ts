@@ -12,7 +12,6 @@ import * as _ from "lodash"
 
 var options = { upsert: true, new: true, useFindAndModify: false };
 
-
 export const findZeroRemaining = async (req: Request, res: Response) => {
   let results = await Invoice.aggregate([{
     $group: {
@@ -33,7 +32,6 @@ export const findZeroRemaining = async (req: Request, res: Response) => {
   }]).exec()
 }
 
-
 export const invoiceNumberAdjustment = async (req: Request, res: Response) => {
   let { month, year, start, starter, category } = req.body
   let invoices = await Invoice.find({ month, year, category }).sort({ no: 1 }).exec()
@@ -45,8 +43,6 @@ export const invoiceNumberAdjustment = async (req: Request, res: Response) => {
   }
   res.send("done!")
 }
-
-
 
 export const receiptNumberAdjustment = async (req: Request, res: Response) => {
   let { month, year, start, starter, category } = req.body
@@ -88,4 +84,25 @@ export const receiptSequenceTemp = async (req: Request, res: Response) => {
     
   }
   res.send("done receipt!")
+}
+
+
+export const receiptInvoiceMap = async (req: Request, res: Response) => {
+  let { month, year, start, starter, category } = req.body
+  let deleteResult = await Receipt.deleteMany({sequence:{$exists:false}}).exec()
+  console.log({deleteResult})
+
+  let receipts = await Receipt.find({}).sort({ no: 1 }).exec()
+  let i = 0
+  for (const receipt of receipts) {
+    try {
+      receipt.tempSequence = receipt.sequence
+      let result = await receipt.save()
+      console.log(i++, receipts.length)
+    } catch (error) {
+      
+    }
+    
+  }
+  res.send("done receipt-invoice!")
 }

@@ -772,7 +772,7 @@ let display0 = (invoices: Array<any>) => {
       arrayDebtText.push({text:debt.text})
     }
   }
-  let finalDebtAmount = debts.reduce((acc,debt)=>acc+debt.invoiceAmount,0)
+  let finalDebtAmount = debts.reduce((acc,debt)=>acc+debt.totalAmount,0)
   let finalDebtText = arrayDebtText.map(el=>el.text).join("/").replace(/\/-(.*?)([ก-ฮ])/g,"-$2")
   return {
     debtAmount:finalDebtAmount,
