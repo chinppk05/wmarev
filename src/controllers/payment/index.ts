@@ -90,8 +90,9 @@ export const remove = (req: Request, res: Response) => {
 }
 
 export const removeMany = (req: Request, res: Response) => {
-  let list: Array<string> = req.body.list
-  let ids = list.map(el => mongoose.Types.ObjectId(el))
+  let list: Array<{ id: string, type: string }> = req.body.list
+  let ids = list.map(el => mongoose.Types.ObjectId(el.id))
+  // console.log('list',list)
   DBModel.deleteMany({ _id: { $in: ids } }).then((data: any) => {
     res.send(data);
   });
