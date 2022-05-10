@@ -14,7 +14,7 @@ const schema = new Schema({
   oldMeter2: String,
   oldMeter3: String,
   number: Number,
-  sequence: { type: String, unique: true, index:true },
+  sequence: { type: String, index: true },
   taxId: String,
   code: String,
   name: String,
@@ -35,8 +35,8 @@ const schema = new Schema({
 
   qty: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-  year: { type: Number, default: 0, index:true },
-  month: { type: Number, default: 0, index:true },
+  year: { type: Number, default: 0, index: true },
+  month: { type: Number, default: 0, index: true },
   area: { type: ObjectId, ref: "Contract" },
   condition: { type: ObjectId, ref: "Condition" },
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
@@ -71,24 +71,26 @@ schema.pre("save", async function (next: NextFunction) {
 
 
   try {
-    let counter = await Counter.findOneAndUpdate(
-      { name: "Invoice", year: budgetYear, category: (self.category ?? "9") },
-      { $inc: { sequence: 1 } },
-      options).exec()
-    let sequence = counter.year.toString().slice(-2) +
-      (self.category ?? "9") +
-      counter.sequence.toString().padStart(7, "0");
-    let recordDate = DateTime.fromObject({
-      day: 15,
-      month: self.month,
-      year: self.year - 543,
-    }).toJSDate();
-    this.sequence = sequence;
-    this.recordDate = recordDate
-    // let result = await Invoice.findOneAndUpdate(
-    //   { _id: this._id },
-    //   { $set: { sequence, recordDate } }
-    // ).exec();
+    if (this.sequence === undefined) {
+      let counter = await Counter.findOneAndUpdate(
+        { name: "Invoice", year: budgetYear, category: (self.category ?? "9") },
+        { $inc: { sequence: 1 } },
+        options).exec()
+      let sequence = counter.year.toString().slice(-2) +
+        (self.category ?? "9") +
+        counter.sequence.toString().padStart(7, "0");
+      let recordDate = DateTime.fromObject({
+        day: 15,
+        month: self.month,
+        year: self.year - 543,
+      }).toJSDate();
+      this.sequence = sequence;
+      this.recordDate = recordDate
+      // let result = await Invoice.findOneAndUpdate(
+      //   { _id: this._id },
+      //   { $set: { sequence, recordDate } }
+      // ).exec();
+    }
   } catch (error) {
 
   }

@@ -729,7 +729,41 @@ let getInvoice = (year: number, month: number, category: string, categoryType: s
   return Invoice.findOne({ year, month, category, meter, calculationType }).exec()
 }
 
-let display0 = (debt: Array<any>) => {
+
+let display0 = (invoices: Array<any>) => {
+  let debts = invoices.filter(invoice=>invoice.isPaid===false)
+  let mapDebts = debts.map(debt=>({month:debt.month,year:debt.year,yearMonth:parseInt(String(debt.year)+String(debt.month).padStart(2,'0'))}))
+  let sortDebts = mapDebts.sort((a,b)=>a.yearMonth-b.yearMonth)
+  let debtText:Array<any> = []
+  let arrayDebtText:Array<any> = []
+  let latest:any = {}
+  for(const [i,debt] of sortDebts.entries()){
+    let current = DateTime.fromObject({
+      year: debt.year-543,
+      month: debt.month,
+      day: 10
+    })
+    let formatDate = current.reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
+    debtText.push({text:formatDate, gap: ((latest.yearMonth??0) - (debt.yearMonth??0))})
+    latest = debt
+  }
+  for(const [i,debt] of debtText.entries()){
+    if(debt.gap===-1){
+      arrayDebtText.push({text:"-"})
+      if(debtText[i+1].gap!==-1) arrayDebtText.push({text:debt.text})
+    } else {
+      arrayDebtText.push({text:debt.text})
+    }
+  }
+  let finalDebtAmount = debts.reduce((acc,debt)=>acc+debt.invoiceAmount,0)
+  let finalDebtText = arrayDebtText.map(el=>el.text).join("/").replace(/\/-(.*?)([ก-ฮ])/g,"-$2")
+  return {
+    debtAmount:finalDebtAmount,
+    debtText:finalDebtText
+  }
+}
+
+let display1 = (debt: Array<any>) => {
   let debtText = ""
   var debtAmount = 0
   var isMiddle = false
