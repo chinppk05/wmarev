@@ -191,9 +191,10 @@ export const postGroup = (req: Request, res: Response) => {
 export const excelDownload = (req: Request, res: Response) => {
   const Excel = require('exceljs')
   let searchObj = req.body.search
+  let mapSearch:Array<any> = searchObj.map((el:any)=>mongoose.Types.ObjectId(el.id))
   var workbook = new Excel.Workbook();
   let sheet = workbook.addWorksheet("Sheet1");
-  DBModel.find(searchObj).lean().then(async function (data: Array<any>) {
+  DBModel.find({_id:{$in:mapSearch}}).lean().then(async function (data: Array<any>) {
     let header: Array<string> = []
     data.forEach((el: any, idx: number) => {
       for (const [key, value] of Object.entries(el)) {
