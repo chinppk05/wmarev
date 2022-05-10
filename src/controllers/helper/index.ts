@@ -59,10 +59,11 @@ export const receiptNumberAdjustment = async (req: Request, res: Response) => {
   for (const receipt of receipts) {
     starter = starter ?? "642"
     receipt.sequence = starter + String(start++).padStart(6, "0")
+    console.log('receipt', receipt.sequence)
     let result = await receipt.save()
-    console.log(result)
+    console.log(result.sequence)
   }
-  res.send("done!")
+  res.send("done!!!!!")
 }
 //
 
