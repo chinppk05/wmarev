@@ -47,14 +47,13 @@ export const invoiceNumberAdjustment = async (req: Request, res: Response) => {
   }
   res.send("done!")
 }
+//{paymentDate:{$gte: ISODate('2021-12-01T00:00:00.000+07:00'), $lte: ISODate('2021-12-31T23:59:59.999+07:00')}}
+
 export const receiptSequenceTemp = async (req: Request, res: Response) => {
   let { month, year, start, starter, category } = req.body
   let receipts = await Receipt.find({}).sort({ no: 1 }).exec()
   for (const receipt of receipts) {
-    starter = starter ?? "642"
-    receipt.sequence = starter + String(start++).padStart(7, "0")
-    let result = await receipt.save()
-    console.log(result)
+    receipt.temp
     
   }
   res.send("done!")
