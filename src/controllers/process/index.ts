@@ -764,11 +764,16 @@ let display0 = (invoices: Array<any>) => {
     debtText.push({text:formatDate, gap: ((latest.yearMonth??0) - (debt.yearMonth??0))})
     latest = debt
   }
+  console.log(debts[0])
   for(const [i,debt] of debtText.entries()){
     console.log(debt)
     if(debt.gap===-1){
       arrayDebtText.push({text:"-"})
-      if(debtText[i+1].gap!==-1) arrayDebtText.push({text:debt.text})
+      try {
+        if(debtText[i+1].gap!==-1) arrayDebtText.push({text:debt.text})
+      } catch (error) {
+        
+      }
     } else {
       arrayDebtText.push({text:debt.text})
     }

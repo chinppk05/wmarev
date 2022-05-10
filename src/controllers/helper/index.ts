@@ -56,14 +56,18 @@ export const receiptNumberAdjustment = async (req: Request, res: Response) => {
     },
     category
   }).sort({ excelNum: 1 }).exec()
+  let prep:Array<any> = []
   for (const receipt of receipts) {
     starter = starter ?? "642"
     receipt.sequence = starter + String(start++).padStart(6, "0")
     console.log('receipt', receipt.sequence)
     let result = await receipt.save()
-    console.log(result.sequence)
+
+    console.log(result)
+    prep.push(result)
   }
-  res.send("done!!!!!")
+  res.send(prep)
+
 }
 //
 
@@ -111,4 +115,26 @@ export const receiptInvoiceMap = async (req: Request, res: Response) => {
   }
 
   res.send({status:"done receipt-invoice!", length:invoices.length, preps2})
+}
+
+
+export const receiptRemoveDuplicate = async (req: Request, res: Response) => {
+  let { month, year, start, starter, category } = req.body
+  let paymentStart = DateTime.fromObject({ day: 1, month, year:year-543 }).plus({month:2}).startOf('day').toJSDate()
+  let paymentEnd = DateTime.fromObject({ day: 1, month, year:year-543 }).plus({month:2}).endOf('month').endOf('day').toJSDate()
+  //{paymentDate:{$gte: ISODate('2021-12-01T00:00:00.000+07:00'), $lte: ISODate('2021-12-31T23:59:59.999+07:00')}}
+  let receipts = await Receipt.find({
+    paymentDate: {
+      $gte: paymentStart,
+      $lte: paymentEnd
+    },
+    category
+  }).sort({ excelNum: 1 }).exec()
+  for (const receipt of receipts) {
+    starter = starter ?? "642"
+    receipt.sequence = starter + String(start++).padStart(6, "0")
+    let result = await receipt.save()
+    console.log(result)
+  }
+  res.send("done!")
 }
