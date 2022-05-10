@@ -57,13 +57,14 @@ export const receiptNumberAdjustment = async (req: Request, res: Response) => {
     category
   }).sort({ excelNum: 1 }).exec()
   let prep:Array<any> = []
+  console.log("length", receipts.length)
   for (const receipt of receipts) {
     starter = starter ?? "642"
     receipt.sequence = starter + String(start++).padStart(6, "0")
-    console.log('receipt', receipt.sequence)
+    // console.log('receipt', receipt.sequence)
     let result = await receipt.save()
 
-    console.log(result)
+    // console.log(result)
     prep.push(result)
   }
   res.send(prep)
