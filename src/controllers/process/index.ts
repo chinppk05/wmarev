@@ -765,6 +765,7 @@ let display0 = (invoices: Array<any>) => {
     latest = debt
   }
   for(const [i,debt] of debtText.entries()){
+    console.log(debt)
     if(debt.gap===-1){
       arrayDebtText.push({text:"-"})
       if(debtText[i+1].gap!==-1) arrayDebtText.push({text:debt.text})

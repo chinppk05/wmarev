@@ -43,6 +43,10 @@ const schema = new Schema({
   invoiceNumber: String,
   invoice: { type: ObjectId, ref: 'Invoice' },
   invoices: [String],
+  invoicesYearMonth: [{
+    year: Number,
+    month: Number
+  }],
   usage: { type: ObjectId, ref: 'Usage' },
   customer: { type: ObjectId, ref: 'Customer' },
   year: { type: Number, default: 0 },

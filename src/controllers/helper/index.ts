@@ -88,21 +88,26 @@ export const receiptSequenceTemp = async (req: Request, res: Response) => {
 
 
 export const receiptInvoiceMap = async (req: Request, res: Response) => {
-  let { month, year, start, starter, category } = req.body
-  let deleteResult = await Receipt.deleteMany({sequence:{$exists:false}}).exec()
-  console.log({deleteResult})
-
-  let receipts = await Receipt.find({}).sort({ no: 1 }).exec()
+  let invoices = await Invoice.find({$and:[{ receipts: { $exists: true, $ne: [] } },{ receipts: { $exists: true, $ne: ["-"] } }]}).exec()
+  
   let i = 0
-  for (const receipt of receipts) {
-    try {
-      receipt.tempSequence = receipt.sequence
-      let result = await receipt.save()
-      console.log(i++, receipts.length)
-    } catch (error) {
-      
-    }
-    
+  let preps:Array<any> = []
+  for (const invoice of invoices) {
+    let receiptsInInvoice = invoice.receipts
+    let receipt = receiptsInInvoice[0]
+    preps.push({invoice:invoice.sequence, receipt})
   }
-  res.send("done receipt-invoice!")
+  let preps2 = _.groupBy(preps, 'receipt')
+  for(const elem in preps2){
+    let receipt = await Receipt.findOne({sequence:elem}).exec()
+    if(receipt){
+      receipt.invoices = preps2[elem].map(el=>el.invoice)
+      let invoiceInside = await Invoice.find({sequence:{$in:receipt.invoices}}).lean().exec()
+      receipt.invoicesYearMonth = invoiceInside.map((el:any)=>({year:el.year, month:el.month}))
+      let save = await receipt.save()
+      if(save) console.log(receipt.invoices)
+    }
+  }
+
+  res.send({status:"done receipt-invoice!", length:invoices.length, preps2})
 }
