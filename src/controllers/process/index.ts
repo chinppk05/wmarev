@@ -365,7 +365,7 @@ export const printInvoice = async (req: Request, res: Response) => {
   });
 }
 
-
+// excelNum
 export const createReceipt = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let list = req.body.list
@@ -415,7 +415,7 @@ export const createReceipt = (req: Request, res: Response) => {
   })
 }
 
-export const createReceiptV2 = (req: Request, res: Response) => {
+export const createReceiptV2_OBSOLETE = (req: Request, res: Response) => {
   try {
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     let list: Array<{ id: string, type: string }> = req.body.list
@@ -510,6 +510,32 @@ export const createReceiptV2 = (req: Request, res: Response) => {
     })
   } catch (error) {
     res.send("error")
+  }
+}
+
+export const createReceiptV2 = async (req: Request, res: Response) => {
+  try {
+    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    let list: Array<{ id: string, type: string }> = req.body.list
+    var options = { upsert: true, new: true, useFindAndModify: false };
+    let payments = await Payment.find({ _id: { $in: list.map(o => o.id) } }).sort({excelNum:1}).lean().exec()
+    for(const payment of payments){
+      console.log({meter:payment.meter, excelNum:payment.excelNum})
+      try {
+        delete payment._id
+        delete payment.sequence
+        let result = await Receipt.findOneAndUpdate({ meter: payment.meter, year: payment.year, month: payment.month }, payment, options).exec()
+        if(result.sequence === undefined){
+          result.save()
+        }
+        console.log({sequence:result.sequence, name:result.name, excelNum:result.excelNum})
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    
+  } catch(error){
+
   }
 }
 
