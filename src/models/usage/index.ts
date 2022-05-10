@@ -10,7 +10,8 @@ const ObjectId = Schema.Types.ObjectId;
 const schema = new Schema({
   customer: { type: ObjectId, ref: "Customer" },
   no: Number,
-  sequence: { type: String, unique: true },
+  sequence: { type: String, index: true },
+  invoiceSequence: { type: String, index: true },
   meter: String,
   oldMeter: String,
   oldMeter2: String,
@@ -26,8 +27,8 @@ const schema = new Schema({
   area: { type: ObjectId, ref: "Contract" },
   category: String,
   categoryType: String,
-  year: Number,
-  month: Number,
+  year: { type: Number, index: true },
+  month: { type: Number, index: true },
   recordDate: Date,
   remark: String,
   fileUrl: String,
@@ -41,9 +42,9 @@ const schema = new Schema({
   isPrint: Boolean,
   calculationType: String,
   createdAt: Date,
-  notes:String,
-  ref:String,
-  status:String,
+  notes: String,
+  ref: String,
+  status: String,
 });
 
 schema.pre("save", async function (next: NextFunction) {

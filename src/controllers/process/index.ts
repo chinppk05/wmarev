@@ -107,11 +107,10 @@ export const createInvoice = async (req: Request, res: Response) => {
       year: { $gt: 0 },
       month: { $gt: 0 }
     }).sort("-year -month").exec()
-    console.log(leanUsage.debtAmount["$numberDecimal"], leanUsage.debtAmount["$numberDecimal"] === '0')
     // console.log({debt})
     // console.log({debtText:display0(debt).debtText})
     // console.log({debtAmount:rounddown(display0(debt).debtAmount)})
-    if (leanUsage.debtAmount["$numberDecimal"] !== '0') {
+    if ((leanUsage.debtAmount??{"$numberDecimal":"0"})["$numberDecimal"] !== '0') {
       console.log("import")
       debtText = leanUsage.debtText
       debtAmount = parseInt(leanUsage.debtAmount["$numberDecimal"]) / 100
@@ -159,6 +158,7 @@ export const createInvoice = async (req: Request, res: Response) => {
       debtDetail
     }
     delete result.sequence
+    if(result.invoiceSequence!==undefined) result.sequence = result.invoiceSequence
     // console.log(usage.name, (usage.invoice ?? {}).name)
     result.invoiceAmount = (result.debtAmount + result.totalAmount)
     result.billAmount = rounddown((result.totalAmount * (1 + (result.vatRate ?? 0))))
