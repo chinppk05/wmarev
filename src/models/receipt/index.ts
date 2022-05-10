@@ -24,19 +24,17 @@ const schema = new Schema({
   address: String,
   period: String,
   signature: String,
+  debtText: String,
+
   taxRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   qty: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   rate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   remainingAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vatRate: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   vat: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-
   billAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-  debtText: String,
   debtAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-
   debtVat: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-
   previousAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   totalAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   paymentAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
@@ -69,13 +67,17 @@ const schema = new Schema({
   isPaidExact: Boolean,
   notes: String,
   ref: String,
-  excelNum: {type:Number},
+  excelNum: { type: Number },
 })
 
 schema.pre("save", async function (next: NextFunction) {
   var options = { upsert: true, new: true, useFindAndModify: false };
-  let year = (this.year + 0)
-  if(this.month > 10) year = year + 1
+  let payment = DateTime.fromJSDate(this.paymentDate)
+  let month = (payment.month ?? (new Date().getMonth() + 1)) - 2
+  let year = (payment.year ?? new Date().getFullYear()) + 543
+  console.log({ year, month })
+  if (month > 10) year = year + 1
+  console.log({ year, month })
   Counter.findOneAndUpdate(
     { name: "Receipt", year: year, category: this.category },
     { $inc: { sequence: 1 } },
@@ -83,8 +85,8 @@ schema.pre("save", async function (next: NextFunction) {
     (err: Error, doc: any) => {
       let sequence
       if (this.sequence != undefined) sequence = this.sequence
-      else sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(7, "0");
-      let recordDate = DateTime.fromObject({ day: 15, month: this.month, year: this.year - 543 }).toJSDate()
+      else sequence = doc.year.toString().slice(-2) + (this.category ?? "9") + doc.sequence.toString().padStart(6, "0");
+      let recordDate = DateTime.fromObject({ day: 15, month: month, year: year - 543 }).toJSDate()
       // console.log("sequence for receipt ", sequence)
       Receipt.findOneAndUpdate({ _id: this._id }, { $set: { sequence, recordDate } }).exec()
       next();

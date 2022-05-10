@@ -524,6 +524,19 @@ export const createReceiptV2 = async (req: Request, res: Response) => {
       try {
         delete payment._id
         delete payment.sequence
+        payment.taxRate = payment.taxRate/100
+        payment.qty = payment.qty/100
+        payment.rate = payment.rate/100
+        payment.remainingAmount = payment.remainingAmount/100
+        payment.vatRate = payment.vatRate/100
+        payment.vat = payment.vat/100
+        payment.billAmount = payment.billAmount/100
+        payment.debtAmount = payment.debtAmount/100
+        payment.debtVat = payment.debtVat/100
+        payment.previousAmount = payment.previousAmount/100
+        payment.totalAmount = payment.totalAmount/100
+        payment.paymentAmount = payment.paymentAmount/100
+        payment.invoiceAmount = payment.invoiceAmount/100
         let result = await Receipt.findOneAndUpdate({ meter: payment.meter, year: payment.year, month: payment.month }, payment, options).exec()
         if(result.sequence === undefined){
           result.save()
