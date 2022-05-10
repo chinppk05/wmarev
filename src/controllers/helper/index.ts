@@ -139,3 +139,59 @@ export const receiptRemoveDuplicate = async (req: Request, res: Response) => {
   }
   res.send("done!")
 }
+
+
+
+export const restoreInvoice = async (req: Request, res: Response) => {
+  let i = 0
+  let invoices = await Invoice.find({
+    $or:[
+      {year: 2564, month:10},
+      {year: 2564, month:11},
+      {year: 2564, month:12},
+      {year: 2565, month:1},
+    ],
+    isPaid:true,
+    $and:[
+      {
+          receipts:{
+            $ne:['-']
+        }
+      },
+      {
+          receipts:{
+            $ne:null
+        }
+      }
+    ]
+  }).exec()
+  let found:Array<any> = []
+  let notfound:Array<any> = []
+  for (const invoice of invoices) {
+    let receipt = invoice.receipts[0]
+    let receiptOnDB = await Receipt.findOne({sequence:receipt}).exec()
+    // invoice.receiptsOld = invoice.receipts
+    // invoice.save()
+    if(receiptOnDB) found.push(receiptOnDB)
+    else{
+      notfound.push(invoice)
+    }
+  }
+  for(const invoice of notfound){
+    let receipt = invoice.receipts[0]
+    // console.log({receipt})
+    let receiptOnDB = await Receipt.findOne({tempSequence:receipt}).exec()
+    // if(receipt==="643000807") console.log("643000807 found!")
+    if(receiptOnDB) {
+      // if(receiptOnDB.tempSequence==="643000807") console.log("643000807 found! " + receiptOnDB._id +"/"+ invoice._id)
+      invoice.receipts = [receiptOnDB.sequence]
+      // receiptOnDB.receipts = [receiptOnDB.sequence]
+      let save = invoice.save()
+      if(save) console.log("saved", i++)
+    }
+  }
+  console.log("length found", found.length)
+  console.log("length notfound", notfound.length)
+  
+  res.send("done")
+}

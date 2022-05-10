@@ -100,6 +100,7 @@ schema.pre("save", async function (next: NextFunction) {
       }
     );
   }
+  next();
 });
 
 /*

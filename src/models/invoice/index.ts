@@ -28,6 +28,7 @@ const schema = new Schema({
 
   invoice: { type: ObjectId, ref: "Invoice" },
   receipts: [String],
+  receiptsOld: [String],
   usage: { type: ObjectId, ref: "Usage" },
 
   debtText: String,
