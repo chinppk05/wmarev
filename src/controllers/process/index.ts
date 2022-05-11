@@ -748,7 +748,7 @@ let getInvoice = (year: number, month: number, category: string, categoryType: s
 
 
 let display0 = (invoices: Array<any>) => {
-  let debts = invoices.filter(invoice=>invoice.isPaid===false)
+  let debts = invoices.filter(invoice=>invoice.isPaid===false&&invoice.totalAmount>0)
   let mapDebts = debts.map(debt=>({month:debt.month,year:debt.year,yearMonth:parseInt(String(debt.year)+String(debt.month).padStart(2,'0'))}))
   let sortDebts = mapDebts.sort((a,b)=>a.yearMonth-b.yearMonth)
   let debtText:Array<any> = []
