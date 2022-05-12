@@ -282,7 +282,8 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   console.log("notfound", notfound.length)
   console.log("receipts", receipts.length)
   for(const receipt of found){
-    console.log("old:", receipt.debtText, "new:", receipt.debtText)
+    console.log("old:", receipt.receipt.debtText, "new:", receipt.debtText)
+    console.log()
     // receipt.debtText = receipt.debtText
     // receipt.save()
   }
