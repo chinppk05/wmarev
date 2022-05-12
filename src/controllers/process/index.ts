@@ -786,6 +786,8 @@ let display0 = (invoices: Array<any>) => {
   }
 }
 
+
+
 let display1 = (debt: Array<any>) => {
   let debtText = ""
   var debtAmount = 0
