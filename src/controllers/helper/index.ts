@@ -298,10 +298,12 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   console.log("receipts", receipts.length)
   let count = 0
   for(const elem of found){
-    console.log("old:", elem.receipt.debtText, "new:", elem.newdebtText)
-    if(elem.receipt.debtText===elem.newdebtText) count++
+      if(elem.newdebtText==="Invalid Date") elem.newdebtText = "-"
+      console.log("old:", elem.receipt.debtText, "new:", elem.newdebtText)
+      if(elem.receipt.debtText===elem.newdebtText) count++
     try {
       elem.receipt.debtText = elem.newdebtText
+      console.log("saving...", elem.receipt.debtText)
       await elem.receipt.save()
     } catch (error) {
       console.log(error)
