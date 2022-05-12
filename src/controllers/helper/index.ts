@@ -289,6 +289,6 @@ export const restoreDebtText = async (req: Request, res: Response) => {
     // receipt.save()
   }
   // console.log("map", receipts.map((r:any)=>r.sequence))
-
+  console.log("done " + count)
   res.send("done " + count)
 }
