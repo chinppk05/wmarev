@@ -12,6 +12,21 @@ import * as _ from "lodash"
 
 var options = { upsert: true, new: true, useFindAndModify: false };
 
+let rounddown = (num: number) => {
+  let newNum = parseFloat(num.toFixed(3))
+  let multiply100 = newNum * 100
+  multiply100 = parseFloat(multiply100.toFixed(3))
+  let result = Math.floor(multiply100) / 100;
+  return result
+}
+let roundup = (num: number) => {
+  let newNum = parseFloat(num.toFixed(3))
+  let multiply100 = newNum * 100
+  multiply100 = parseFloat(multiply100.toFixed(3))
+  let result = Math.ceil(multiply100) / 100;
+  return result
+}
+
 export const findZeroRemaining = async (req: Request, res: Response) => {
   let results = await Invoice.aggregate([{
     $group: {
@@ -283,10 +298,16 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   console.log("receipts", receipts.length)
   let count = 0
   for(const elem of found){
-    console.log("old:", elem.receipt.debtText, "new:", elem.newdebtText)
-    if(elem.receipt.debtText===elem.newdebtText) count++
+      if(elem.newdebtText==="Invalid Date") elem.newdebtText = "-"
+      console.log("old:", elem.receipt.debtText, "new:", elem.newdebtText)
+      if(elem.receipt.debtText===elem.newdebtText) count++
     try {
       elem.receipt.debtText = elem.newdebtText
+      if(elem.receipt.debtText === "-") {
+        elem.receipt.debtAmount = 0
+        elem.receipt.debtVat = 0
+      }
+      console.log("saving...", elem.receipt.debtText)
       await elem.receipt.save()
     } catch (error) {
       console.log(error)
@@ -295,4 +316,29 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   // console.log("map", receipts.map((r:any)=>r.sequence))
   console.log("done " + count)
   res.send("done " + count)
+}
+
+export const cleanTotalAmountForReceipt = async (req: Request, res: Response) => {
+  
+  let paymentStart = DateTime.fromObject({ day: 1, month: 10, year: 2021 }).plus({ month: 2 }).startOf('day').toJSDate()
+  let paymentEnd = DateTime.fromObject({ day: 1, month: 1, year: 2022 }).plus({ month: 2 }).endOf('month').endOf('day').toJSDate()
+  let receipts = await Receipt.find({
+    paymentDate: {
+      $gte: paymentStart,
+      $lte: paymentEnd
+    },
+  }).exec()
+  for(const receipt of receipts){
+    let invoice = await Invoice.findOne({sequence:receipt.invoiceNumber}).exec()
+    invoice = JSON.parse(JSON.stringify(invoice))
+    // if(receipt.sequence==="642002838") console.log(invoice)
+    receipt.totalAmount = invoice.totalAmount
+    receipt.debtAmount = invoice.debtAmount
+    receipt.debtVat = rounddown(invoice.debtAmount * 0.07)
+    receipt.totalAmount = invoice.totalAmount
+    let result = await receipt.save()
+    console.log(result)
+  }
+  
+  res.send("done cleanTotalAmountForReceipt")
 }

@@ -828,6 +828,7 @@ let display0 = (invoices: Array<any>) => {
   }
 }
 
+
 let generatePaymentMonth = (invoices: Array<any>) => {
   let debts = invoices
   let mapDebts = debts.map(debt=>({month:debt.month,year:debt.year,yearMonth:parseInt(String(debt.year)+String(debt.month).padStart(2,'0'))}))
@@ -866,6 +867,7 @@ let generatePaymentMonth = (invoices: Array<any>) => {
     debtText:finalDebtText
   }
 }
+
 
 let display1 = (debt: Array<any>) => {
   let debtText = ""
