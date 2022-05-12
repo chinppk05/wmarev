@@ -18,4 +18,6 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}/approve/receipt/`, ctrl.approvalApprovedReceipt)
   app.post(`/api/v1/${endpoint}/sign/receipt/`, ctrl.signReceipt)
   app.post(`/api/v1/${endpoint}/print/receipt/`, ctrl.printReceipt)
+  app.post(`/api/v1/${endpoint}/create/receipt/v3/`, ctrl.createReceiptV3)
+
 }

@@ -56,7 +56,7 @@ const schema = new Schema({
   paymentDate: Date,
   isNextStage: Boolean,
   processing: Boolean,
-
+  paids:[Object],
 
   isRequested: { type: Boolean, default: false },
   isApproved: { type: Boolean, default: false },
