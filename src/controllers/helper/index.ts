@@ -303,6 +303,10 @@ export const restoreDebtText = async (req: Request, res: Response) => {
       if(elem.receipt.debtText===elem.newdebtText) count++
     try {
       elem.receipt.debtText = elem.newdebtText
+      if(elem.receipt.debtText === "-") {
+        elem.receipt.debtAmount = 0
+        elem.receipt.debtVat = 0
+      }
       console.log("saving...", elem.receipt.debtText)
       await elem.receipt.save()
     } catch (error) {
