@@ -274,7 +274,7 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   worksheet.eachRow((row, rn) => {
     console.log(rn)
     let finding = receipts.find((receipt:any) => (receipt.sequence === row.getCell("C").text&&receipt.meter === row.getCell("A").text))
-    if(finding) found.push({receipt:finding, debtText:row.getCell("D").text})
+    if(finding) found.push({receipt:finding, newdebtText:row.getCell("D").text})
     else notfound.push(row.getCell("C").text)
   })
 
@@ -282,11 +282,15 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   console.log("notfound", notfound.length)
   console.log("receipts", receipts.length)
   let count = 0
-  for(const receipt of found){
-    console.log("old:", receipt.receipt.debtText, "new:", receipt.debtText)
-    if(receipt.receipt.debtText===receipt.debtText) count++
-    // receipt.debtText = receipt.debtText
-    // receipt.save()
+  for(const elem of found){
+    console.log("old:", elem.receipt.debtText, "new:", elem.newdebtText)
+    if(elem.receipt.debtText===elem.newdebtText) count++
+    try {
+      elem.receipt.debtText = elem.newdebtText
+      await elem.receipt.save()
+    } catch (error) {
+      console.log(error)
+    }
   }
   // console.log("map", receipts.map((r:any)=>r.sequence))
   console.log("done " + count)
