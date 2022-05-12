@@ -180,8 +180,8 @@ export const restoreInvoice = async (req: Request, res: Response) => {
     let { month, year, meter } = invoice
     console.log({ month, year, meter })
     let receiptOnDB = await Receipt.findOne({ month, year, meter }).exec()
-    console.log({meter:receiptOnDB.meter,sequence:receiptOnDB.sequence})
-    
+    console.log({ meter: receiptOnDB.meter, sequence: receiptOnDB.sequence })
+
     invoice.receipts = [receiptOnDB.sequence]
     invoice.save()
   }
@@ -245,6 +245,48 @@ export const restoreInvoiceFirstRun = async (req: Request, res: Response) => {
   }
   console.log("length found", found.length)
   console.log("length notfound", notfound.length)
+
+  res.send("done")
+}
+
+
+
+
+import Excel, { Worksheet } from "exceljs"
+export const restoreDebtText = async (req: Request, res: Response) => {
+  let i = 0
+  console.log("debt text restore")
+  let paymentStart = DateTime.fromObject({ day: 1, month: 10, year: 2021 }).plus({ month: 2 }).startOf('day').toJSDate()
+  let paymentEnd = DateTime.fromObject({ day: 1, month: 1, year: 2022 }).plus({ month: 2 }).endOf('month').endOf('day').toJSDate()
+  let receipts = await Receipt.find({
+    paymentDate: {
+      $gte: paymentStart,
+      $lte: paymentEnd
+    },
+  }).exec()
+  const workbook = new Excel.Workbook();
+  let path = __dirname + "/fix_002.xlsx";
+  console.log(path)
+  await workbook.xlsx.readFile(path);
+  let worksheet = await workbook.getWorksheet("Receipts")
+  let found:Array<any> = []
+  let notfound: Array<any> = []
+  worksheet.eachRow((row, rn) => {
+    console.log(rn)
+    let finding = receipts.find((receipt:any) => (receipt.sequence === row.getCell("C").text&&receipt.meter === row.getCell("A").text))
+    if(finding) found.push({receipt:finding, debtText:row.getCell("D").text})
+    else notfound.push(row.getCell("C").text)
+  })
+
+  console.log("found", found.length)
+  console.log("notfound", notfound.length)
+  console.log("receipts", receipts.length)
+  for(const receipt of found){
+    console.log("old:", receipt.debtText, "new:", receipt.debtText)
+    // receipt.debtText = receipt.debtText
+    // receipt.save()
+  }
+  // console.log("map", receipts.map((r:any)=>r.sequence))
 
   res.send("done")
 }

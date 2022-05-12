@@ -10,6 +10,7 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}/receipt-sequence-temp`, ctrl.receiptSequenceTemp)
   app.post(`/api/v1/${endpoint}/receipt-invoice-map`, ctrl.receiptInvoiceMap)
   app.post(`/api/v1/${endpoint}/invoice-restore`, ctrl.restoreInvoice)
+  app.post(`/api/v1/${endpoint}/receipt-debttext-restore`, ctrl.restoreDebtText)
   
   
 }
