@@ -131,7 +131,8 @@ export const removeMany = (req: Request, res: Response) => {
   let ids = list.map(el => mongoose.Types.ObjectId(el))
   DBModel.find({ _id: { $in: ids } }).then((data1: any) => {
     let payments = _.flatten(data1.map((d:any)=>d.invoices))
-    Payment.updateMany({_id:  { $in: payments }},{$set:{isNextStage:false}}).then((data2: any) => {
+    console.log(payments)
+    Payment.updateMany({sequence:  { $in: payments }},{$set:{isNextStage:false}}).then((data2: any) => {
       DBModel.deleteMany({ _id: { $in: ids } }).then((data: any) => {
         res.send(data);
       });

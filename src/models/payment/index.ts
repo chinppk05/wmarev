@@ -42,7 +42,6 @@ const schema = new Schema({
 
   billAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   excelNum: {type:Number},
-
   
   printDate: Date,
   calculationType: String,

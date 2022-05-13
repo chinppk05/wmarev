@@ -671,6 +671,113 @@ export const printReceipt = async (req: Request, res: Response) => {
   });
 }
 
+export const createReceiptV3 = async (req: Request, res: Response) => {
+  try {
+    var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    let list: Array<{ id: string, type: string, meter: string, paymentDate: string, paids: Array<any>, invoices: [string] }> = req.body.list
+    var options = { upsert: true, new: true, useFindAndModify: false };
+    let payments = await Payment.find({ _id: { $in: list.map(o => o.id) } }).sort({excelNum:1}).lean().exec()
+    console.log("ok")
+    for(const item of list){
+      console.log('what', item.id)
+      try {
+        let payment = await Payment.findById(item.id).exec()
+        // console.log(payment)
+        let leanPayment = JSON.parse(JSON.stringify(payment))
+        delete leanPayment._id
+        delete leanPayment.getSequence
+        try {
+          // console.log(item.invoices)
+          let invoices = await Invoice.find({sequence:{$in:item.invoices}}).sort({year:1,month:1})
+          if(item.type==="separate"){ // กรณีจัดทำแบบแยก
+            let paymentDate_minus_2 = DateTime.fromISO(item.paymentDate).set({day:15}).startOf('days').minus({month:2})
+            let paid:any = item.paids[0]
+            let invoiceDate = DateTime.fromObject({year:paid.year-543,month:paid.month}).set({day:15}).startOf('days')
+            if(paymentDate_minus_2.equals(invoiceDate)) {
+              let receipt = new Receipt({
+                ...item,
+                ...leanPayment,
+                totalAmount:((invoices[0].totalAmount)??0) - ((leanPayment.vat)??0),
+                debtAmount:0,
+                debtVat:0,
+                debtText: "-",
+                notes:"separate"
+              })
+              let saveResult1 = await receipt.save()
+              console.log('Result1', {saveResult1})
+            } else { //จัดทำแบบแยก เฉพาะเดือนค้าง
+              let receipt = new Receipt({
+                ...item,
+                year: payment.year,
+                month: payment.month,
+                code: payment.code,
+                debtText: generatePaymentMonth(invoices).debtText,
+                debtAmount:((invoices[0].totalAmount)??0) - ((leanPayment.vat)??0),
+                debtVat:(leanPayment.vat??0)
+              })
+              let saveResult2 = await receipt.save()
+              console.log('Result2', {saveResult2})
+            }
+          } else { // กรณีจัดทำแบบรวม :TODO
+            let check = DateTime.fromISO(item.paymentDate).set({day:15}).minus({month:2}).toObject()
+            let { month, year } = check
+            // console.log(month,year)
+            // console.log({month, year:year+543})
+            // console.log(item.paids)
+            let mapCheck = item.paids.find(paid=>paid.month==month&&paid.year==year+543)
+            if(mapCheck!=undefined){ // จัดทำแบบรวม มีเดือนปัจจุบันด้วย
+              let debtAmount = invoices.map((invoice:any)=>invoice.totalAmount??0).reduce((a:number,b:number)=>a+b,0)
+              let debtVat = invoices.map((invoice:any)=>invoice.vat??0).reduce((a:number,b:number)=>a+b,0)
+              let currentAmount = invoices.filter((inv:any)=>inv.month==month&&inv.year==year+543).map((invoice:any)=>invoice.totalAmount??0).reduce((a:number,b:number)=>a+b,0)
+              let currentVat = invoices.filter((inv:any)=>inv.month==month&&inv.year==year+543).map((invoice:any)=>invoice.vat??0).reduce((a:number,b:number)=>a+b,0)
+              let debtInvoices = invoices.filter((inv:any)=>!(inv.month==month)&&(inv.year==(year+543)))
+              let receipt = new Receipt({
+                ...item,
+                qty: payment.qty,
+                year: payment.year,
+                month: payment.month,
+                code: payment.code,
+                debtText: generatePaymentMonth(debtInvoices).debtText,
+                debtAmount: (debtAmount - debtVat) - (currentAmount - currentVat),
+                debtVat: debtVat - currentVat,
+                totalAmount: currentAmount - currentVat,
+                vat: currentVat
+              })
+              // console.log({debtInvoices})
+              let saveResult2 = await receipt.save()
+              // console.log('Result2', {saveResult2})
+            } else { // จัดทำแบบรวม มีแต่เดือนค้าง
+              let debtAmount = invoices.map((invoice:any)=>invoice.totalAmount??0).reduce((a:number,b:number)=>a+b,0)
+              let debtVat = invoices.map((invoice:any)=>invoice.vat??0).reduce((a:number,b:number)=>a+b,0)
+              let receipt = new Receipt({
+                ...item,
+                year: payment.year,
+                month: payment.month,
+                code: payment.code,
+                debtText: generatePaymentMonth(invoices).debtText,
+                debtAmount: debtAmount - debtVat,
+                debtVat: debtVat
+              })
+              let saveResult2 = await receipt.save()
+              console.log('Result2', {saveResult2})
+            }
+          }
+        } catch (error) {
+          console.log(error)
+          
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    res.send({
+      status:"done"
+    })    
+  } catch(error){
+
+  }
+}
+
 /*
 export const createTestUsage = async (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
@@ -786,6 +893,45 @@ let display0 = (invoices: Array<any>) => {
   }
 }
 
+
+let generatePaymentMonth = (invoices: Array<any>) => {
+  let debts = invoices
+  let mapDebts = debts.map(debt=>({month:debt.month,year:debt.year,yearMonth:parseInt(String(debt.year)+String(debt.month).padStart(2,'0'))}))
+  let sortDebts = mapDebts.sort((a,b)=>a.yearMonth-b.yearMonth)
+  let debtText:Array<any> = []
+  let arrayDebtText:Array<any> = []
+  let latest:any = {}
+  for(const [i,debt] of sortDebts.entries()){
+    let current = DateTime.fromObject({
+      year: debt.year-543,
+      month: debt.month,
+      day: 10
+    })
+    let formatDate = current.reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
+    debtText.push({text:formatDate, gap: ((latest.yearMonth??0) - (debt.yearMonth??0))})
+    latest = debt
+  }
+  console.log(debts[0])
+  for(const [i,debt] of debtText.entries()){
+    console.log(debt)
+    if(debt.gap===-1){
+      arrayDebtText.push({text:"-"})
+      try {
+        if(debtText[i+1].gap!==-1) arrayDebtText.push({text:debt.text})
+      } catch (error) {
+        
+      }
+    } else {
+      arrayDebtText.push({text:debt.text})
+    }
+  }
+  let finalDebtAmount = debts.reduce((acc,debt)=>acc+debt.totalAmount,0)
+  let finalDebtText = arrayDebtText.map(el=>el.text).join("/").replace(/\/-(.*?)([ก-ฮ])/g,"-$2")
+  return {
+    debtAmount:finalDebtAmount,
+    debtText:finalDebtText
+  }
+}
 
 
 let display1 = (debt: Array<any>) => {
