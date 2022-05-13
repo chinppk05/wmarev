@@ -378,23 +378,35 @@ export const cleanTotalAmountForReceipt = async (req: Request, res: Response) =>
       let new_totalAmount = elem.totalAmount
       let new_vat = elem.vat
       let leanReceipt = JSON.parse(JSON.stringify(receipt))
+      let fixed = false
       if (leanReceipt !== null) {
         if (leanReceipt.debtAmount !== new_debtAmount) {
           console.log("debtAmount !==", leanReceipt.debtAmount, new_debtAmount)
+          receipt.debtAmount = new_debtAmount
+          fixed = true
           count1++
         }
         if (leanReceipt.debtVat !== new_debtVat) {
           console.log("debtVat !==", leanReceipt.debtVat, new_debtVat)
+          receipt.debtVat = new_debtVat
+          fixed = true
           count2++
         }
         if (leanReceipt.totalAmount !== new_totalAmount) {
           console.log("totalAmount !==", leanReceipt.totalAmount, new_totalAmount)
+          receipt.totalAmount = new_totalAmount
+          fixed = true
           count3++
         }
         if (leanReceipt.vat !== new_vat) {
           console.log("vat !==", leanReceipt.vat, new_vat)
+          receipt.vat = new_vat
+          fixed = true
           count4++
         }
+      }
+      if(fixed){
+        let saveResult = await receipt.save()
       }
 
     } else {
