@@ -284,12 +284,12 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   console.log(path)
   await workbook.xlsx.readFile(path);
   let worksheet = await workbook.getWorksheet("Receipts")
-  let found:Array<any> = []
+  let found: Array<any> = []
   let notfound: Array<any> = []
   worksheet.eachRow((row, rn) => {
     console.log(rn)
-    let finding = receipts.find((receipt:any) => (receipt.sequence === row.getCell("C").text&&receipt.meter === row.getCell("A").text))
-    if(finding) found.push({receipt:finding, newdebtText:row.getCell("D").text})
+    let finding = receipts.find((receipt: any) => (receipt.sequence === row.getCell("C").text && receipt.meter === row.getCell("A").text))
+    if (finding) found.push({ receipt: finding, newdebtText: row.getCell("D").text })
     else notfound.push(row.getCell("C").text)
   })
 
@@ -297,13 +297,13 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   console.log("notfound", notfound.length)
   console.log("receipts", receipts.length)
   let count = 0
-  for(const elem of found){
-      if(elem.newdebtText==="Invalid Date") elem.newdebtText = "-"
-      console.log("old:", elem.receipt.debtText, "new:", elem.newdebtText)
-      if(elem.receipt.debtText===elem.newdebtText) count++
+  for (const elem of found) {
+    if (elem.newdebtText === "Invalid Date") elem.newdebtText = "-"
+    console.log("old:", elem.receipt.debtText, "new:", elem.newdebtText)
+    if (elem.receipt.debtText === elem.newdebtText) count++
     try {
       elem.receipt.debtText = elem.newdebtText
-      if(elem.receipt.debtText === "-") {
+      if (elem.receipt.debtText === "-") {
         elem.receipt.debtAmount = 0
         elem.receipt.debtVat = 0
       }
@@ -318,8 +318,8 @@ export const restoreDebtText = async (req: Request, res: Response) => {
   res.send("done " + count)
 }
 
-export const cleanTotalAmountForReceipt = async (req: Request, res: Response) => {
-  
+export const cleanTotalAmountForReceipt_OBSOLETE = async (req: Request, res: Response) => {
+
   let paymentStart = DateTime.fromObject({ day: 1, month: 10, year: 2021 }).plus({ month: 2 }).startOf('day').toJSDate()
   let paymentEnd = DateTime.fromObject({ day: 1, month: 1, year: 2022 }).plus({ month: 2 }).endOf('month').endOf('day').toJSDate()
   let receipts = await Receipt.find({
@@ -328,8 +328,8 @@ export const cleanTotalAmountForReceipt = async (req: Request, res: Response) =>
       $lte: paymentEnd
     },
   }).exec()
-  for(const receipt of receipts){
-    let invoice = await Invoice.findOne({sequence:receipt.invoiceNumber}).exec()
+  for (const receipt of receipts) {
+    let invoice = await Invoice.findOne({ sequence: receipt.invoiceNumber }).exec()
     invoice = JSON.parse(JSON.stringify(invoice))
     // if(receipt.sequence==="642002838") console.log(invoice)
     receipt.totalAmount = invoice.totalAmount
@@ -339,6 +339,119 @@ export const cleanTotalAmountForReceipt = async (req: Request, res: Response) =>
     let result = await receipt.save()
     console.log(result)
   }
-  
+
+  res.send("done cleanTotalAmountForReceipt")
+}
+
+
+export const cleanTotalAmountForReceipt = async (req: Request, res: Response) => {
+
+  const workbook = new Excel.Workbook();
+  let path = __dirname + "/fix_003.xlsx";
+  console.log(path)
+  await workbook.xlsx.readFile(path);
+  let worksheet = await workbook.getWorksheet("Receipts")
+  let prep: Array<any> = []
+  let found: Array<any> = []
+  let notfound: Array<any> = []
+  let count1 = 0
+  let count2 = 0
+  let count3 = 0
+  let count4 = 0
+  worksheet.eachRow(async (row, rn) => {
+    prep.push({
+      sequence: row.getCell("C").text,
+      meter: row.getCell("A").text,
+      debtAmount: row.getCell("K").value,
+      debtVat: row.getCell("L").value,
+      totalAmount: row.getCell("M").value,
+      vat: row.getCell("N").value
+    })
+  })
+
+  for (const elem of prep) {
+    let receipt = await Receipt.findOne({ sequence: elem.sequence, meter: elem.meter }).exec()
+    if (receipt !== undefined) {
+      found.push({ sequence: elem.sequence })
+      let new_debtAmount = elem.debtAmount
+      let new_debtVat = elem.debtVat
+      let new_totalAmount = elem.totalAmount
+      let new_vat = elem.vat
+      let leanReceipt = JSON.parse(JSON.stringify(receipt))
+      if (leanReceipt !== null) {
+        if (leanReceipt.debtAmount !== new_debtAmount) {
+          console.log("debtAmount !==", leanReceipt.debtAmount, new_debtAmount)
+          count1++
+        }
+        if (leanReceipt.debtVat !== new_debtVat) {
+          console.log("debtVat !==", leanReceipt.debtVat, new_debtVat)
+          count2++
+        }
+        if (leanReceipt.totalAmount !== new_totalAmount) {
+          console.log("totalAmount !==", leanReceipt.totalAmount, new_totalAmount)
+          count3++
+        }
+        if (leanReceipt.vat !== new_vat) {
+          console.log("vat !==", leanReceipt.vat, new_vat)
+          count4++
+        }
+      }
+
+    } else {
+      notfound.push({ sequence: elem.sequence })
+    }
+  }
+
+  // let receipt = await Receipt.findOne({ sequence: row.getCell("C").text })
+  // if (receipt !== undefined) {
+  //   found.push({ sequence: row.getCell("C").text })
+  // let new_debtAmount = row.getCell("K").value
+  // let new_debtVat = row.getCell("L").value
+  // let new_totalAmount = row.getCell("M").value
+  // let new_vat = row.getCell("N").value
+
+  // if (receipt.debtAmount !== new_debtAmount) {
+  //   console.log("debtAmount !==", receipt.debtAmount, new_debtAmount)
+  //   count1++
+  // }
+  // if (receipt.debtVat !== new_debtVat) {
+  //   console.log("debtVat !==", receipt.debtVat, new_debtVat)
+  //   count2++
+  // }
+  // if (receipt.totalAmount !== new_totalAmount) {
+  //   console.log("totalAmount !==", receipt.totalAmount, new_totalAmount)
+  //   count3++
+  // }
+  // if (receipt.vat !== new_vat) {
+  //   console.log("vat !==", receipt.vat, new_vat)
+  //   count4++
+  // }
+  // console.log(receipt)
+  // }
+  // else {
+  //   notfound.push({ sequence: row.getCell("C").text })
+  // }
+  console.log(found.length, notfound.length)
+  console.log(count1, count2, count3, count4)
+  // let paymentStart = DateTime.fromObject({ day: 1, month: 10, year: 2021 }).plus({ month: 2 }).startOf('day').toJSDate()
+  // let paymentEnd = DateTime.fromObject({ day: 1, month: 1, year: 2022 }).plus({ month: 2 }).endOf('month').endOf('day').toJSDate()
+  // let receipts = await Receipt.find({
+  //   paymentDate: {
+  //     $gte: paymentStart,
+  //     $lte: paymentEnd
+  //   },
+  // }).exec()
+  // for(const receipt of receipts){
+  //   let invoice = await Invoice.findOne({sequence:receipt.invoiceNumber}).exec()
+  //   invoice = JSON.parse(JSON.stringify(invoice))
+  //   // if(receipt.sequence==="642002838") console.log(invoice)
+  //   receipt.totalAmount = invoice.totalAmount
+  //   receipt.debtAmount = invoice.debtAmount
+  //   receipt.debtVat = rounddown(invoice.debtAmount * 0.07)
+  //   receipt.totalAmount = invoice.totalAmount
+  //   let result = await receipt.save()
+  //   console.log(result)
+  // }
+
   res.send("done cleanTotalAmountForReceipt")
 }
