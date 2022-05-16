@@ -155,7 +155,7 @@ export const createInvoice = async (req: Request, res: Response) => {
       debtAmount,
       invoiceDate: invoiceDate,
       vat,
-      debtDetail
+      debtDetail,
     }
     delete result.sequence
     if(result.invoiceSequence!==undefined) result.sequence = result.invoiceSequence
@@ -686,6 +686,7 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
         let leanPayment = JSON.parse(JSON.stringify(payment))
         delete leanPayment._id
         delete leanPayment.getSequence
+        delete leanPayment.sequence
         try {
           // console.log(item.invoices)
           let invoices = await Invoice.find({sequence:{$in:item.invoices}}).sort({year:1,month:1})
@@ -704,18 +705,22 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
                 notes:"separate"
               })
               let saveResult1 = await receipt.save()
+              let updateInvoice = await Invoice.findOneAndUpdate({sequence:{$in:item.invoices}},{$set:{isPaid:true}})
               console.log('Result1', {saveResult1})
+              // console.log({updateInvoice})
             } else { //จัดทำแบบแยก เฉพาะเดือนค้าง
               let receipt = new Receipt({
                 ...item,
+                ...leanPayment,
                 year: payment.year,
                 month: payment.month,
                 code: payment.code,
                 debtText: generatePaymentMonth(invoices).debtText,
                 debtAmount:((invoices[0].totalAmount)??0) - ((leanPayment.vat)??0),
-                debtVat:(leanPayment.vat??0)
+                debtVat:(leanPayment.vat??0),
               })
               let saveResult2 = await receipt.save()
+              let updateInvoice = await Invoice.findOneAndUpdate({sequence:{$in:item.invoices}},{$set:{isPaid:true}})
               console.log('Result2', {saveResult2})
             }
           } else { // กรณีจัดทำแบบรวม :TODO
@@ -743,8 +748,13 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
                 totalAmount: currentAmount - currentVat,
                 vat: currentVat
               })
-              // console.log({debtInvoices})
+              console.log({debtInvoices})
               let saveResult2 = await receipt.save()
+              // let updateInvoice = await Invoice.findOneAndUpdate({sequence:{$in:item.invoices}},{$set:{isPaid:true}})
+              for(const invoice of item.invoices){
+                let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true}})
+                console.log({updateInvoice})
+              }
               // console.log('Result2', {saveResult2})
             } else { // จัดทำแบบรวม มีแต่เดือนค้าง
               let debtAmount = invoices.map((invoice:any)=>invoice.totalAmount??0).reduce((a:number,b:number)=>a+b,0)
@@ -759,6 +769,11 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
                 debtVat: debtVat
               })
               let saveResult2 = await receipt.save()
+              // let updateInvoice = await Invoice.findOneAndUpdate({sequence:{$in:item.invoices}},{$set:{isPaid:true}})
+              for(const invoice of item.invoices){
+                let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true}})
+                console.log({updateInvoice})
+              }
               console.log('Result2', {saveResult2})
             }
           }
@@ -914,19 +929,10 @@ let generatePaymentMonth = (invoices: Array<any>) => {
   console.log(debts[0])
   for(const [i,debt] of debtText.entries()){
     console.log(debt)
-    if(debt.gap===-1){
-      arrayDebtText.push({text:"-"})
-      try {
-        if(debtText[i+1].gap!==-1) arrayDebtText.push({text:debt.text})
-      } catch (error) {
-        
-      }
-    } else {
       arrayDebtText.push({text:debt.text})
-    }
   }
   let finalDebtAmount = debts.reduce((acc,debt)=>acc+debt.totalAmount,0)
-  let finalDebtText = arrayDebtText.map(el=>el.text).join("/").replace(/\/-(.*?)([ก-ฮ])/g,"-$2")
+  let finalDebtText = arrayDebtText.map(el=>el.text).join("/")
   return {
     debtAmount:finalDebtAmount,
     debtText:finalDebtText

@@ -72,7 +72,7 @@ schema.pre("save", async function (next: NextFunction) {
 
 
   try {
-    if (this.sequence === undefined) {
+    if (this.sequence === undefined || this.sequence === null) {
       let counter = await Counter.findOneAndUpdate(
         { name: "Invoice", year: budgetYear, category: (self.category ?? "9") },
         { $inc: { sequence: 1 } },
