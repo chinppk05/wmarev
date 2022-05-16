@@ -65,7 +65,7 @@ const schema = new Schema({
     },
   ],
 
-  manuals:[
+  manuals: [
     {
       order: Number,
       enable: Boolean,
@@ -88,6 +88,8 @@ const schema = new Schema({
   qtyYear: Number, //ปีของปริมาณน้ำบำบัด
   newText: String,
   oldText: String,
+  isLeftText: String,
+  isRightText: String,
   areaTotalExpenses: Number,
 
   allocationPerUnit: Number,
@@ -95,8 +97,8 @@ const schema = new Schema({
   treatmentQty: Number,
   wmaExpenses: Number,
   areaExpenses: Number,
-  totalExpenses: { type: Number, default: -1 },
-  totalIncome: { type: Number, default: -1 },
+  totalExpenses: { type: Number, default: 0 },
+  totalIncome: { type: Number, default: 0 },
   advanceAmount: Number,
   eAdvanceAmount: Number,
 
@@ -105,17 +107,18 @@ const schema = new Schema({
 
   remainingAmount: Number,
   eRemainingAmount: Number,
-
+  modificationSum: Number,
+  modificationeSum: Number,
 
   //สตง.รับรอง
   eContributionAmount: Number,
   eTreatmentQty: Number,
   eAllocationPerUnit: Number,
   eAllocationCost: Number,
-  eWmaExpenses: Number,
-  eAreaExpenses: Number,
-  eTotalExpenses: Number,
-  eTotalIncome: Number,
+  eWmaExpenses: { type: Number, default: 0 },
+  eAreaExpenses: { type: Number, default: 0 },
+  eTotalExpenses: { type: Number, default: 0 },
+  eTotalIncome: { type: Number, default: 0 },
 
   eAreaCost01: Number,
   eAreaCost02: Number,
@@ -162,6 +165,7 @@ const schema = new Schema({
   note8: String,
   note9: String,
 
+  display: [String],
   createdIP: String,
   createdAt: Date,
   modifiedAt: Date,
