@@ -18,11 +18,18 @@ export const get = (req: Request, res: Response) => {
     res.send(data)
   })
 }
+export const find = (req: Request, res: Response) => {
+  const { name, category, year } = req.body
+  DBModel.findOne({ name, category, year }).then(function (data: any) {
+    console.log({name,category,year},data)
+    res.send(data)
+  })
+}
 
 export const update = (req: Request, res: Response) => {
   let sid = req.params.id.length != 24 ? '000000000000000000000000' : req.params.id
   let id = mongoose.Types.ObjectId(sid)
-  DBModel.updateOne({ _id: id }, { ...req.body, modifiedAt:new Date(), $inc: { _v: 1 } }).then((data:any) => {
+  DBModel.updateOne({ _id: id }, { ...req.body, modifiedAt: new Date(), $inc: { _v: 1 } }).then((data: any) => {
     res.send(data)
   })
 }

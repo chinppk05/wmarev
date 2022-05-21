@@ -11,6 +11,7 @@ const schema = new Schema({
   date: Date,
   time: Number,
   sequence: { type: String, unique: true },
+  receiptSequence: { type: String, index: true },
   invoiceAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
   invoiceNumber: String,
   amount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
@@ -26,7 +27,7 @@ const schema = new Schema({
   method: String,
   period: String,
   isNextStage: Boolean,
-  process:Boolean,
+  process: Boolean,
   invoice: { type: ObjectId, ref: 'Invoice' },
   invoices: [{ type: ObjectId, ref: 'Invoice' }],
   usage: { type: ObjectId, ref: 'Usage' },
@@ -41,8 +42,8 @@ const schema = new Schema({
   tax: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
 
   billAmount: { type: Decimal, get: getDecimal, set: setDecimal, default: 0 },
-  excelNum: {type:Number},
-  
+  excelNum: { type: Number },
+
   printDate: Date,
   calculationType: String,
   paymentDate: Date,

@@ -543,6 +543,7 @@ export const createReceiptV2 = async (req: Request, res: Response) => {
         payment.totalAmount = payment.totalAmount/100
         payment.paymentAmount = payment.paymentAmount/100
         payment.invoiceAmount = payment.invoiceAmount/100
+        if(payment.receiptSequence!=undefined) payment.sequence = payment.receiptSequence
         let invoices:Array<any> = []
         if(processType==="combine"){
           let combinedList = payments.filter((pay:any)=>pay.excelNum===payment.excelNum)
