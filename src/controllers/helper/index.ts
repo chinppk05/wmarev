@@ -405,7 +405,7 @@ export const cleanTotalAmountForReceipt = async (req: Request, res: Response) =>
           count4++
         }
       }
-      if(fixed){
+      if (fixed) {
         let saveResult = await receipt.save()
       }
 
@@ -467,3 +467,110 @@ export const cleanTotalAmountForReceipt = async (req: Request, res: Response) =>
 
   res.send("done cleanTotalAmountForReceipt")
 }
+
+
+let exception = ['12170463906'] // สำนักงานสรรพสามิตพื้นที่กระบี่
+
+export const revertExcelInvoice = async (req: Request, res: Response) => {
+
+  const workbook = new Excel.Workbook();
+  let path = __dirname + "/invoice_fix_001.xlsx";
+  console.log(path)
+  await workbook.xlsx.readFile(path);
+  let worksheet = await workbook.getWorksheet("Sheet1")
+  let preps: Array<any> = []
+  let notfound: Array<any> = []
+  worksheet.eachRow(async (row, rn) => {
+    if (rn >= 3) {
+      preps.push({
+        sequence: row.getCell("B").text,
+        meter: row.getCell("C").text,
+        name: row.getCell("D").text,
+        debtAmount: row.getCell("G").value,
+        debtText: row.getCell("F").value,
+      })
+    }
+  })
+  console.log(preps.length)
+  let i = 0
+  for (const elem of preps) {
+    let vat = (elem.debtAmount * 0.07)
+    if (exception.includes(elem.meter)) {
+      vat = roundup(vat)
+    } else {
+      vat = rounddown(vat)
+    }
+    let invoice = await Invoice.findOne({ sequence: elem.sequence, meter: elem.meter, name: elem.name }).exec()
+    if (invoice) {
+      console.log("found", ++i, "of", preps.length, vat)
+      invoice.debtText = elem.debtText
+      invoice.debtAmount = elem.debtAmount
+    } else {
+      notfound.push({
+        sequence: elem.sequence,
+        meter: elem.meter
+      })
+    }
+  }
+  console.log("done!")
+  console.log({ notfound })
+  res.send("done")
+}
+export const revertExcelReceipt = async (req: Request, res: Response) => {
+
+  const workbook = new Excel.Workbook();
+  let path = __dirname + "/receipt_fix_001.xlsx";
+  console.log(path)
+  await workbook.xlsx.readFile(path);
+  let worksheet = await workbook.getWorksheet("Sheet1")
+  let preps: Array<any> = []
+  let notfound: Array<any> = []
+  worksheet.eachRow(async (row, rn) => {
+    if (rn >= 3) {
+      preps.push({
+        sequence: row.getCell("C").text.replace("wma-",""),
+        meter: row.getCell("D").text,
+        name: row.getCell("E").text,
+        debtAmount: row.getCell("H").value,
+        debtVat: row.getCell("I").value,
+        debtText: row.getCell("G").value,
+        // invoiceAmount: row.getCell("L").value,
+        invoiceAmount: row.getCell("P").value,
+        paymentAmount: row.getCell("Q").value,
+      })
+    }
+  })
+  console.log(preps.length)
+  let i = 0
+  for (const elem of preps) {
+    let receipt = await Receipt.findOne({ sequence: elem.sequence, meter: elem.meter }).exec()
+    if (receipt) {
+      // console.log("found", ++i, "of", preps.length)
+      // console.log(elem.debtText,elem.debtAmount,elem.debtVat)
+      
+      let paymentAmount = elem.paymentAmount
+      if(elem.paymentAmount==null){
+        paymentAmount = elem.invoiceAmount 
+      }
+      if((elem.invoiceAmount + 3.55) < elem.paymentAmount){
+        paymentAmount = elem.invoiceAmount
+      }
+      receipt.debtText = elem.debtText
+      receipt.debtAmount = elem.debtAmount
+      receipt.debtVat = elem.debtVat
+      receipt.invoiceAmount =  elem.invoiceAmount
+      receipt.paymentAmount = paymentAmount
+      let save = await receipt.save()
+    } else {
+      notfound.push({
+        sequence: elem.sequence,
+        meter: elem.meter
+      })
+    }
+  }
+  console.log("done!")
+  console.log({ notfound })
+  console.log("notfound length", notfound.length)
+  res.send("done")
+}
+
