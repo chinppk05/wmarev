@@ -678,9 +678,7 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
     let list: Array<{ id: string, type: string, meter: string, paymentDate: string, paids: Array<any>, invoices: [string] }> = req.body.list
     var options = { upsert: true, new: true, useFindAndModify: false };
     let payments = await Payment.find({ _id: { $in: list.map(o => o.id) } }).sort({excelNum:1}).lean().exec()
-    console.log("ok")
     for(const item of list){
-      console.log('what', item.id)
       try {
         let payment = await Payment.findById(item.id).exec()
         // console.log(payment)
@@ -706,9 +704,10 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
                 notes:"separate"
               })
               let saveResult1 = await receipt.save()
-              let updateInvoice = await Invoice.findOneAndUpdate({sequence:{$in:item.invoices}},{$set:{isPaid:true}})
-              console.log('Result1', {saveResult1})
-              // console.log({updateInvoice})
+              for(const invoice of item.invoices){
+                let newReceipt = await Receipt.findById(saveResult1._id).exec()
+                let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true, receipts:[newReceipt.sequence]}})
+              }
             } else { //จัดทำแบบแยก เฉพาะเดือนค้าง
               let receipt = new Receipt({
                 ...item,
@@ -721,15 +720,14 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
                 debtVat:(leanPayment.vat??0),
               })
               let saveResult2 = await receipt.save()
-              let updateInvoice = await Invoice.findOneAndUpdate({sequence:{$in:item.invoices}},{$set:{isPaid:true}})
-              console.log('Result2', {saveResult2})
+              for(const invoice of item.invoices){
+                let newReceipt = await Receipt.findById(saveResult2._id).exec()
+                let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true, receipts:[newReceipt.sequence]}})
+              }
             }
           } else { // กรณีจัดทำแบบรวม :TODO
             let check = DateTime.fromISO(item.paymentDate).set({day:15}).minus({month:2}).toObject()
             let { month, year } = check
-            // console.log(month,year)
-            // console.log({month, year:year+543})
-            // console.log(item.paids)
             let mapCheck = item.paids.find(paid=>paid.month==month&&paid.year==year+543)
             if(mapCheck!=undefined){ // จัดทำแบบรวม มีเดือนปัจจุบันด้วย
               let debtAmount = invoices.map((invoice:any)=>invoice.totalAmount??0).reduce((a:number,b:number)=>a+b,0)
@@ -749,14 +747,11 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
                 totalAmount: currentAmount - currentVat,
                 vat: currentVat
               })
-              console.log({debtInvoices})
               let saveResult2 = await receipt.save()
-              // let updateInvoice = await Invoice.findOneAndUpdate({sequence:{$in:item.invoices}},{$set:{isPaid:true}})
               for(const invoice of item.invoices){
-                let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true}})
-                console.log({updateInvoice})
+                let newReceipt = await Receipt.findById(saveResult2._id).exec()
+                let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true, receipts:[newReceipt.sequence]}})
               }
-              // console.log('Result2', {saveResult2})
             } else { // จัดทำแบบรวม มีแต่เดือนค้าง
               let debtAmount = invoices.map((invoice:any)=>invoice.totalAmount??0).reduce((a:number,b:number)=>a+b,0)
               let debtVat = invoices.map((invoice:any)=>invoice.vat??0).reduce((a:number,b:number)=>a+b,0)
@@ -770,10 +765,9 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
                 debtVat: debtVat
               })
               let saveResult2 = await receipt.save()
-              // let updateInvoice = await Invoice.findOneAndUpdate({sequence:{$in:item.invoices}},{$set:{isPaid:true}})
               for(const invoice of item.invoices){
-                let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true}})
-                console.log({updateInvoice})
+                let newReceipt = await Receipt.findById(saveResult2._id).exec()
+                let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true, receipts:[newReceipt.sequence]}})
               }
               console.log('Result2', {saveResult2})
             }

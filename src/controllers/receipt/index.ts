@@ -4,6 +4,7 @@ import Payment from '../../models/payment/index'
 import Counter from '../../models/counter/index'
 import mongoose from "mongoose";
 import * as _ from "lodash"
+import Invoice from '../../models/invoice';
 
 export const create = (req: Request, res: Response) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -126,18 +127,24 @@ export const remove = (req: Request, res: Response) => {
   })
 }
 
-export const removeMany = (req: Request, res: Response) => {
+export const removeMany = async (req: Request, res: Response) => {
   let list: Array<string> = req.body.list
   let ids = list.map(el => mongoose.Types.ObjectId(el))
-  DBModel.find({ _id: { $in: ids } }).then((data1: any) => {
-    let payments = _.flatten(data1.map((d:any)=>d.invoices))
-    console.log(payments)
-    Payment.updateMany({sequence:  { $in: payments }},{$set:{isNextStage:false}}).then((data2: any) => {
-      DBModel.deleteMany({ _id: { $in: ids } }).then((data: any) => {
-        res.send(data);
-      });
-    })
-  })
+  let receiptsToDelete = await DBModel.find({ _id: { $in: ids } })
+  let payments = _.flatten(receiptsToDelete.map((d: any) => d.invoices))
+  let paymentResult = await Payment.updateMany({ sequence: { $in: payments } }, { $set: { isNextStage: false } })
+  let receiptFound = await DBModel.find({ _id: { $in: ids } })
+  let invoices = await Invoice.find({ $or:receiptFound.map((rf:any)=>({receipts: rf.sequence})) })
+  for(const invoice of invoices){
+    invoice.isPaid = false
+    let save = await invoice.save()
+  }
+  console.log("receiptFound", receiptFound.length)
+  console.log("invoices", invoices.length)
+  console.log("paymentResult", paymentResult.length)
+  let receiptDeleted = await DBModel.deleteMany({ _id: { $in: ids } })
+  console.log("receiptDeleted", receiptDeleted.length)
+  res.send("done");
 };
 
 export const information = (req: Request, res: Response) => {
