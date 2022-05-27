@@ -711,7 +711,7 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
             } else { //จัดทำแบบแยก เฉพาะเดือนค้าง
               let receipt = new Receipt({
                 ...item,
-                ...leanPayment,
+                // ...leanPayment,
                 year: payment.year,
                 month: payment.month,
                 code: payment.code,
@@ -720,6 +720,7 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
                 debtVat:(leanPayment.vat??0),
               })
               let saveResult2 = await receipt.save()
+              // console.log({ saveResult2 })
               for(const invoice of item.invoices){
                 let newReceipt = await Receipt.findById(saveResult2._id).exec()
                 let updateInvoice = await Invoice.findOneAndUpdate({sequence:invoice},{$set:{isPaid:true, receipts:[newReceipt.sequence]}})
