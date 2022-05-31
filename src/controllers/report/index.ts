@@ -1040,26 +1040,72 @@ let mo = (year: number, month: number) => {
   });
 };
 
-let display0 = (debt: Array<any>) => {
-  let debtText = "";
-  var debtAmount = 0;
-  var isMiddle = false;
-  let arr = debt.slice().reverse() as Array<any>;
-  for (let i = 0; i < arr.length; i++) {
-    debtText += DateTime.fromISO(arr[i].dt)
+let display0 = (invoices: Array<any>) => {
+  let debts = invoices.filter(
+    (invoice) => invoice.isPaid === false && invoice.totalAmount > 0
+  );
+  let mapDebts = debts.map((debt) => ({
+    month: debt.month,
+    year: debt.year,
+    yearMonth: parseInt(
+      String(debt.year) + String(debt.month).padStart(2, "0")
+    ),
+  }));
+  let sortDebts = mapDebts.sort((a, b) => a.yearMonth - b.yearMonth);
+  let debtText: Array<any> = [];
+  let arrayDebtText: Array<any> = [];
+  let latest: any = {};
+  let maxYear = Math.max(...sortDebts.map(el=>el.year))
+  let maxYearMonth = Math.max(...sortDebts.map(el=>el.yearMonth))
+  for (const [i, debt] of sortDebts.entries()) {
+    let current = DateTime.fromObject({
+      year: debt.year - 543,
+      month: debt.month,
+      day: 10,
+    });
+    let formatDate = current
       .reconfigure({ outputCalendar: "buddhist" })
       .setLocale("th")
       .toFormat("LLLyy");
-    debtText += "/";
-    let amt = arr[i].rate * arr[i].qty * 100;
-    let res = Math.round(amt + 0.07 * amt);
-    debtAmount += res / 100;
+    let gap = (latest.yearMonth ?? 0) - (debt.yearMonth ?? 0)
+    debtText.push({
+      text: formatDate,
+      yearMonth: debt.yearMonth,
+      gap
+    });
+    latest = debt;
   }
+  for (const [i, debt] of debtText.entries()) {
+    if(debt.yearMonth===maxYearMonth) 
+      arrayDebtText.push({ text: debt.text });
+    else if (debt.gap === -1) {
+      arrayDebtText.push({ text: "-" });
+      try {
+        if (debtText[i + 1].gap !== -1)
+          arrayDebtText.push({ text: debt.text });
+      } catch (error) {}
+    } else {
+      arrayDebtText.push({ text: debt.text });
+    }
+  }
+  let finalDebtAmount = debts.reduce(
+    (acc, debt) => acc + debt.totalAmount,
+    0
+  );
+  let finalDebtText = arrayDebtText
+    .map((el) => el.text)
+    .join(arrayDebtText.length==2?"-":"/")
+    .replace(/\/-(.*?)([ก-ฮ])/g, "-$2");
   return {
-    debtText,
-    debtAmount,
+    debtAmount: finalDebtAmount,
+    debtText: finalDebtText,
+    original: debtText,
+    // debts,
+    maxYear,
+    maxYearMonth
   };
-};
+}
+
 let display2 = (debt: Array<any>) => {
   let debtArray: Array<any> = [];
   var isMiddle = false;

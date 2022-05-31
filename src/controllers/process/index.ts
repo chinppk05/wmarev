@@ -866,42 +866,69 @@ let getInvoice = (year: number, month: number, category: string, categoryType: s
 
 
 let display0 = (invoices: Array<any>) => {
-  let debts = invoices.filter(invoice=>invoice.isPaid===false&&invoice.totalAmount>0)
-  let mapDebts = debts.map(debt=>({month:debt.month,year:debt.year,yearMonth:parseInt(String(debt.year)+String(debt.month).padStart(2,'0'))}))
-  let sortDebts = mapDebts.sort((a,b)=>a.yearMonth-b.yearMonth)
-  let debtText:Array<any> = []
-  let arrayDebtText:Array<any> = []
-  let latest:any = {}
-  for(const [i,debt] of sortDebts.entries()){
+  let debts = invoices.filter(
+    (invoice) => invoice.isPaid === false && invoice.totalAmount > 0
+  );
+  let mapDebts = debts.map((debt) => ({
+    month: debt.month,
+    year: debt.year,
+    yearMonth: parseInt(
+      String(debt.year) + String(debt.month).padStart(2, "0")
+    ),
+  }));
+  let sortDebts = mapDebts.sort((a, b) => a.yearMonth - b.yearMonth);
+  let debtText: Array<any> = [];
+  let arrayDebtText: Array<any> = [];
+  let latest: any = {};
+  let maxYear = Math.max(...sortDebts.map(el=>el.year))
+  let maxYearMonth = Math.max(...sortDebts.map(el=>el.yearMonth))
+  for (const [i, debt] of sortDebts.entries()) {
     let current = DateTime.fromObject({
-      year: debt.year-543,
+      year: debt.year - 543,
       month: debt.month,
-      day: 10
-    })
-    let formatDate = current.reconfigure({ outputCalendar: "buddhist" }).setLocale("th").toFormat("LLLyy")
-    debtText.push({text:formatDate, gap: ((latest.yearMonth??0) - (debt.yearMonth??0))})
-    latest = debt
+      day: 10,
+    });
+    let formatDate = current
+      .reconfigure({ outputCalendar: "buddhist" })
+      .setLocale("th")
+      .toFormat("LLLyy");
+    let gap = (latest.yearMonth ?? 0) - (debt.yearMonth ?? 0)
+    debtText.push({
+      text: formatDate,
+      yearMonth: debt.yearMonth,
+      gap
+    });
+    latest = debt;
   }
-  console.log(debts[0])
-  for(const [i,debt] of debtText.entries()){
-    console.log(debt)
-    if(debt.gap===-1){
-      arrayDebtText.push({text:"-"})
+  for (const [i, debt] of debtText.entries()) {
+    if(debt.yearMonth===maxYearMonth) 
+      arrayDebtText.push({ text: debt.text });
+    else if (debt.gap === -1) {
+      arrayDebtText.push({ text: "-" });
       try {
-        if(debtText[i+1].gap!==-1) arrayDebtText.push({text:debt.text})
-      } catch (error) {
-        
-      }
+        if (debtText[i + 1].gap !== -1)
+          arrayDebtText.push({ text: debt.text });
+      } catch (error) {}
     } else {
-      arrayDebtText.push({text:debt.text})
+      arrayDebtText.push({ text: debt.text });
     }
   }
-  let finalDebtAmount = debts.reduce((acc,debt)=>acc+debt.totalAmount,0)
-  let finalDebtText = arrayDebtText.map(el=>el.text).join("/").replace(/\/-(.*?)([ก-ฮ])/g,"-$2")
+  let finalDebtAmount = debts.reduce(
+    (acc, debt) => acc + debt.totalAmount,
+    0
+  );
+  let finalDebtText = arrayDebtText
+    .map((el) => el.text)
+    .join(arrayDebtText.length==2?"-":"/")
+    .replace(/\/-(.*?)([ก-ฮ])/g, "-$2");
   return {
-    debtAmount:finalDebtAmount,
-    debtText:finalDebtText
-  }
+    debtAmount: finalDebtAmount,
+    debtText: finalDebtText,
+    original: debtText,
+    // debts,
+    maxYear,
+    maxYearMonth
+  };
 }
 
 
