@@ -958,7 +958,8 @@ let generatePaymentMonth = (invoices: Array<any>) => {
   let finalDebtText = arrayDebtText.map(el=>el.text).join("/")
   return {
     debtAmount:finalDebtAmount,
-    debtText:finalDebtText
+    debtText:display0(sortDebts).debtText,
+    originalDebtText:finalDebtText
   }
 }
 
