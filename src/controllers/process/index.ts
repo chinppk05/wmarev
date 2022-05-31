@@ -1036,9 +1036,7 @@ let display2 = (invoices: Array<any>) => {
   let mapDebts = debts.map((debt) => ({
     month: debt.month,
     year: debt.year,
-    yearMonth: parseInt(
-      String(debt.year) + String(debt.month).padStart(2, "0")
-    ),
+    yearMonth: parseInt(String(debt.year) + String(debt.month).padStart(2, "0")),
   }));
   let sortDebts = mapDebts.sort((a, b) => a.yearMonth - b.yearMonth);
   let debtText: Array<any> = [];
