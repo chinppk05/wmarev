@@ -735,7 +735,8 @@ export const createReceiptV3 = async (req: Request, res: Response) => {
               let debtVat = invoices.map((invoice:any)=>invoice.vat??0).reduce((a:number,b:number)=>a+b,0)
               let currentAmount = invoices.filter((inv:any)=>inv.month==month&&inv.year==year+543).map((invoice:any)=>invoice.totalAmount??0).reduce((a:number,b:number)=>a+b,0)
               let currentVat = invoices.filter((inv:any)=>inv.month==month&&inv.year==year+543).map((invoice:any)=>invoice.vat??0).reduce((a:number,b:number)=>a+b,0)
-              let debtInvoices = invoices.filter((inv:any)=>!(inv.month==month)&&(inv.year==(year+543)))
+              let debtInvoices = invoices
+              // .filter((inv:any)=>!(inv.month==month)&&(inv.year==(year+543)))
               let receipt = new Receipt({
                 ...item,
                 qty: payment.qty,
@@ -939,6 +940,7 @@ let generatePaymentMonth = (invoices: Array<any>) => {
   let debtText:Array<any> = []
   let arrayDebtText:Array<any> = []
   let latest:any = {}
+  console.log({sortDebts})
   for(const [i,debt] of sortDebts.entries()){
     let current = DateTime.fromObject({
       year: debt.year-543,
