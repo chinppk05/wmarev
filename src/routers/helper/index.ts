@@ -13,9 +13,8 @@ module.exports = (app: Express) => {
   app.post(`/api/v1/${endpoint}/receipt-debttext-restore`, ctrl.restoreDebtText)
   app.post(`/api/v1/${endpoint}/receipt-clear-totalamount`, ctrl.cleanTotalAmountForReceipt)
 
-
   app.post(`/api/v1/${endpoint}/revert-excel-invoice`, ctrl.revertExcelInvoice)
   app.post(`/api/v1/${endpoint}/revert-excel-receipt`, ctrl.revertExcelReceipt)
-  
+  app.post(`/api/v1/${endpoint}/excel-import-v2`, ctrl.excelReceiptImportV2)
   
 }

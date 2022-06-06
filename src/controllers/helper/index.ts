@@ -528,7 +528,7 @@ export const revertExcelReceipt = async (req: Request, res: Response) => {
   worksheet.eachRow(async (row, rn) => {
     if (rn >= 3) {
       preps.push({
-        sequence: row.getCell("C").text.replace("wma-",""),
+        sequence: row.getCell("C").text.replace("wma-", ""),
         meter: row.getCell("D").text,
         name: row.getCell("E").text,
         debtAmount: row.getCell("H").value,
@@ -547,18 +547,18 @@ export const revertExcelReceipt = async (req: Request, res: Response) => {
     if (receipt) {
       // console.log("found", ++i, "of", preps.length)
       // console.log(elem.debtText,elem.debtAmount,elem.debtVat)
-      
+
       let paymentAmount = elem.paymentAmount
-      if(elem.paymentAmount==null){
-        paymentAmount = elem.invoiceAmount 
+      if (elem.paymentAmount == null) {
+        paymentAmount = elem.invoiceAmount
       }
-      if((elem.invoiceAmount + 3.55) < elem.paymentAmount){
+      if ((elem.invoiceAmount + 3.55) < elem.paymentAmount) {
         paymentAmount = elem.invoiceAmount
       }
       receipt.debtText = elem.debtText
       receipt.debtAmount = elem.debtAmount
       receipt.debtVat = elem.debtVat
-      receipt.invoiceAmount =  elem.invoiceAmount
+      receipt.invoiceAmount = elem.invoiceAmount
       receipt.paymentAmount = paymentAmount
       let save = await receipt.save()
     } else {
@@ -574,3 +574,199 @@ export const revertExcelReceipt = async (req: Request, res: Response) => {
   res.send("done")
 }
 
+
+
+export const excelReceiptImportV2 = async (req: Request, res: Response) => {
+  let { monthStart, yearStart, monthEnd, yearEnd, } = req.body
+  const wmaMonth = {
+    'มค': 1,
+    'กพ': 2,
+    'มีค': 3,
+    'เมย': 4,
+    'พค': 5,
+    'มิย': 6,
+    'กค': 7,
+    'สค': 8,
+    'กย': 9,
+    'ตค': 10,
+    'พย': 11,
+    'ธค': 12,
+  }
+  let paymentStart = DateTime.fromObject({ day: 1, month: monthStart, year: yearStart - 543 }).startOf('day').toJSDate()
+  let paymentEnd = DateTime.fromObject({ day: 1, month: monthEnd, year: yearEnd - 543 }).endOf('month').endOf('day').toJSDate()
+  //{paymentDate:{$gte: ISODate('2021-12-01T00:00:00.000+07:00'), $lte: ISODate('2021-12-31T23:59:59.999+07:00')}}
+  // let receipts = await Receipt.find({
+  //   paymentDate: {
+  //     $gte: paymentStart,
+  //     $lte: paymentEnd
+  //   },
+  // }).sort({ excelNum: 1 }).exec()
+  let deleteReceipts = await Receipt.deleteMany({
+    paymentDate: {
+      $gte: paymentStart,
+      $lte: paymentEnd
+    },
+  })
+  const workbook = new Excel.Workbook();
+  let path = __dirname + "/receipt_fix_002.xlsx";
+  await workbook.xlsx.readFile(path);
+  console.log(deleteReceipts)
+
+  let worksheet = await workbook.getWorksheet("Sheet1")
+  let preps: Array<any> = []
+  let notfound: Array<any> = []
+  // console.log(worksheet)
+  let count = 0
+  worksheet.eachRow(async (row, rn) => {
+    if (rn > 2) {
+      count++
+      // console.log(row.getCell("C").text)
+      try {
+        //@ts-ignore
+        let paymentDate = new Date(row.getCell("X").value.result)
+        let year = 0
+        let month = 0
+        let sequence = row.getCell("C").text.replace("wma-", "")
+        let category = sequence.substring(2, 3)
+        let invoiceAmount = row.getCell("N").value
+        let debtAmount = row.getCell("H").value
+        let paidType = "-"
+        if (invoiceAmount > 0 && debtAmount == 0) {
+          paidType = "จ่ายตรงเดือน"
+          year = DateTime.fromJSDate(paymentDate).set({ day: 15 }).minus({ month: 2 }).year + 543
+          month = DateTime.fromJSDate(paymentDate).set({ day: 15 }).minus({ month: 2 }).month
+        } else if (invoiceAmount == 0 && debtAmount > 0) {
+          paidType = "จ่ายไม่ตรงเดือน"
+          year = DateTime.fromJSDate(paymentDate).set({ day: 15 }).minus({ month: 2 }).year + 543
+          month = DateTime.fromJSDate(paymentDate).set({ day: 15 }).minus({ month: 2 }).month
+        } else {
+          paidType = "จ่ายรวมเดือนปัจจุบัน"
+          year = DateTime.fromJSDate(paymentDate).set({ day: 15 }).minus({ month: 2 }).year + 543
+          month = DateTime.fromJSDate(paymentDate).set({ day: 15 }).minus({ month: 2 }).month
+        }
+        let prep = {
+          excelNum: row.getCell("A").value,
+          sequence: row.getCell("C").text.replace("wma-", ""),
+          year,
+          month,
+          meter: row.getCell("D").value,
+          name: row.getCell("E").value,
+          address: row.getCell("F").value,
+          paymentAmount: row.getCell("Q").value,
+          paymentDate: paymentDate,
+          // invoiceNumber: row.getCell("M").value,
+          debtText: row.getCell("G").value,
+          debtAmount: row.getCell("H").value,
+          debtVat: row.getCell("I").value,
+          qty: row.getCell("K").value,
+          totalAmount: row.getCell("P").value,
+          vatRate: 0.07,
+          vat: row.getCell("M").value,
+          invoiceAmount: row.getCell("N").value,
+          code: "01-kb",
+          category,
+          categoryType: "บาท/ลบ.ม.",
+          isNextStage: true,
+          isPrint: true,
+          isRequested: true,
+          isApproved: true,
+          isSigned: true,
+          process: true,
+          createdAt: new Date(),
+          paidType
+        }
+        // console.log({prep})
+        preps.push(prep)
+      } catch (error) {
+
+      }
+    }
+  })
+  let notfounds: Array<any> = []
+  for (let prep of preps) {
+    let year = prep.year
+    let month = prep.month
+    let hasDash = prep.debtText.search("-") > 0
+    if (prep.paidType === "จ่ายตรงเดือน") {
+      let invoice = await Invoice.findOne({ meter: prep.meter, year: prep.year, month: prep.month }).exec()
+      // console.log((invoice??{sequence:"-"}).sequence)
+      prep.invoices = [invoice.sequence]
+      invoice.isPaid = true
+      invoice.receipts = [prep.sequence]
+      await invoice.save()
+    } else if (prep.paidType === "จ่ายไม่ตรงเดือน") {
+      try {
+        year = (parseInt(prep.debtText.match(/\d{2}/)[0]) + 2500)
+        //@ts-ignore
+        if (!hasDash) month = wmaMonth[prep.debtText.match(/(.*?)\d{2}/)[1]]
+        // else if()
+        else {
+          if (prep.debtText.match(/([ก-๙]{2}|[ก-๙]{3})(\d{2})-([ก-๙]{2}|[ก-๙]{3})(\d{2})/g) !== null) {
+            console.log("จ่ายข้ามปี")
+            let regex = /([ก-๙]{2}|[ก-๙]{3})(\d{2})-([ก-๙]{2}|[ก-๙]{3})(\d{2})/g
+            let match = null
+            let fromMonth = 0
+            let toMonth = 0
+            let fromYear = 0
+            let toYear = 0
+            if (regex.exec(prep.debtText) != null) {
+              match = regex.exec(prep.debtText)
+              fromYear = (2500 + parseInt(match[2])) - 543
+              toYear = (2500 + parseInt(match[4])) - 543
+              //@ts-ignore
+              fromMonth = wmaMonth[match[1]]
+              //@ts-ignore
+              toMonth = wmaMonth[match[3]]
+              // year = (2500 + parseInt(match[3])) - 543
+              console.log({fromYear, toYear, fromMonth, toMonth})
+              let invoices = await Invoice.find({ meter: prep.meter, year: year + 543, month: { $gte: fromMonth, $lte: toMonth } }).exec()
+              for (const invoice of invoices) {
+                invoice.isPaid = true
+                invoice.receipts = [prep.sequence]
+                await invoice.save()
+              }
+              prep.invoices = invoices.map((inv: any) => inv.sequence)
+              console.log(prep.invoices)
+            }
+          } else {
+            console.log("จ่ายภายในปี")
+            let regex = /([ก-๙]{2}|[ก-๙]{3})-([ก-๙]{2}|[ก-๙]{3})(\d{2})/g
+            let match = null
+            let fromMonth = 0
+            let toMonth = 0
+            let year = 0
+            if (regex.exec(prep.debtText) != null) {
+              match = regex.exec(prep.debtText)
+              //@ts-ignore
+              fromMonth = wmaMonth[match[1]]
+              //@ts-ignore
+              toMonth = wmaMonth[match[2]]
+              year = (2500 + parseInt(match[3])) - 543
+              let invoices = await Invoice.find({ meter: prep.meter, year: year + 543, month: { $gte: fromMonth, $lte: toMonth } }).exec()
+              for (const invoice of invoices) {
+                invoice.isPaid = true
+                invoice.receipts = [prep.sequence]
+                await invoice.save()
+              }
+              prep.invoices = invoices.map((inv: any) => inv.sequence)
+              console.log(prep.invoices)
+            } else {
+              notfounds.push({meter:prep.meter, receipt:prep.sequence, debtText:prep.debtText, paidType:prep.paidType})
+            }
+          }
+        }
+      } catch (error) {
+
+      }
+      // console.log({year,month, debtText:prep.debtText, hasDash})
+    } else if (prep.paidType === "จ่ายรวมเดือนปัจจุบัน") {
+      notfounds.push({meter:prep.meter, receipt:prep.sequence, debtText:prep.debtText, paidType:prep.paidType})
+    } else {
+
+    }
+    // console.log({prep})
+  }
+  console.log(count)
+  console.log(notfounds)
+  res.send("done")
+}
