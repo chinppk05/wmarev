@@ -682,7 +682,7 @@ export const excelReceiptImportV2 = async (req: Request, res: Response) => {
           process: true,
           createdAt: new Date(),
           paidType,
-          notes: row.getCell("V").text,
+          notes: row.getCell("R").text,
           ref:paidType
         }
         // console.log({prep})
