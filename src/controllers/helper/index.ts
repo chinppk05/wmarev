@@ -739,13 +739,18 @@ export const excelReceiptImportV2 = async (req: Request, res: Response) => {
     let month = prep.month
     let hasDash = prep.debtText.search("-") > 0
     let hasSlash = prep.debtText.search("/") > 0
+    console.log({sequence:prep.sequence})
     if (prep.paidType === "จ่ายตรงเดือน") {
-      let invoice = await Invoice.findOne({ meter: prep.meter, year: prep.year, month: prep.month }).exec()
-      invoice.isPaid = true
-      invoice.receipts = [prep.sequence]
-      await invoice.save()
-      prep.invoices = [invoice.sequence]
-      prep.invoices_id = [invoice._id]
+      try {
+        let invoice = await Invoice.findOne({ meter: prep.meter, year: prep.year, month: prep.month }).exec()
+        invoice.isPaid = true
+        invoice.receipts = [prep.sequence]
+        await invoice.save()
+        prep.invoices = [invoice.sequence]
+        prep.invoices_id = [invoice._id]
+      } catch (error) {
+        
+      }
       c_t1++
       await createItem(prep)
 
