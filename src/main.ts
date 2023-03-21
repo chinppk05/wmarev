@@ -66,6 +66,7 @@ app.use(morgan('combined', { skip: (req: any, res: any) => { return req.original
 
 app.use('/api/v1/uploads', express.static('uploads'))
 app.use('/api/v1/manuals', express.static('manuals'))
+app.use('/api/v1/static', express.static('static'))
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
